@@ -9,8 +9,10 @@ import ChooseListingTypeModal from 'components/ChooseListingTypeModal';
 import ListingEditModal from 'components/ListingEditModal';
 import { ListingModalAction } from 'utils/enums';
 import { useFormattedDropdownData } from 'components/ContextData/ContextData';
+import { useTableSearchParams } from 'utils/hooks';
 
 function MyListings() {
+  const { token, currency } = useTableSearchParams();
   const { tokenOptionsMap, currencyOptionsMap } = useFormattedDropdownData();
 
   const onCreateNewListingClick = () => {
@@ -22,6 +24,8 @@ function MyListings() {
         action,
         tokens: tokenOptionsMap,
         currencies: currencyOptionsMap,
+        tokenParam: token,
+        currencyParam: currency,
       }).then(result => {
         console.log('result', result);
       });

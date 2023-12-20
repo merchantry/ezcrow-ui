@@ -42,6 +42,12 @@ body {
   align-items: center;
 }
 
+.MuiPaper-root {
+  // Bad hack to override the default MUI Paper background color
+  // TODO: Find a better way to do this
+  background: $primary !important;
+}
+
 @keyframes modal-mask-appear {
   from {
     opacity: 0;

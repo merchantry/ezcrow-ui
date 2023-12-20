@@ -4,13 +4,15 @@ import { InputAdornment, TextField, TextFieldProps } from '@mui/material';
 import styles from './BaseInput.module.scss';
 
 export interface BaseInputProps<T extends string | number>
-  extends Omit<TextFieldProps<'outlined'>, 'onChange' | 'variant'> {
+  extends Omit<TextFieldProps<'outlined'>, 'onChange' | 'variant' | 'helperText' | 'error'> {
   label: string;
   value?: T;
   onChange?: (value: T) => void;
   type?: 'text' | 'number';
   className?: string;
   endAdornment?: React.ReactNode;
+  helperText?: string;
+  error?: string;
 }
 
 function BaseInput<T extends string | number = string>({
@@ -20,6 +22,8 @@ function BaseInput<T extends string | number = string>({
   type = 'text',
   className,
   endAdornment,
+  helperText,
+  error,
   ...rest
 }: BaseInputProps<T>) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -35,6 +39,11 @@ function BaseInput<T extends string | number = string>({
     return { endAdornment: <InputAdornment position="end">{endAdornment}</InputAdornment> };
   }, [endAdornment]);
 
+  const helperTextProp = useMemo(() => {
+    if (error) return error;
+    return helperText;
+  }, [error, helperText]);
+
   return (
     <TextField
       variant="outlined"
@@ -44,6 +53,8 @@ function BaseInput<T extends string | number = string>({
       onChange={handleChange}
       className={`${styles.input} ${className}`}
       InputProps={inputProps}
+      helperText={helperTextProp}
+      error={!!error}
       {...rest}
     />
   );

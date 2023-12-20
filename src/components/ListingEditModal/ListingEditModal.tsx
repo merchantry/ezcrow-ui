@@ -9,6 +9,7 @@ import BaseInput from 'components/BaseInput';
 import ButtonWithTooltip from 'components/ButtonWithTooltip';
 import { currencyToSymbol, maybePluralize } from 'utils/helpers';
 import BaseSelect from 'components/BaseSelect';
+import { useTableSearchParams } from 'utils/hooks';
 
 type ListingEditData = Omit<Listing, 'id' | 'hasOrders' | 'userAddress' | 'availableAmount'>;
 
@@ -18,6 +19,8 @@ interface ListingEditModalProps extends ModalProps<ListingEditData> {
   currencies: Record<string, string>;
   tokens: Record<string, string>;
   listing?: Listing;
+  tokenParam?: string;
+  currencyParam?: string;
 }
 
 function ListingEditModal({
@@ -28,13 +31,17 @@ function ListingEditModal({
   currencies,
   tokens,
   listing,
+  tokenParam = 'USDT',
+  currencyParam = 'USD',
 }: ListingEditModalProps) {
-  const [token, setToken] = useState<string>(listing?.token ?? 'USDT');
+  const [token, setToken] = useState<string>(listing?.token ?? tokenParam);
   const [totalAmount, setTotalAmount] = useState<number>(listing?.totalAmount ?? 10);
   const [price, setPrice] = useState<number>(listing?.price ?? 1);
   const [minPerOrder, setMinPerOrder] = useState<number>(listing?.minPerOrder ?? 10);
   const [maxPerOrder, setMaxPerOrder] = useState<number>(listing?.maxPerOrder ?? 100);
-  const [fiatCurrency, setFiatCurrency] = useState<string>(listing?.fiatCurrency ?? 'USD');
+  const [fiatCurrency, setFiatCurrency] = useState<string>(listing?.fiatCurrency ?? currencyParam);
+
+  const [priceError, setPriceError] = useState<string | undefined>();
 
   const { listingTitle, buttonText, buttonColor, buttonTooltip } = useMemo(() => {
     const buttonAction = modalAction === ListingModalAction.CreateNew ? 'Create New' : 'Edit';
@@ -68,6 +75,10 @@ function ListingEditModal({
     () => !!totalAmount && !!price && !!minPerOrder && !!maxPerOrder,
     [totalAmount, price, minPerOrder, maxPerOrder],
   );
+
+  const rateOnBlur = () => {
+    setPriceError('ah shit');
+  };
 
   const {
     tokenHelperText,
@@ -140,6 +151,8 @@ function ListingEditModal({
             onChange={setPrice}
             endAdornment={fiatCurrencySymbol}
             helperText={priceHelperText}
+            onBlur={rateOnBlur}
+            error={priceError}
           />
           <BaseInput<number>
             type="number"
