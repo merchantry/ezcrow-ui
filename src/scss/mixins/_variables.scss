@@ -1,0 +1,31 @@
+$rich-black: #061b2a;
+$prussian-blue: #012640;
+$charcoal: #314e62;
+$columbia-blue: #b4d4ee;
+$pumpkin: #fa6d05;
+$citrine: #eadd15;
+$grey-blue: #050f16;
+$white: #fff;
+$green: #3ab05b;
+$red: #ff4242;
+$light-blue: #308dcf;
+
+$primary: $prussian-blue;
+$primary-dark: $rich-black;
+$primary-light: $charcoal;
+$secondary: $pumpkin;
+$accent: $columbia-blue;
+$success: $green;
+$danger: $red;
+$warning: $citrine;
+$info: $light-blue;
+
+$panel-color: $prussian-blue;
+$background-color: $grey-blue;
+$font-color: $white;
+$border-color: $primary-light;
+$border: 1px solid $border-color;
+
+$border-radius-small: 4px;
+$border-radius: 8px;
+$quick-transition: 0.2s;

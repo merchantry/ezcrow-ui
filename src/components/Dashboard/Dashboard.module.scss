@@ -1,0 +1,53 @@
+@import 'scss/mixins/variables.scss';
+
+.appContainer {
+  height: 100vh;
+  padding: 30px;
+
+  background-color: $background-color;
+
+  & > .content {
+    display: flex;
+    height: 100%;
+    gap: 20px;
+
+    & > .sidebar {
+      width: 240px;
+      height: 100%;
+
+      background-color: $panel-color;
+      border-radius: $border-radius;
+
+      & > .logoContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+
+        & > .logo {
+          cursor: pointer;
+        }
+      }
+
+      & > nav {
+        & > ul {
+          list-style: none;
+
+          display: flex;
+          flex-direction: column;
+
+          padding: 0;
+          gap: 10px;
+        }
+      }
+    }
+
+    & > .mainContent {
+      flex: 1;
+      padding: 40px;
+
+      background-color: $panel-color;
+      border-radius: $border-radius;
+    }
+  }
+}

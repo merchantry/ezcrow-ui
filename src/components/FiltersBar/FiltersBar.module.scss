@@ -1,0 +1,65 @@
+@import 'scss/mixins/variables';
+@import 'scss/mixins/mixins';
+
+.filterControls {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+
+  & > .filters {
+    @include elementContainer;
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 2px 20px;
+
+    text-transform: uppercase;
+    font-weight: 700;
+
+    & > a {
+      opacity: 0.3;
+      cursor: pointer;
+
+      text-decoration: none;
+
+      transition: opacity $quick-transition;
+
+      &.active,
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    & > .buy {
+      color: $success;
+    }
+
+    & > .sell {
+      color: $danger;
+    }
+  }
+
+  & > .tokenDropdown {
+    width: 153px;
+  }
+
+  & > .currencyDropdown {
+    width: 187px;
+  }
+
+  & > .sortByDropdown {
+    width: 258px;
+  }
+
+  & > button.sortOrder,
+  & > .pagination > button {
+    width: 40px;
+
+    transition: background $quick-transition;
+
+    &.active {
+      background: $primary-light;
+    }
+  }
+}

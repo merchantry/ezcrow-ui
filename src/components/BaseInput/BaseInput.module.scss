@@ -1,0 +1,32 @@
+@import 'scss/mixins/variables';
+@import 'scss/mixins/mixins';
+
+div.input {
+  & > label {
+    color: $font-color !important;
+  }
+
+  & > p {
+    color: $font-color;
+  }
+
+  & > div {
+    color: $font-color;
+
+    & > input {
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+
+    & > div > p {
+      color: $font-color;
+    }
+
+    & > fieldset {
+      border-color: $border-color !important;
+    }
+  }
+}

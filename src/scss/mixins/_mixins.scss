@@ -1,0 +1,25 @@
+@import './variables.scss';
+
+@mixin elementContainer {
+  background: $primary-dark;
+  border-radius: $border-radius-small;
+}
+
+@mixin clickableAnimation {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+
+  transition: all $quick-transition;
+
+  &:hover:not(:active) {
+    box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.25);
+    transform: translateY(-1px);
+  }
+}
+
+@mixin buttonColor($color) {
+  background: $color;
+
+  &:hover {
+    background: $color;
+  }
+}

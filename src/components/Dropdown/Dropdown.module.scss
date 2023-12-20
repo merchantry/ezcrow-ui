@@ -1,0 +1,84 @@
+@import 'scss/mixins/variables';
+@import 'scss/mixins/mixins';
+
+.dropdownContainer {
+  @include elementContainer;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 15px;
+
+  cursor: pointer;
+
+  & > .label {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 5px;
+
+    & > span:first-child {
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+  }
+
+  & > .dropdownArrowContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: transform $quick-transition;
+  }
+
+  &.open {
+    border-radius: $border-radius-small $border-radius-small 0 0;
+
+    & > .dropdownArrowContainer {
+      transform: rotate(180deg);
+    }
+  }
+
+  & > ul.dropdown {
+    list-style: none;
+
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+
+    max-height: 0;
+    overflow: hidden;
+    visibility: hidden;
+
+    background: $primary-dark;
+    border-radius: 0 0 $border-radius-small $border-radius-small;
+    box-shadow: 0px 0px 4px rgba($accent, 0.2);
+
+    transition:
+      max-height $quick-transition,
+      visibility $quick-transition;
+
+    & > li {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding: 5px 0;
+
+      cursor: pointer;
+
+      border-top: $border;
+
+      transition: background $quick-transition;
+
+      &:hover {
+        background: $primary-light;
+      }
+    }
+  }
+}

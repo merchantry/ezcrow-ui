@@ -1,0 +1,59 @@
+@import 'scss/mixins/variables';
+@import 'scss/mixins/mixins';
+
+.tableContainer {
+  width: 100%;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $primary-light;
+    border-radius: $border-radius;
+  }
+
+  & > table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    & tr {
+      & > td,
+      & > th {
+        padding: 10px 0px;
+
+        border-bottom: $border;
+
+        text-align: right;
+
+        &:first-child {
+          text-align: left;
+          padding-left: 20px;
+        }
+
+        &:last-child {
+          padding-right: 20px;
+        }
+      }
+    }
+
+    & > tbody {
+      & > tr {
+        background: $primary;
+
+        transition: filter $quick-transition;
+
+        &:nth-child(odd) {
+          background: $primary-dark;
+        }
+
+        &:hover {
+          filter: brightness(1.1);
+        }
+      }
+    }
+  }
+}

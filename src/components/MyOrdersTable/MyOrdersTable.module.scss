@@ -1,0 +1,39 @@
+@import 'scss/mixins/variables';
+@import 'scss/mixins/mixins';
+
+span.order {
+  font-weight: 600;
+
+  &.buy {
+    color: $success;
+  }
+
+  &.sell {
+    color: $danger;
+  }
+}
+
+div.chipContainer {
+  display: inline-block;
+  width: 153px;
+
+  & svg {
+    visibility: hidden;
+    max-width: 0px;
+    transition: all $quick-transition ease-in-out;
+  }
+}
+
+tr:hover div.chipContainer svg,
+div.chipContainer:hover svg {
+  visibility: visible;
+  max-width: 13px;
+}
+
+button.orderButton {
+  width: 162px;
+}
+
+button.cancelButton {
+  @include clickableAnimation;
+}

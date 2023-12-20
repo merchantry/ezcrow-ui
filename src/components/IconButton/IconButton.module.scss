@@ -1,0 +1,20 @@
+@import 'scss/mixins/variables';
+@import 'scss/mixins/mixins';
+
+button.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  min-width: 40px;
+
+  outline: none;
+
+  font-size: 1rem;
+  color: $font-color;
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

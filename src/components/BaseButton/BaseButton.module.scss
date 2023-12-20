@@ -1,0 +1,21 @@
+@import 'scss/mixins/variables';
+@import 'scss/mixins/mixins';
+
+button.button {
+  @include clickableAnimation;
+
+  font-family: 'Montserrat', sans-serif;
+  color: $font-color;
+  font-weight: 600;
+  text-transform: none;
+
+  padding: 3px 20px;
+
+  &[disabled] {
+    color: $font-color;
+  }
+
+  & svg {
+    font-size: 16px !important;
+  }
+}
