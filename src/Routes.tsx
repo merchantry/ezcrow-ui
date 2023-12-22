@@ -13,7 +13,7 @@ import Page from 'layouts/Page';
 
 function Routes() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <RoutesList>
         <Route element={<Dashboard />}>
           <Route
