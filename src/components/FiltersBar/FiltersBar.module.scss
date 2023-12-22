@@ -41,15 +41,15 @@
   }
 
   & > .tokenDropdown {
-    width: 153px;
+    min-width: 153px;
   }
 
   & > .currencyDropdown {
-    width: 188px;
+    min-width: 188px;
   }
 
   & > .sortByDropdown {
-    width: 258px;
+    min-width: 258px;
   }
 
   & > button.sortOrder,
