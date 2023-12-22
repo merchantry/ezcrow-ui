@@ -2,15 +2,21 @@ import React from 'react';
 
 import styles from './StripedTable.module.scss';
 import { ColumnData } from 'utils/types';
+import { Box, CircularProgress } from '@mui/material';
 
 interface StripedTableProps<T> {
   data: T[];
   columnData: ColumnData<T>;
   getRowKey: (row: T) => string | number;
+  isFetching?: boolean;
 }
 
-function StripedTable<T>({ data, columnData, getRowKey }: StripedTableProps<T>) {
-  return (
+function StripedTable<T>({ data, columnData, getRowKey, isFetching }: StripedTableProps<T>) {
+  return isFetching ? (
+    <Box className={styles.progressContainer}>
+      <CircularProgress />
+    </Box>
+  ) : (
     <div className={styles.tableContainer}>
       <table>
         <colgroup>
@@ -37,6 +43,12 @@ function StripedTable<T>({ data, columnData, getRowKey }: StripedTableProps<T>) 
           ))}
         </tbody>
       </table>
+
+      {data.length === 0 && (
+        <div className={styles.emptyTableTextContainer}>
+          <h3>Nothing to see here</h3>
+        </div>
+      )}
     </div>
   );
 }

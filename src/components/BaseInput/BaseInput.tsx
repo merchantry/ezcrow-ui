@@ -3,34 +3,30 @@ import React, { ChangeEvent, useMemo } from 'react';
 import { InputAdornment, TextField, TextFieldProps } from '@mui/material';
 import styles from './BaseInput.module.scss';
 
-export interface BaseInputProps<T extends string | number>
+export interface BaseInputProps
   extends Omit<TextFieldProps<'outlined'>, 'onChange' | 'variant' | 'helperText' | 'error'> {
-  label: string;
-  value?: T;
-  onChange?: (value: T) => void;
-  type?: 'text' | 'number';
+  label?: string;
+  value?: string;
+  onChange?: (value: string) => void;
   className?: string;
   endAdornment?: React.ReactNode;
   helperText?: string;
   error?: string;
 }
 
-function BaseInput<T extends string | number = string>({
+function BaseInput({
   label,
   value,
   onChange,
-  type = 'text',
   className,
   endAdornment,
   helperText,
   error,
   ...rest
-}: BaseInputProps<T>) {
+}: BaseInputProps) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!onChange) return;
-
-    const newValue = e.target.value as T;
-    onChange(newValue);
+    onChange(e.target.value);
   };
 
   const inputProps = useMemo(() => {
@@ -47,11 +43,10 @@ function BaseInput<T extends string | number = string>({
   return (
     <TextField
       variant="outlined"
-      type={type}
       label={label}
       value={value}
       onChange={handleChange}
-      className={`${styles.input} ${className}`}
+      className={`${styles.input} ${!!error && styles.error} ${className}`}
       InputProps={inputProps}
       helperText={helperTextProp}
       error={!!error}

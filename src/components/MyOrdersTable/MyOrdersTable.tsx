@@ -1,10 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { capitalize, decapitalize, priceFormat } from 'utils/helpers';
-import { OrderAction } from 'utils/enums';
+import { decapitalize, priceFormat, run } from 'utils/helpers';
+import { OrderAction, OrderCancelAction } from 'utils/enums';
 
 import styles from './MyOrdersTable.module.scss';
-import orders from './orders';
+import dummyOrders from './orders';
 import tableStyles from 'scss/modules/Table.module.scss';
 import StripedTable from 'components/StripedTable';
 import { Order } from 'utils/types';
@@ -14,50 +14,77 @@ import OrderActionButtons from './OrderActionButtons';
 import { useTableSearchParams } from 'utils/hooks';
 import ConfirmationModal from 'components/ConfirmationModal';
 import triggerModal from 'utils/triggerModal';
+import { FaRegHand } from 'react-icons/fa6';
+import { cancelOrder, executeOrder, getAllOrders } from 'web3/requests/orders';
 
 interface MyOrdersTableProps {
   filter?: OrderAction;
 }
 
 function MyOrdersTable({ filter }: MyOrdersTableProps) {
-  const { currency, token, sortBy, sortOrder } = useTableSearchParams();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
+  const { currency, token, sortBy, sortOrder, page } = useTableSearchParams();
 
-  const filteredItems = useMemo(
-    () =>
-      orders
-        .filter(
-          order =>
-            order.listing.token === token &&
-            order.listing.fiatCurrency === currency &&
-            (filter ? order.action === filter : true),
-        )
-        .sort((a, b) => {
-          const aValue = a.listing[sortBy];
-          const bValue = b.listing[sortBy];
+  useEffect(() => {
+    setIsFetching(true);
+    getAllOrders(currency, token, sortBy, sortOrder, page).then(() => {
+      setIsFetching(false);
+      setOrders(
+        dummyOrders
+          .filter(
+            order =>
+              order.listing.token === token &&
+              order.listing.fiatCurrency === currency &&
+              (filter ? order.action === filter : true),
+          )
+          .sort((a, b) => {
+            const aValue = a.listing[sortBy];
+            const bValue = b.listing[sortBy];
 
-          if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-          if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+            if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
 
-          return 0;
-        }),
-    [currency, filter, sortBy, sortOrder, token],
-  );
+            return 0;
+          }),
+      );
+    });
+  }, [currency, filter, page, sortBy, sortOrder, token]);
 
   const onActionButtonClick = (order: Order, tooltip: string, buttonText: string) => {
-    triggerModal(ConfirmationModal, {
-      title: `${buttonText} ?`,
-      text: `Are you sure you want to ${decapitalize(tooltip)}?`,
-      confirmText: buttonText,
-    }).then(result => {
-      if (result) {
-        console.log('confirmed', order);
+    const isCancellingOrDisputing =
+      tooltip === OrderCancelAction.Cancel || tooltip === OrderCancelAction.Dispute;
+
+    const text = run(() => {
+      switch (tooltip) {
+        case OrderCancelAction.Cancel:
+          return `Are you sure you want to cancel the trade?`;
+        case OrderCancelAction.Dispute:
+          return `Are you sure you want to raise a dispute?`;
+        default:
+          return `Are you sure you want to ${decapitalize(tooltip)}?`;
       }
+    });
+
+    triggerModal(ConfirmationModal, {
+      title: `${buttonText} (Order ID: ${order.id})?`,
+      text,
+      confirmText: buttonText,
+      confirmColor:
+        order.action === OrderAction.Sell || isCancellingOrDisputing ? 'error' : 'success',
+      noCancelBtn: true,
+      confirmIcon: tooltip === OrderCancelAction.Dispute ? <FaRegHand /> : undefined,
+    }).then(confirmed => {
+      if (!confirmed) return;
+      if (isCancellingOrDisputing) cancelOrder(order.id);
+      else executeOrder(order.id);
     });
   };
 
   return (
     <StripedTable
-      data={filteredItems}
+      isFetching={isFetching}
+      data={orders}
       getRowKey={(row: Order) => row.id}
       columnData={[
         {
@@ -68,7 +95,7 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
           label: 'Order Type',
           render: order => (
             <span className={`${styles.order} ${styles[order.action]}`}>
-              {`${capitalize(order.action)} ${order.listing.token}`}
+              {`${order.action} ${order.listing.token}`}
             </span>
           ),
         },

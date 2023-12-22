@@ -1,11 +1,10 @@
 import React from 'react';
 
-import { capitalize, opposite, priceFormat } from 'utils/helpers';
-import { ListingAction, ListingModalAction } from 'utils/enums';
+import { opposite, priceFormat } from 'utils/helpers';
+import { ListingAction } from 'utils/enums';
 
 import styles from './MyListingsTable.module.scss';
 import tableStyles from 'scss/modules/Table.module.scss';
-import listings from './listings';
 import BaseButton from 'components/BaseButton';
 import StripedTable from 'components/StripedTable';
 import { Listing } from 'utils/types';
@@ -13,26 +12,28 @@ import { useFilteredListings } from 'utils/hooks';
 import UserAddressCellData from 'components/UserAddressCellData';
 import triggerModal from 'utils/triggerModal';
 import ConfirmationModal from 'components/ConfirmationModal';
-import ListingEditModal from 'components/ListingEditModal';
 import { useFormattedDropdownData } from 'components/ContextData/ContextData';
+import { confirmListingData } from 'utils/modals';
+import { FaTrash } from 'react-icons/fa6';
+import { editListing, removeListing } from 'web3/requests/listings';
 
 interface MyListingsTableProps {
   filter?: ListingAction;
 }
 
 function MyListingsTable({ filter }: MyListingsTableProps) {
-  const filteredListings = useFilteredListings(listings, filter);
+  const [filteredListings, isFetching] = useFilteredListings(filter);
   const { tokenOptionsMap, currencyOptionsMap } = useFormattedDropdownData();
 
-  const onEditListingClick = (listing: Listing) => {
-    triggerModal(ListingEditModal, {
-      modalAction: ListingModalAction.Edit,
+  const onEditListingClick = async (listing: Listing) => {
+    confirmListingData({
+      listingToEdit: listing,
       action: listing.action,
       tokens: tokenOptionsMap,
       currencies: currencyOptionsMap,
-      listing,
-    }).then(result => {
-      console.log('result', result);
+    }).then(listingEditData => {
+      if (!listingEditData) return;
+      editListing(listing.id, listingEditData);
     });
   };
 
@@ -40,18 +41,21 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
     if (listing.hasOrders) return;
 
     triggerModal(ConfirmationModal, {
-      title: 'Remove Listing?',
+      title: `Remove Listing (ID: ${listing.id})?`,
       text: 'Are you sure you want to remove this listing?',
       confirmText: 'Remove',
-    }).then(result => {
-      if (result) {
-        console.log('confirmed', listing);
-      }
+      confirmIcon: <FaTrash />,
+      confirmColor: 'error',
+      cancelColor: 'primary',
+    }).then(confirmed => {
+      if (!confirmed) return;
+      removeListing(listing.id);
     });
   };
 
   return (
     <StripedTable
+      isFetching={isFetching}
       data={filteredListings}
       getRowKey={(row: Listing) => row.id}
       columnData={[
@@ -68,7 +72,7 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
 
             return (
               <span className={`${styles.order} ${styles[creatorAction]}`}>
-                {`${capitalize(creatorAction)} ${listing.token}`}
+                {`${creatorAction} ${listing.token}`}
               </span>
             );
           },

@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import { CURRENCY_OPTIONS, TOKEN_OPTIONS } from 'utils/config';
 import { currencyToSymbol } from 'utils/helpers';
 
 interface ContextDataProps {
@@ -58,8 +59,8 @@ export const useFormattedDropdownData = () => {
 };
 
 function ContextData({ children }: ContextDataProps) {
-  const [availableTokens, setAvailableTokens] = useState<string[]>(['ETH', 'USDC', 'USDT']);
-  const [availableCurrencies, setAvailableCurrencies] = useState<string[]>(['USD', 'EUR', 'INR']);
+  const [availableTokens, setAvailableTokens] = useState<string[]>(TOKEN_OPTIONS);
+  const [availableCurrencies, setAvailableCurrencies] = useState<string[]>(CURRENCY_OPTIONS);
 
   return (
     <DropdownDataContext.Provider

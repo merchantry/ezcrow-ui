@@ -1,0 +1,27 @@
+@import 'scss/mixins/variables';
+
+.slideFromLeft {
+  animation: slideFromLeft $quick-transition ease-in-out;
+}
+
+.slideFromRight {
+  animation: slideFromRight $quick-transition ease-in-out;
+}
+
+@keyframes slideFromRight {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideFromLeft {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

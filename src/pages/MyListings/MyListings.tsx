@@ -6,10 +6,10 @@ import BaseButton from 'components/BaseButton';
 import { FaPlus } from 'react-icons/fa';
 import triggerModal from 'utils/triggerModal';
 import ChooseListingTypeModal from 'components/ChooseListingTypeModal';
-import ListingEditModal from 'components/ListingEditModal';
-import { ListingModalAction } from 'utils/enums';
 import { useFormattedDropdownData } from 'components/ContextData/ContextData';
 import { useTableSearchParams } from 'utils/hooks';
+import { confirmListingData } from 'utils/modals';
+import { createListing } from 'web3/requests/listings';
 
 function MyListings() {
   const { token, currency } = useTableSearchParams();
@@ -19,15 +19,15 @@ function MyListings() {
     triggerModal(ChooseListingTypeModal).then(action => {
       if (!action) return;
 
-      return triggerModal(ListingEditModal, {
-        modalAction: ListingModalAction.CreateNew,
+      return confirmListingData({
         action,
         tokens: tokenOptionsMap,
         currencies: currencyOptionsMap,
         tokenParam: token,
         currencyParam: currency,
-      }).then(result => {
-        console.log('result', result);
+      }).then(listingEditData => {
+        if (!listingEditData) return;
+        createListing(listingEditData);
       });
     });
   };

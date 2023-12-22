@@ -1,3 +1,19 @@
-.modalBody {
+@import 'scss/mixins/variables';
+
+.fontSpan {
+  margin: 0 0.5em;
+  text-transform: uppercase;
+  font-weight: 600;
+
+  &.buy {
+    color: $success;
+  }
+
+  &.sell {
+    color: $danger;
+  }
+}
+
+.footer {
   gap: 20px;
 }

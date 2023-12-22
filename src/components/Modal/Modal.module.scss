@@ -36,21 +36,23 @@
     align-items: center;
     padding: 32px 48px;
   }
+}
 
-  & > .footer {
-    height: 50px;
-    width: 100%;
+// declared outside of .modal to allow for overriding
+// the footer's justify-content
+.footer {
+  height: 50px;
+  width: 100%;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 40px 32px 48px 32px;
-    margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px 32px 48px 32px;
+  margin-top: 16px;
 
-    border-top: $border;
-    border-radius: 0 0 $border-radius $border-radius;
-    background: $primary;
-  }
+  border-top: $border;
+  border-radius: 0 0 $border-radius $border-radius;
+  background: $primary;
 }
 
 @keyframes modal-appear {

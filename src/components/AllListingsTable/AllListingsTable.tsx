@@ -1,28 +1,55 @@
 import React from 'react';
 
-import { capitalize, priceFormat } from 'utils/helpers';
+import { maybePluralize, priceFormat } from 'utils/helpers';
 import { ListingAction } from 'utils/enums';
 import { FaRegMessage } from 'react-icons/fa6';
 
 import styles from './AllListingsTable.module.scss';
 import tableStyles from 'scss/modules/Table.module.scss';
-import listings from './listings';
 import BaseButton from 'components/BaseButton';
 import IconButton from 'components/IconButton';
 import StripedTable from 'components/StripedTable';
 import { Listing } from 'utils/types';
 import { useFilteredListings } from 'utils/hooks';
 import UserAddressCellData from 'components/UserAddressCellData';
+import CreateOrderModal from 'components/CreateOrderModal';
+import ConfirmationModal from 'components/ConfirmationModal';
+import { FaChevronLeft } from 'react-icons/fa6';
+import { modalLoop } from 'utils/modals';
+import { createOrder } from 'web3/requests/orders';
 
 interface AllListingsTableProps {
   filter?: ListingAction;
 }
 
 function AllListingsTable({ filter }: AllListingsTableProps) {
-  const filteredListings = useFilteredListings(listings, filter);
+  const [filteredListings, isFetching] = useFilteredListings(filter);
+
+  const onListingActionClick = async (listing: Listing) => {
+    modalLoop(
+      CreateOrderModal,
+      {
+        listing,
+      },
+      ConfirmationModal,
+      orderAmount => ({
+        title: `Create ${listing.action} Order?`,
+        text: `Are you sure you want to create a ${listing.action} order for ${orderAmount} ${
+          listing.token
+        } ${maybePluralize(orderAmount, 'token')}?`,
+        confirmText: 'Create Order',
+        cancelText: 'Back',
+        cancelStartIcon: <FaChevronLeft />,
+      }),
+    ).then(orderAmount => {
+      if (!orderAmount) return;
+      createOrder(listing.id, orderAmount);
+    });
+  };
 
   return (
     <StripedTable
+      isFetching={isFetching}
       data={filteredListings}
       getRowKey={(row: Listing) => row.id}
       columnData={[
@@ -53,7 +80,7 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
           label: '',
           colStyle: { width: 205 },
           render: listing => {
-            const actionTitle = `${capitalize(listing.action)} ${listing.token}`;
+            const actionTitle = `${listing.action} ${listing.token}`;
 
             return (
               <div className={tableStyles.actions}>
@@ -61,6 +88,7 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
                   <FaRegMessage />
                 </IconButton>
                 <BaseButton
+                  onClick={() => onListingActionClick(listing)}
                   color={listing.action === ListingAction.Buy ? 'success' : 'error'}
                   title={actionTitle}
                 >

@@ -16,14 +16,13 @@ export const mergeSearchParams = (
   return params;
 };
 
-export const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
-
 export const decapitalize = (value: string) => value.charAt(0).toLowerCase() + value.slice(1);
 
 export const priceFormat = (amount: number, currency: string) =>
   new Intl.NumberFormat('de-DE', {
     style: 'currency',
     currency,
+    maximumFractionDigits: 3,
   }).format(amount);
 
 export const roundTo = (value: number, decimals: number) => {
@@ -55,3 +54,5 @@ export const currencyToSymbol = (currency: string) => {
 
 export const maybePluralize = (value: number, singular: string, plural?: string) =>
   value === 1 ? singular : plural ?? `${singular}s`;
+
+export const run = <T>(fn: () => T) => fn();

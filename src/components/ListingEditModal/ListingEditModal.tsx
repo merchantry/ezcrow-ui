@@ -1,19 +1,20 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import styles from './ListingEditModal.module.scss';
-import { ModalProps } from 'utils/interfaces';
+import { EditableModalProps } from 'utils/interfaces';
 import Modal from 'components/Modal';
-import { Listing } from 'utils/types';
+import { Listing, ListingEditData } from 'utils/types';
 import { ListingAction, ListingModalAction } from 'utils/enums';
-import BaseInput from 'components/BaseInput';
 import ButtonWithTooltip from 'components/ButtonWithTooltip';
-import { currencyToSymbol, maybePluralize } from 'utils/helpers';
+import { currencyToSymbol, maybePluralize, opposite, roundTo } from 'utils/helpers';
 import BaseSelect from 'components/BaseSelect';
-import { useTableSearchParams } from 'utils/hooks';
+import NumberInput from 'components/NumberInput';
+import { NumberInputProps } from 'components/NumberInput/NumberInput';
+import { MIN_FIAT_AMOUNT, MIN_TOKEN_AMOUNT, ROUND_TO_FIAT, ROUND_TO_TOKEN } from 'utils/config';
 
-type ListingEditData = Omit<Listing, 'id' | 'hasOrders' | 'userAddress' | 'availableAmount'>;
+type ModifiedNumberInputProps = Omit<NumberInputProps, 'roundTo' | 'min' | 'step' | 'endAdornment'>;
 
-interface ListingEditModalProps extends ModalProps<ListingEditData> {
+export interface ListingEditModalProps extends EditableModalProps<ListingEditData> {
   action: ListingAction;
   modalAction: ListingModalAction;
   currencies: Record<string, string>;
@@ -25,66 +26,81 @@ interface ListingEditModalProps extends ModalProps<ListingEditData> {
 
 function ListingEditModal({
   onSubmit,
-  onClose,
   action,
   modalAction,
   currencies,
   tokens,
   listing,
+  data,
   tokenParam = 'USDT',
   currencyParam = 'USD',
+  ...modalProps
 }: ListingEditModalProps) {
-  const [token, setToken] = useState<string>(listing?.token ?? tokenParam);
-  const [totalAmount, setTotalAmount] = useState<number>(listing?.totalAmount ?? 10);
-  const [price, setPrice] = useState<number>(listing?.price ?? 1);
-  const [minPerOrder, setMinPerOrder] = useState<number>(listing?.minPerOrder ?? 10);
-  const [maxPerOrder, setMaxPerOrder] = useState<number>(listing?.maxPerOrder ?? 100);
-  const [fiatCurrency, setFiatCurrency] = useState<string>(listing?.fiatCurrency ?? currencyParam);
+  const [token, setToken] = useState<string>(data?.token ?? listing?.token ?? tokenParam);
+  const [totalAmount, setTotalAmount] = useState<number>(
+    data?.totalAmount ?? listing?.totalAmount ?? 10,
+  );
+  const [price, setPrice] = useState<number>(data?.price ?? listing?.price ?? 1);
+  const [minPerOrder, setMinPerOrder] = useState<number>(
+    data?.minPerOrder ?? listing?.minPerOrder ?? 10,
+  );
+  const [maxPerOrder, setMaxPerOrder] = useState<number>(
+    data?.maxPerOrder ?? listing?.maxPerOrder ?? 10,
+  );
+  const [fiatCurrency, setFiatCurrency] = useState<string>(
+    data?.fiatCurrency ?? listing?.fiatCurrency ?? currencyParam,
+  );
 
-  const [priceError, setPriceError] = useState<string | undefined>();
+  const [minPerOrderError, setMinPerOrderError] = useState<string | undefined>(undefined);
+  const [maxPerOrderError, setMaxPerOrderError] = useState<string | undefined>(undefined);
 
-  const { listingTitle, buttonText, buttonColor, buttonTooltip } = useMemo(() => {
-    const buttonAction = modalAction === ListingModalAction.CreateNew ? 'Create New' : 'Edit';
+  const listingTitle = useMemo(() => {
+    const creatorAction = opposite(action, [ListingAction.Buy, ListingAction.Sell]);
 
-    switch (action) {
-      case ListingAction.Buy:
-        return {
-          listingTitle: 'Sell Listing',
-          buttonText: `${buttonAction} Sell Listing`,
-          buttonColor: 'error' as const,
-          buttonTooltip: totalAmount
-            ? `You will need to deposit ${totalAmount} ${token} ${maybePluralize(
-                totalAmount,
-                'token',
-              )}`
-            : undefined,
-        };
-      case ListingAction.Sell:
-        return {
-          listingTitle: 'Buy Listing',
-          buttonText: `${buttonAction} Buy Listing`,
-          buttonColor: 'success' as const,
-          buttonTooltip: undefined,
-        };
+    switch (modalAction) {
+      case ListingModalAction.Edit:
+        return `Edit ${creatorAction} Listing (ID: ${listing?.id})`;
+      case ListingModalAction.CreateNew:
+        return `Create New ${creatorAction} Listing`;
     }
-  }, [action, modalAction, token, totalAmount]);
+  }, [action, listing, modalAction]);
+
+  const buttonTooltip = useMemo(() => {
+    if (action === ListingAction.Sell) {
+      return undefined;
+    }
+
+    return `You will need to deposit ${totalAmount} ${token} ${maybePluralize(
+      totalAmount,
+      'token',
+    )}`;
+  }, [action, totalAmount, token]);
 
   const fiatCurrencySymbol = useMemo(() => currencyToSymbol(fiatCurrency), [fiatCurrency]);
 
-  const isReadyToSubmit = useMemo(
-    () => !!totalAmount && !!price && !!minPerOrder && !!maxPerOrder,
-    [totalAmount, price, minPerOrder, maxPerOrder],
-  );
+  const maxPotentialOrderAmount = useMemo(() => {
+    if (!price || !totalAmount) return 0;
 
-  const rateOnBlur = () => {
-    setPriceError('ah shit');
-  };
+    return roundTo(price * totalAmount, ROUND_TO_FIAT);
+  }, [price, totalAmount]);
+
+  const isReadyToSubmit = useMemo(
+    () =>
+      !!totalAmount &&
+      !!price &&
+      !!minPerOrder &&
+      !!maxPerOrder &&
+      !minPerOrderError &&
+      !maxPerOrderError,
+    [totalAmount, price, minPerOrder, maxPerOrder, minPerOrderError, maxPerOrderError],
+  );
 
   const {
     tokenHelperText,
     currencyHelperText,
     priceHelperText,
     amountHelperText,
+    maxPotentialOrderAmountHelperText,
     minPerOrderHelperText,
     maxPerOrderHelperText,
   } = useMemo(() => {
@@ -95,8 +111,10 @@ function ListingEditModal({
           currencyHelperText: `Currency you want to sell it for`,
           priceHelperText: `The price you want to sell the token for`,
           amountHelperText: `The amount of ${token} you want to sell`,
-          minPerOrderHelperText: `The minimum amount of ${fiatCurrency} per order`,
-          maxPerOrderHelperText: `The maximum amount of ${fiatCurrency} per order`,
+          // eslint-disable-next-line max-len
+          maxPotentialOrderAmountHelperText: `The maximum amount of ${fiatCurrency} you can earn on this listing (Rate * Amount)`,
+          minPerOrderHelperText: `The minimum amount of ${fiatCurrency} a user can spend per order`,
+          maxPerOrderHelperText: `The maximum amount of ${fiatCurrency} a user can spend per order`,
         };
       case ListingAction.Sell:
         return {
@@ -104,16 +122,56 @@ function ListingEditModal({
           currencyHelperText: `Currency you want to buy it with`,
           priceHelperText: `The rate at which you want to buy the token`,
           amountHelperText: `The amount of ${token} you want to buy`,
-          minPerOrderHelperText: `The minimum amount of ${fiatCurrency} per order`,
-          maxPerOrderHelperText: `The maximum amount of ${fiatCurrency} per order`,
+          // eslint-disable-next-line max-len
+          maxPotentialOrderAmountHelperText: `The maximum amount of ${fiatCurrency} you can spend on this listing (Rate * Amount)`,
+          minPerOrderHelperText: `The minimum amount of ${fiatCurrency} you want to spend per order`,
+          maxPerOrderHelperText: `The maximum amount of ${fiatCurrency} you want to spend per order`,
         };
     }
   }, [action, fiatCurrency, token]);
 
-  const handleOnSubmit = () => {
-    if (!totalAmount || !price || !minPerOrder || !maxPerOrder) return;
+  const FiatInput = useCallback(
+    (props: ModifiedNumberInputProps) => (
+      <NumberInput
+        roundTo={ROUND_TO_FIAT}
+        min={MIN_FIAT_AMOUNT}
+        step={MIN_FIAT_AMOUNT}
+        endAdornment={fiatCurrencySymbol}
+        {...props}
+      />
+    ),
+    [fiatCurrencySymbol],
+  );
 
-    onSubmit({
+  const TokenInput = useCallback(
+    (props: ModifiedNumberInputProps) => (
+      <NumberInput
+        roundTo={ROUND_TO_TOKEN}
+        min={MIN_TOKEN_AMOUNT}
+        step={MIN_TOKEN_AMOUNT}
+        endAdornment={token}
+        {...props}
+      />
+    ),
+    [token],
+  );
+
+  useEffect(() => {
+    setMinPerOrderError(undefined);
+    setMaxPerOrderError(undefined);
+
+    if (minPerOrder > maxPerOrder) {
+      setMinPerOrderError('Min per order cannot be greater than max per order');
+      setMaxPerOrderError('Max per order cannot be less than min per order');
+    } else if (maxPerOrder > maxPotentialOrderAmount) {
+      setMaxPerOrderError(`Max per order cannot be greater than max potential order amount`);
+    }
+  }, [minPerOrder, maxPerOrder, maxPotentialOrderAmount]);
+
+  const handleOnSubmit = () => {
+    if (!isReadyToSubmit) return;
+
+    const editedData: ListingEditData = {
       totalAmount,
       token,
       fiatCurrency,
@@ -121,11 +179,22 @@ function ListingEditModal({
       minPerOrder,
       maxPerOrder,
       action,
-    });
+    };
+
+    if (listing && modalAction === ListingModalAction.Edit) {
+      const someDataChanged = Object.entries(editedData).some(
+        ([key, value]) => value !== listing[key as keyof Listing],
+      );
+
+      // If no data changed, we simply close the modal
+      if (!someDataChanged) modalProps.onClose();
+    }
+
+    onSubmit(editedData);
   };
 
   return (
-    <Modal title={listingTitle} onClose={onClose}>
+    <Modal title={listingTitle} {...modalProps}>
       <Modal.Body>
         <div className={styles.inputsContainer}>
           <div className={styles.flexContainer}>
@@ -144,40 +213,39 @@ function ListingEditModal({
               helperText={currencyHelperText}
             />
           </div>
-          <BaseInput<number>
-            type="number"
-            label="Rate"
+          <FiatInput
+            label="Price Per Token / Rate"
             value={price}
             onChange={setPrice}
-            endAdornment={fiatCurrencySymbol}
             helperText={priceHelperText}
-            onBlur={rateOnBlur}
-            error={priceError}
           />
-          <BaseInput<number>
-            type="number"
+          <TokenInput
             label="Amount"
             value={totalAmount}
             onChange={setTotalAmount}
-            endAdornment={token}
             helperText={amountHelperText}
           />
+          <FiatInput
+            label="Max Potential Order Amount"
+            className={`${styles.maxPotentialOrderAmount} ${styles[action]}`}
+            value={maxPotentialOrderAmount}
+            helperText={maxPotentialOrderAmountHelperText}
+            disabled
+          />
           <div className={styles.flexContainer}>
-            <BaseInput<number>
-              type="number"
+            <FiatInput
               label="Min Per Order"
               value={minPerOrder}
               onChange={setMinPerOrder}
-              endAdornment={fiatCurrencySymbol}
               helperText={minPerOrderHelperText}
+              error={minPerOrderError}
             />
-            <BaseInput<number>
-              type="number"
+            <FiatInput
               label="Max Per Order"
               value={maxPerOrder}
               onChange={setMaxPerOrder}
-              endAdornment={fiatCurrencySymbol}
               helperText={maxPerOrderHelperText}
+              error={maxPerOrderError}
             />
           </div>
         </div>
@@ -187,10 +255,10 @@ function ListingEditModal({
           disabled={!isReadyToSubmit}
           tooltip={buttonTooltip}
           placement="top"
-          color={buttonColor}
+          color="success"
           onClick={handleOnSubmit}
         >
-          {buttonText}
+          Save Changes
         </ButtonWithTooltip>
       </Modal.Footer>
     </Modal>

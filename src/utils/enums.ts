@@ -4,8 +4,8 @@
  * Not the creator of the listing.
  */
 export enum ListingAction {
-  Buy = 'buy',
-  Sell = 'sell',
+  Buy = 'Buy',
+  Sell = 'Sell',
 }
 
 export enum SortOrder {
@@ -46,13 +46,13 @@ export enum UserType {
  *
  */
 export enum OrderAction {
-  Buy = 'buy',
-  Sell = 'sell',
+  Buy = 'Buy',
+  Sell = 'Sell',
 }
 
 export enum OrderCancelAction {
-  Cancel = 'cancel',
-  Dispute = 'dispute',
+  Cancel = 'Cancel Order',
+  Dispute = 'Raise A Dispute',
 }
 
 export enum ListingModalAction {

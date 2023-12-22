@@ -4,11 +4,11 @@
 span.order {
   font-weight: 600;
 
-  &.buy {
+  &.Buy {
     color: $success;
   }
 
-  &.sell {
+  &.Sell {
     color: $danger;
   }
 }

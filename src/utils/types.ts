@@ -1,5 +1,6 @@
-import { FILTER_OPTIONS, SORT_BY_OPTIONS, TOKEN_OPTIONS } from './config';
+import { FILTER_OPTIONS, SORT_BY_OPTIONS } from './config';
 import { ListingAction, OrderAction, OrderStatus, UserType } from './enums';
+import { ModalProps } from './interfaces';
 
 export type FilterOption = (typeof FILTER_OPTIONS)[number];
 
@@ -16,6 +17,8 @@ export type Listing = {
   userAddress: string;
   hasOrders: boolean;
 };
+
+export type ListingEditData = Omit<Listing, 'id' | 'hasOrders' | 'userAddress' | 'availableAmount'>;
 
 export type Order = {
   id: number;
@@ -40,3 +43,5 @@ export type PerUserOption<T> = Record<UserType, T>;
 export type PerListingActionAndUserOption<T> = Record<ListingAction, PerUserOption<T>>;
 export type OrderOption<T> = T | PerUserOption<T> | PerListingActionAndUserOption<T>;
 export type PerOrderData<T> = Record<OrderStatus, { [K in keyof T]: OrderOption<T[K]> }>;
+
+export type GetModalSubmitDataType<T> = T extends ModalProps<infer R> ? R : never;

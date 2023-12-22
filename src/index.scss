@@ -42,7 +42,7 @@ body {
   align-items: center;
 }
 
-.MuiPaper-root {
+.MuiMenu-paper {
   // Bad hack to override the default MUI Paper background color
   // TODO: Find a better way to do this
   background: $primary !important;

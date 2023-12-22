@@ -29,18 +29,12 @@ function ButtonsComponents({
   onClick,
   ...rest
 }: ButtonsComponentsProps) {
-  const { cancelActionTooltip, cancelActionIcon } = useMemo(() => {
+  const cancelActionIcon = useMemo(() => {
     switch (cancelAction) {
       case OrderCancelAction.Cancel:
-        return {
-          cancelActionTooltip: 'Cancel Trade',
-          cancelActionIcon: <FaXmark />,
-        };
+        return <FaXmark />;
       case OrderCancelAction.Dispute:
-        return {
-          cancelActionTooltip: 'Raise A Dispute',
-          cancelActionIcon: <FaRegHand />,
-        };
+        return <FaRegHand />;
     }
   }, [cancelAction]);
 
@@ -49,7 +43,7 @@ function ButtonsComponents({
   };
 
   const handleCancelActionClick = () => {
-    if (onClick) onClick(cancelActionTooltip, cancelActionTooltip);
+    if (onClick) onClick(cancelAction, cancelAction);
   };
 
   return (
@@ -64,7 +58,7 @@ function ButtonsComponents({
       </ButtonWithTooltip>
       <IconButtonWithTooltip
         color="error"
-        tooltip={cancelActionTooltip}
+        tooltip={cancelAction}
         disabled={disabled}
         className={styles.cancelButton}
         onClick={handleCancelActionClick}

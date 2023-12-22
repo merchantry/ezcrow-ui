@@ -1,28 +1,43 @@
 @import 'scss/mixins/variables';
-@import 'scss/mixins/mixins';
 
 div.input {
-  & > label {
+  // label
+  & > label,
+  // helper text
+  & > p,
+  // select input text
+  & > div,
+  // input text
+  & > div > input,
+  // input adornment text
+  & > div > div > p {
     color: $font-color !important;
   }
 
-  & > p {
-    color: $font-color;
+  &.error {
+    & > label,
+    & > p {
+      color: $danger !important;
+    }
+
+    & > div {
+      & > fieldset {
+        border-color: $danger !important;
+      }
+    }
   }
 
   & > div {
-    color: $font-color;
-
     & > input {
+      &[disabled] {
+        -webkit-text-fill-color: unset;
+      }
+
       &::-webkit-outer-spin-button,
       &::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
       }
-    }
-
-    & > div > p {
-      color: $font-color;
     }
 
     & > fieldset {

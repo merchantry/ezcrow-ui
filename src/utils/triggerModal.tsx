@@ -1,10 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { ModalProps } from './interfaces';
+import { GetModalSubmitDataType } from './types';
 
-type GetSubmitDataType<T> = T extends ModalProps<infer R> ? R : never;
-
-function triggerModal<R extends ModalProps<T>, T = GetSubmitDataType<R>>(
+function triggerModal<R extends ModalProps<T>, T = GetModalSubmitDataType<R>>(
   Modal: React.FC<R>,
   _props?: Omit<R, 'onSubmit' | 'onClose'>,
 ): Promise<T | undefined> {

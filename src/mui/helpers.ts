@@ -1,7 +1,7 @@
 import { Theme, buttonClasses } from '@mui/material';
 
 const uiColors = ['primary', 'warning', 'error', 'success', 'info'] as const;
-type ColorType = (typeof uiColors)[number];
+export type ColorType = (typeof uiColors)[number];
 
 export const getThemeColor = (color: string | undefined, theme: Theme) => {
   const isUIColor = !!color && uiColors.includes(color as ColorType);

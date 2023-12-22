@@ -1,8 +1,8 @@
 import React, { useRef, useState, useMemo, CSSProperties } from 'react';
 import styles from './Dropdown.module.scss';
 
-import { ReactComponent as DropdownChevron } from 'assets/dropdown_chevron.svg';
 import { useClickOutside } from 'utils/hooks';
+import { FaCaretDown } from 'react-icons/fa6';
 
 interface DropwdownProps<T extends string> {
   value?: T;
@@ -59,7 +59,7 @@ function Dropwdown<T extends string>({
         <span>{valueLabel}</span>
       </div>
       <div className={styles.dropdownArrowContainer}>
-        <DropdownChevron />
+        <FaCaretDown />
       </div>
       <ul className={styles.dropdown} style={isOpen ? openStyles : undefined}>
         {optionsArray.map(([option, label]) => (

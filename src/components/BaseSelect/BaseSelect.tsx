@@ -4,17 +4,17 @@ import { MenuItem } from '@mui/material';
 import BaseInput from 'components/BaseInput';
 import { BaseInputProps } from 'components/BaseInput/BaseInput';
 
-export interface BaseSelectProps<T extends string | number> extends BaseInputProps<T> {
-  options: Record<T, string>;
+export interface BaseSelectProps extends BaseInputProps {
+  options: Record<string, string>;
 }
 
-function BaseSelect<T extends string | number = string>({ options, ...rest }: BaseSelectProps<T>) {
-  const entries = useMemo(() => Object.entries(options) as [T, string][], [options]);
+function BaseSelect({ options, ...rest }: BaseSelectProps) {
+  const entries = useMemo(() => Object.entries(options) as [string, string][], [options]);
 
   return (
     <BaseInput select {...rest}>
       {entries.map(([value, label]) => (
-        <MenuItem color="#cecece" key={value} value={value}>
+        <MenuItem key={value} value={value}>
           {label}
         </MenuItem>
       ))}

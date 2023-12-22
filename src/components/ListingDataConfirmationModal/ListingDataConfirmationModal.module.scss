@@ -1,0 +1,48 @@
+@import 'scss/mixins/variables';
+
+$listing-colors: (
+  inc: $success,
+  dec: $danger,
+  changed: $warning,
+);
+
+.listingData {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 30px;
+
+  background: $primary-light;
+  border-radius: $border-radius;
+
+  & .dataComparisonRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 60px;
+    padding-bottom: 8px;
+
+    border-bottom: 1px solid $primary;
+
+    & > span:last-child {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+
+      & svg {
+        transform: translateY(3px);
+      }
+
+      @each $type, $color in $listing-colors {
+        & > span.#{$type} {
+          color: $color;
+
+          & > svg {
+            fill: $color;
+          }
+        }
+      }
+    }
+  }
+}
