@@ -42,9 +42,9 @@ function ListingDataConfirmationModal({
   const title = useMemo(() => {
     switch (listingEditData.action) {
       case ListingAction.Buy:
-        return 'Confirm Buy Listing Data';
-      case ListingAction.Sell:
         return 'Confirm Sell Listing Data';
+      case ListingAction.Sell:
+        return 'Confirm Buy Listing Data';
     }
   }, [listingEditData]);
 
