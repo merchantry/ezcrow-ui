@@ -120,7 +120,7 @@ function FiltersBar({ children }: FiltersBarProps) {
         pages={5}
         className={styles.pagination}
       />
-      {children}
+      <div className={styles.buttonsContainer}>{children}</div>
     </div>
   );
 }
