@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { decapitalize, maybePluralize, priceFormat } from 'utils/helpers';
+import { decapitalize, priceFormat } from 'utils/helpers';
 import { ListingAction } from 'utils/enums';
 import { FaRegMessage } from 'react-icons/fa6';
 

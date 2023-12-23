@@ -1,0 +1,5 @@
+@import 'scss/mixins/variables';
+
+div.readOnlyInput > div > fieldset {
+  border-color: $white !important;
+}

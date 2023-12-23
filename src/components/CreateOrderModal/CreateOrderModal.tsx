@@ -8,7 +8,8 @@ import { ListingAction } from 'utils/enums';
 import { currencyToSymbol, decapitalize, opposite, priceFormat, roundTo } from 'utils/helpers';
 import BaseButton from 'components/BaseButton';
 import { ROUND_TO_FIAT, ROUND_TO_TOKEN } from 'utils/config';
-import { FiatInput, TokenInput } from 'components/NumberInput/ModifiedNumberInputs';
+import { TokenInput } from 'components/NumberInput/ModifiedNumberInputs';
+import ReadOnlyInput from 'components/ReadOnlyInput';
 
 type CreateOrderData = {
   orderAmount: number;
@@ -104,13 +105,12 @@ function CreateOrderModal({ onSubmit, listing, data, ...modalProps }: CreateOrde
           endAdornment={listing.token}
           error={orderAmountError}
         />
-        <FiatInput
+        <ReadOnlyInput
           label="Order Cost"
           className={styles.orderCost}
           value={orderCost}
           helperText={orderCostHelperText}
           endAdornment={currencySymbol}
-          disabled
         />
       </Modal.Body>
 

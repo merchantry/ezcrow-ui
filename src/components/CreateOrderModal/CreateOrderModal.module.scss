@@ -2,10 +2,6 @@
 
 div.body {
   width: 500px;
-
-  & > .orderCost fieldset {
-    border-color: $white !important;
-  }
 }
 
 div.footer {

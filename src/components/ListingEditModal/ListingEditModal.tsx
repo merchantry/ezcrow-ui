@@ -11,6 +11,7 @@ import BaseSelect from 'components/BaseSelect';
 import { NumberInputProps } from 'components/NumberInput/NumberInput';
 import { ROUND_TO_FIAT } from 'utils/config';
 import { FiatInput, TokenInput } from 'components/NumberInput/ModifiedNumberInputs';
+import ReadOnlyInput from 'components/ReadOnlyInput';
 
 type ModifiedNumberInputProps = Omit<NumberInputProps, 'roundTo' | 'min' | 'step' | 'endAdornment'>;
 
@@ -212,12 +213,11 @@ function ListingEditModal({
           onChange={setTotalAmount}
           helperText={amountHelperText}
         />
-        <FiatInputWithCurrency
+        <ReadOnlyInput
           label="Max Potential Order Amount"
-          className={styles.maxPotentialOrderAmount}
           value={maxPotentialOrderAmount}
           helperText={maxPotentialOrderAmountHelperText}
-          disabled
+          endAdornment={fiatCurrencySymbol}
         />
         <div className={styles.flexContainer}>
           <FiatInputWithCurrency
