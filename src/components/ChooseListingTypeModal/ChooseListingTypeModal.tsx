@@ -12,9 +12,11 @@ function ChooseListingTypeModal({ onSubmit, ...modalProps }: ChooseListingTypeMo
   return (
     <Modal title="Choose Listing Type" {...modalProps}>
       <Modal.Body>
-        Choose whether you want to <span className={`${styles.fontSpan} ${styles.buy}`}>buy</span>
-        or
-        <span className={`${styles.fontSpan} ${styles.sell}`}>sell</span> tokens
+        <p>
+          Choose whether you want to <span className={`${styles.fontSpan} ${styles.buy}`}>buy</span>
+          or
+          <span className={`${styles.fontSpan} ${styles.sell}`}>sell</span> tokens
+        </p>
       </Modal.Body>
       <Modal.Footer className={styles.footer}>
         <BaseButton color="success" onClick={() => onSubmit(ListingAction.Sell)}>

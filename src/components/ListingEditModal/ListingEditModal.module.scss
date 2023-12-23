@@ -1,24 +1,18 @@
 @import 'scss/mixins/variables';
 
-.inputsContainer {
+div.flexContainer {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 
-  & > div.flexContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-
-    & > div {
-      width: 100%;
-    }
+  & > div {
+    width: 100%;
   }
+}
 
-  & > .maxPotentialOrderAmount fieldset {
-    border-color: $white !important;
-  }
+.maxPotentialOrderAmount fieldset {
+  border-color: $white !important;
 }
 
 div.footer {

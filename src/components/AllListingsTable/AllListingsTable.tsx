@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { maybePluralize, priceFormat } from 'utils/helpers';
+import { decapitalize, maybePluralize, priceFormat } from 'utils/helpers';
 import { ListingAction } from 'utils/enums';
 import { FaRegMessage } from 'react-icons/fa6';
 
@@ -32,18 +32,21 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
         listing,
       },
       ConfirmationModal,
-      orderAmount => ({
+      ({ orderAmount, orderCost }) => ({
         title: `Create ${listing.action} Order?`,
-        text: `Are you sure you want to create a ${listing.action} order for ${orderAmount} ${
-          listing.token
-        } ${maybePluralize(orderAmount, 'token')}?`,
+        text: `Are you sure you want to create a ${decapitalize(
+          listing.action,
+        )} order for ${orderAmount} ${listing.token}  (${priceFormat(
+          orderCost,
+          listing.fiatCurrency,
+        )})?`,
         confirmText: 'Create Order',
         cancelText: 'Back',
         cancelStartIcon: <FaChevronLeft />,
       }),
-    ).then(orderAmount => {
-      if (!orderAmount) return;
-      createOrder(listing.id, orderAmount);
+    ).then(createOrderData => {
+      if (!createOrderData) return;
+      createOrder(listing.id, createOrderData.orderAmount);
     });
   };
 

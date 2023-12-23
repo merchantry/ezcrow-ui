@@ -1,7 +1,7 @@
 @import 'scss/mixins/variables';
 
 .modal {
-  animation: modal-appear 0.3s ease-in-out;
+  animation: modal-appear $quick-transition ease-in-out;
   transform-origin: top center;
   display: flex;
   flex-direction: column;
@@ -33,8 +33,10 @@
 
   & > .body {
     display: flex;
-    align-items: center;
-    padding: 32px 48px;
+    flex-direction: column;
+    gap: 20px;
+
+    padding: 32px 42px;
   }
 }
 

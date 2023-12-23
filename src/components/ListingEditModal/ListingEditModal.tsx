@@ -8,9 +8,9 @@ import { ListingAction, ListingModalAction } from 'utils/enums';
 import ButtonWithTooltip from 'components/ButtonWithTooltip';
 import { currencyToSymbol, maybePluralize, opposite, roundTo } from 'utils/helpers';
 import BaseSelect from 'components/BaseSelect';
-import NumberInput from 'components/NumberInput';
 import { NumberInputProps } from 'components/NumberInput/NumberInput';
-import { MIN_FIAT_AMOUNT, MIN_TOKEN_AMOUNT, ROUND_TO_FIAT, ROUND_TO_TOKEN } from 'utils/config';
+import { ROUND_TO_FIAT } from 'utils/config';
+import { FiatInput, TokenInput } from 'components/NumberInput/ModifiedNumberInputs';
 
 type ModifiedNumberInputProps = Omit<NumberInputProps, 'roundTo' | 'min' | 'step' | 'endAdornment'>;
 
@@ -120,7 +120,7 @@ function ListingEditModal({
         return {
           tokenHelperText: `Token you want to buy`,
           currencyHelperText: `Currency you want to buy it with`,
-          priceHelperText: `The rate at which you want to buy the token`,
+          priceHelperText: `The price you want to buy the token for`,
           amountHelperText: `The amount of ${token} you want to buy`,
           // eslint-disable-next-line max-len
           maxPotentialOrderAmountHelperText: `The maximum amount of ${fiatCurrency} you can spend on this listing (Rate * Amount)`,
@@ -130,28 +130,16 @@ function ListingEditModal({
     }
   }, [action, fiatCurrency, token]);
 
-  const FiatInput = useCallback(
-    (props: ModifiedNumberInputProps) => (
-      <NumberInput
-        roundTo={ROUND_TO_FIAT}
-        min={MIN_FIAT_AMOUNT}
-        step={MIN_FIAT_AMOUNT}
-        endAdornment={fiatCurrencySymbol}
-        {...props}
-      />
+  const FiatInputWithCurrency = useCallback(
+    (props: Omit<ModifiedNumberInputProps, 'endAdornment'>) => (
+      <FiatInput endAdornment={fiatCurrencySymbol} {...props} />
     ),
     [fiatCurrencySymbol],
   );
 
-  const TokenInput = useCallback(
-    (props: ModifiedNumberInputProps) => (
-      <NumberInput
-        roundTo={ROUND_TO_TOKEN}
-        min={MIN_TOKEN_AMOUNT}
-        step={MIN_TOKEN_AMOUNT}
-        endAdornment={token}
-        {...props}
-      />
+  const TokenInputWithCurrency = useCallback(
+    (props: Omit<ModifiedNumberInputProps, 'endAdornment'>) => (
+      <TokenInput endAdornment={token} {...props} />
     ),
     [token],
   );
@@ -196,58 +184,56 @@ function ListingEditModal({
   return (
     <Modal title={listingTitle} {...modalProps}>
       <Modal.Body>
-        <div className={styles.inputsContainer}>
-          <div className={styles.flexContainer}>
-            <BaseSelect
-              label="Token"
-              value={token}
-              onChange={setToken}
-              options={tokens}
-              helperText={tokenHelperText}
-            />
-            <BaseSelect
-              label="Currency"
-              value={fiatCurrency}
-              onChange={setFiatCurrency}
-              options={currencies}
-              helperText={currencyHelperText}
-            />
-          </div>
-          <FiatInput
-            label="Price Per Token / Rate"
-            value={price}
-            onChange={setPrice}
-            helperText={priceHelperText}
+        <div className={styles.flexContainer}>
+          <BaseSelect
+            label="Token"
+            value={token}
+            onChange={setToken}
+            options={tokens}
+            helperText={tokenHelperText}
           />
-          <TokenInput
-            label="Amount"
-            value={totalAmount}
-            onChange={setTotalAmount}
-            helperText={amountHelperText}
+          <BaseSelect
+            label="Currency"
+            value={fiatCurrency}
+            onChange={setFiatCurrency}
+            options={currencies}
+            helperText={currencyHelperText}
           />
-          <FiatInput
-            label="Max Potential Order Amount"
-            className={`${styles.maxPotentialOrderAmount} ${styles[action]}`}
-            value={maxPotentialOrderAmount}
-            helperText={maxPotentialOrderAmountHelperText}
-            disabled
+        </div>
+        <FiatInputWithCurrency
+          label="Price Per Token / Rate"
+          value={price}
+          onChange={setPrice}
+          helperText={priceHelperText}
+        />
+        <TokenInputWithCurrency
+          label="Amount"
+          value={totalAmount}
+          onChange={setTotalAmount}
+          helperText={amountHelperText}
+        />
+        <FiatInputWithCurrency
+          label="Max Potential Order Amount"
+          className={styles.maxPotentialOrderAmount}
+          value={maxPotentialOrderAmount}
+          helperText={maxPotentialOrderAmountHelperText}
+          disabled
+        />
+        <div className={styles.flexContainer}>
+          <FiatInputWithCurrency
+            label="Min Per Order"
+            value={minPerOrder}
+            onChange={setMinPerOrder}
+            helperText={minPerOrderHelperText}
+            error={minPerOrderError}
           />
-          <div className={styles.flexContainer}>
-            <FiatInput
-              label="Min Per Order"
-              value={minPerOrder}
-              onChange={setMinPerOrder}
-              helperText={minPerOrderHelperText}
-              error={minPerOrderError}
-            />
-            <FiatInput
-              label="Max Per Order"
-              value={maxPerOrder}
-              onChange={setMaxPerOrder}
-              helperText={maxPerOrderHelperText}
-              error={maxPerOrderError}
-            />
-          </div>
+          <FiatInputWithCurrency
+            label="Max Per Order"
+            value={maxPerOrder}
+            onChange={setMaxPerOrder}
+            helperText={maxPerOrderHelperText}
+            error={maxPerOrderError}
+          />
         </div>
       </Modal.Body>
       <Modal.Footer className={styles.footer}>
