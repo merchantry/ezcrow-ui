@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/ezcrow-ui/static/css/main.2d9cf9ee.css",
-    "main.js": "/ezcrow-ui/static/js/main.1f571d8e.js",
+    "main.css": "/ezcrow-ui/static/css/main.de0bd2bf.css",
+    "main.js": "/ezcrow-ui/static/js/main.4f1e6763.js",
     "static/js/787.878123e7.chunk.js": "/ezcrow-ui/static/js/787.878123e7.chunk.js",
     "static/media/ezcrow_logo_h.svg": "/ezcrow-ui/static/media/ezcrow_logo_h.198f0d70e9d2829837b27572276b8463.svg",
     "index.html": "/ezcrow-ui/index.html",
-    "main.2d9cf9ee.css.map": "/ezcrow-ui/static/css/main.2d9cf9ee.css.map",
-    "main.1f571d8e.js.map": "/ezcrow-ui/static/js/main.1f571d8e.js.map",
+    "main.de0bd2bf.css.map": "/ezcrow-ui/static/css/main.de0bd2bf.css.map",
+    "main.4f1e6763.js.map": "/ezcrow-ui/static/js/main.4f1e6763.js.map",
     "787.878123e7.chunk.js.map": "/ezcrow-ui/static/js/787.878123e7.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2d9cf9ee.css",
-    "static/js/main.1f571d8e.js"
+    "static/css/main.de0bd2bf.css",
+    "static/js/main.4f1e6763.js"
   ]
 }
