@@ -57,11 +57,16 @@ function DataComparisonRow<T extends number | string>({
     return { newValueClass: undefined, newValueIcon: undefined };
   }, [current, currentUnit, prevUnit, previous]);
 
+  const displayPreviousPrice = useMemo(
+    () => previous !== undefined && previousPrice !== currentPrice,
+    [previous, previousPrice, currentPrice],
+  );
+
   return (
     <div className={styles.dataComparisonRow}>
       <span>{label}</span>
       <span>
-        {!!previousPrice && (
+        {displayPreviousPrice && (
           <>
             <span>{previousPrice}</span>
             <span>
