@@ -60,7 +60,7 @@ function CreateOrderModal({ onSubmit, listing, data, ...modalProps }: CreateOrde
       orderCostHelperText: `The total cost of your order. Rate ${priceFormat(
         listing.price,
         listing.fiatCurrency,
-      )}  * Order Amount`,
+      )} * Order Amount`,
     };
   }, [
     listing.action,

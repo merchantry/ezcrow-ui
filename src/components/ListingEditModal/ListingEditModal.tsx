@@ -12,6 +12,8 @@ import { NumberInputProps } from 'components/NumberInput/NumberInput';
 import { ROUND_TO_FIAT } from 'utils/config';
 import { FiatInput, TokenInput } from 'components/NumberInput/ModifiedNumberInputs';
 import ReadOnlyInput from 'components/ReadOnlyInput';
+import IconButtonWithTooltip from 'components/IconButtonWithTooltip';
+import { FaLessThanEqual, FaEquals } from 'react-icons/fa6';
 
 type ModifiedNumberInputProps = Omit<NumberInputProps, 'roundTo' | 'min' | 'step' | 'endAdornment'>;
 
@@ -157,6 +159,15 @@ function ListingEditModal({
     }
   }, [minPerOrder, maxPerOrder, maxPotentialOrderAmount]);
 
+  const setMaxPerOrderToMaxPotentialOrderAmount = useCallback(() => {
+    setMaxPerOrder(maxPotentialOrderAmount);
+  }, [maxPotentialOrderAmount]);
+
+  const setBothLimitsToMaxPotentialOrderAmount = useCallback(() => {
+    setMinPerOrder(maxPotentialOrderAmount);
+    setMaxPerOrder(maxPotentialOrderAmount);
+  }, [maxPotentialOrderAmount]);
+
   const handleOnSubmit = () => {
     if (!isReadyToSubmit) return;
 
@@ -213,12 +224,28 @@ function ListingEditModal({
           onChange={setTotalAmount}
           helperText={amountHelperText}
         />
-        <ReadOnlyInput
-          label="Max Potential Order Amount"
-          value={maxPotentialOrderAmount}
-          helperText={maxPotentialOrderAmountHelperText}
-          endAdornment={fiatCurrencySymbol}
-        />
+        <div className={styles.maxAmountContainer}>
+          <ReadOnlyInput
+            label="Max Potential Order Amount"
+            value={maxPotentialOrderAmount}
+            helperText={maxPotentialOrderAmountHelperText}
+            endAdornment={fiatCurrencySymbol}
+          />
+          <div className={styles.buttonsContainer}>
+            <IconButtonWithTooltip
+              tooltip="Set Max"
+              onClick={setMaxPerOrderToMaxPotentialOrderAmount}
+            >
+              <FaLessThanEqual />
+            </IconButtonWithTooltip>
+            <IconButtonWithTooltip
+              tooltip="Set Exact"
+              onClick={setBothLimitsToMaxPotentialOrderAmount}
+            >
+              <FaEquals />
+            </IconButtonWithTooltip>
+          </div>
+        </div>
         <div className={styles.flexContainer}>
           <FiatInputWithCurrency
             label="Min Per Order"

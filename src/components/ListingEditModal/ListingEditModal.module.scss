@@ -3,11 +3,30 @@
 div.flexContainer {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   gap: 12px;
 
   & > div {
     width: 100%;
+  }
+}
+
+div.maxAmountContainer {
+  position: relative;
+  display: flex;
+
+  & > div:first-child {
+    width: 100%;
+  }
+
+  & > div.buttonsContainer {
+    position: absolute;
+    right: 40px;
+    top: 8px;
+
+    display: flex;
+    gap: 12px;
+    height: 40px;
   }
 }
 
