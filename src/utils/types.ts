@@ -14,11 +14,11 @@ export type Listing = {
   availableAmount: number;
   minPerOrder: number;
   maxPerOrder: number;
-  userAddress: string;
+  creator: string;
   hasOrders: boolean;
 };
 
-export type ListingEditData = Omit<Listing, 'id' | 'hasOrders' | 'userAddress' | 'availableAmount'>;
+export type ListingEditData = Omit<Listing, 'id' | 'hasOrders' | 'creator' | 'availableAmount'>;
 
 export type Order = {
   id: number;
@@ -27,6 +27,7 @@ export type Order = {
   status: OrderStatus;
   listing: Listing;
   action: OrderAction;
+  creator: string;
 };
 
 export type ColumnData<T> = {

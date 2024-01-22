@@ -25,8 +25,8 @@ function Routes() {
             }
           >
             <Route path="all" element={<AllListingsTable />} />
-            <Route path="buy" element={<AllListingsTable filter={ListingAction.Buy} />} />
-            <Route path="sell" element={<AllListingsTable filter={ListingAction.Sell} />} />
+            <Route path="buy" element={<AllListingsTable filter={ListingAction.Sell} />} />
+            <Route path="sell" element={<AllListingsTable filter={ListingAction.Buy} />} />
           </Route>
           <Route
             path="/my-listings"
@@ -37,8 +37,8 @@ function Routes() {
             }
           >
             <Route path="all" element={<MyListingsTable />} />
-            <Route path="buy" element={<MyListingsTable filter={ListingAction.Sell} />} />
-            <Route path="sell" element={<MyListingsTable filter={ListingAction.Buy} />} />
+            <Route path="buy" element={<MyListingsTable filter={ListingAction.Buy} />} />
+            <Route path="sell" element={<MyListingsTable filter={ListingAction.Sell} />} />
           </Route>
           <Route
             path="/my-orders"

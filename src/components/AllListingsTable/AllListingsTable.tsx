@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { decapitalize, priceFormat } from 'utils/helpers';
+import { decapitalize, opposite, priceFormat } from 'utils/helpers';
 import { ListingAction } from 'utils/enums';
 import { FaRegMessage } from 'react-icons/fa6';
 
@@ -26,16 +26,17 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
   const [filteredListings, isFetching] = useFilteredListings(filter);
 
   const onListingActionClick = async (listing: Listing) => {
-    modalLoop(
+    const userAction = opposite(listing.action, [ListingAction.Sell, ListingAction.Buy]);
+    return modalLoop(
       CreateOrderModal,
       {
         listing,
       },
       ConfirmationModal,
       ({ orderAmount, orderCost }) => ({
-        title: `Create ${listing.action} Order?`,
+        title: `Create ${userAction} Order?`,
         text: `Are you sure you want to create a ${decapitalize(
-          listing.action,
+          userAction,
         )} order for ${orderAmount} ${listing.token}  (${priceFormat(
           orderCost,
           listing.fiatCurrency,
@@ -77,13 +78,14 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
         },
         {
           label: 'Creator',
-          render: listing => <UserAddressCellData userAddress={listing.userAddress} />,
+          render: listing => <UserAddressCellData userAddress={listing.creator} />,
         },
         {
           label: '',
           colStyle: { width: 205 },
           render: listing => {
-            const actionTitle = `${listing.action} ${listing.token}`;
+            const action = opposite(listing.action, [ListingAction.Sell, ListingAction.Buy]);
+            const buttonTitle = `${action} ${listing.token}`;
 
             return (
               <div className={tableStyles.actions}>
@@ -92,10 +94,10 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
                 </IconButton>
                 <BaseButton
                   onClick={() => onListingActionClick(listing)}
-                  color={listing.action === ListingAction.Buy ? 'success' : 'error'}
-                  title={actionTitle}
+                  color={action === ListingAction.Sell ? 'error' : 'success'}
+                  title={buttonTitle}
                 >
-                  {actionTitle}
+                  {buttonTitle}
                 </BaseButton>
               </div>
             );

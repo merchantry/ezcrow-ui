@@ -1,11 +1,10 @@
 /**
- * The ListingAction represents how the user
- * approaching the listing interacts with it.
- * Not the creator of the listing.
+ * The ListingAction represents how the creator of the listing
+ * wants to interact with it.
  */
 export enum ListingAction {
-  Buy = 'Buy',
   Sell = 'Sell',
+  Buy = 'Buy',
 }
 
 export enum SortOrder {
@@ -33,15 +32,15 @@ export enum UserType {
  * is taking on the order.
  *
  * - If a listing creator receives a request on a LisingAction.Buy listing
- * the OrderAction will be OrderAction.Sell
+ * the OrderAction will be OrderAction.Buy
  *
  * - If a listing creator receives a request on a LisingAction.Sell listing
+ * the OrderAction will be OrderAction.Sell
+ *
+ * - If an order creator sends a request to a ListingAction.Sell listing
  * the OrderAction will be OrderAction.Buy
  *
  * - If an order creator sends a request to a ListingAction.Buy listing
- * the OrderAction will be OrderAction.Buy
- *
- * - If an order creator sends a request to a ListingAction.Sell listing
  * the OrderAction will be OrderAction.Sell
  *
  */

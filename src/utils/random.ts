@@ -16,14 +16,14 @@ export const randomListing = (i: number): Listing => {
   return {
     id: 14600 + i,
     token: randomElement(TOKEN_OPTIONS),
-    action: randomElement([ListingAction.Buy, ListingAction.Sell]),
+    action: randomElement([ListingAction.Sell, ListingAction.Buy]),
     fiatCurrency: randomElement(CURRENCY_OPTIONS),
     price,
     totalAmount,
     availableAmount,
     minPerOrder: randomInt(10, 20),
     maxPerOrder: Math.min(totalAmount * price, randomInt(100, 200)),
-    userAddress: '0x1234567890',
+    creator: '0x1234567890',
     hasOrders: totalAmount !== availableAmount,
   };
 };
@@ -47,5 +47,6 @@ export const randomOrder = (i: number): Order => {
     ]),
     listing,
     action: randomElement([OrderAction.Buy, OrderAction.Sell]),
+    creator: '0x1234567890',
   };
 };

@@ -19,10 +19,10 @@ function ChooseListingTypeModal({ onSubmit, ...modalProps }: ChooseListingTypeMo
         </p>
       </Modal.Body>
       <Modal.Footer className={styles.footer}>
-        <BaseButton color="success" onClick={() => onSubmit(ListingAction.Sell)}>
+        <BaseButton color="success" onClick={() => onSubmit(ListingAction.Buy)}>
           I want to buy tokens
         </BaseButton>
-        <BaseButton color="error" onClick={() => onSubmit(ListingAction.Buy)}>
+        <BaseButton color="error" onClick={() => onSubmit(ListingAction.Sell)}>
           I want to sell tokens
         </BaseButton>
       </Modal.Footer>

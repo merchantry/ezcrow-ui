@@ -7,13 +7,14 @@ import { useUserWallet } from 'utils/hooks';
 import { Order, PerOrderData } from 'utils/types';
 import { getOrderData, getUserType } from 'utils/orders';
 import { FaInfo } from 'react-icons/fa6';
+import { ColorType } from 'mui/helpers';
 
 interface OrderStatusProps {
   order: Order;
 }
 
 type ChipData = {
-  color: 'primary' | 'warning' | 'info' | 'success' | 'error';
+  color: ColorType;
   label: string;
   tooltip: string;
 };
@@ -26,14 +27,14 @@ const CHIP_DATA: PerOrderData<ChipData> = {
       [UserType.OrderCreator]: 'Request Sent',
     },
     tooltip: {
-      [ListingAction.Buy]: {
+      [ListingAction.Sell]: {
         [UserType.ListingCreator]:
           'You received a request to sell tokens. To proceed, confirm the requested tokens.',
         [UserType.OrderCreator]:
           // eslint-disable-next-line max-len
           'You sent a request to buy tokens. The order is currently waiting on the seller to confirm the requested tokens.',
       },
-      [ListingAction.Sell]: {
+      [ListingAction.Buy]: {
         [UserType.ListingCreator]:
           'You received a request to buy tokens. To proceed, confirm the requested funds.',
         [UserType.OrderCreator]:
@@ -46,14 +47,14 @@ const CHIP_DATA: PerOrderData<ChipData> = {
     color: 'warning',
     label: 'Confirmed',
     tooltip: {
-      [ListingAction.Buy]: {
+      [ListingAction.Sell]: {
         [UserType.ListingCreator]:
           // eslint-disable-next-line max-len
           'You confirmed the requested tokens. The order is currently waiting on the buyer to send and confirm the payment.',
         [UserType.OrderCreator]:
           'The seller confirmed the requested tokens. Send the payment and click on "Payment Sent" to proceed.',
       },
-      [ListingAction.Sell]: {
+      [ListingAction.Buy]: {
         [UserType.ListingCreator]:
           'You confirmed the requested funds. The order is currently waiting on the seller to deposit the tokens.',
         [UserType.OrderCreator]:
@@ -65,11 +66,11 @@ const CHIP_DATA: PerOrderData<ChipData> = {
     color: 'warning',
     label: 'Tokens Deposited',
     tooltip: {
-      [ListingAction.Buy]: {
+      [ListingAction.Sell]: {
         [UserType.ListingCreator]: '', // Empty
         [UserType.OrderCreator]: '', // Empty
       },
-      [ListingAction.Sell]: {
+      [ListingAction.Buy]: {
         [UserType.ListingCreator]:
           'The seller deposited the tokens. Send the payment and click on "Payment Sent" to proceed.',
         [UserType.OrderCreator]:
@@ -80,23 +81,23 @@ const CHIP_DATA: PerOrderData<ChipData> = {
   [OrderStatus.PaymentSent]: {
     color: 'warning',
     label: {
-      [ListingAction.Buy]: {
+      [ListingAction.Sell]: {
         [UserType.ListingCreator]: 'Payment Received',
         [UserType.OrderCreator]: 'Payment Sent',
       },
-      [ListingAction.Sell]: {
+      [ListingAction.Buy]: {
         [UserType.ListingCreator]: 'Payment Sent',
         [UserType.OrderCreator]: 'Payment Received',
       },
     },
     tooltip: {
-      [ListingAction.Buy]: {
+      [ListingAction.Sell]: {
         [UserType.ListingCreator]:
           'The buyer sent the payment. Confirm you received it and complete the trade.',
         [UserType.OrderCreator]:
           'You sent the payment. When the seller confirms the payment, the order will be completed.',
       },
-      [ListingAction.Sell]: {
+      [ListingAction.Buy]: {
         [UserType.ListingCreator]:
           'You sent the payment. When the seller confirms the payment, the order will be completed.',
         [UserType.OrderCreator]:

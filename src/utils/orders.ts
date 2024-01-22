@@ -33,5 +33,5 @@ export const getOrderData = <T>(order: Order, user: UserType, perOrderData: PerO
   return result as T;
 };
 
-export const getUserType = (listing: Listing, userAddress: string) =>
-  listing.userAddress === userAddress ? UserType.ListingCreator : UserType.OrderCreator;
+export const getUserType = (listing: Listing, creator: string) =>
+  listing.creator === creator ? UserType.ListingCreator : UserType.OrderCreator;

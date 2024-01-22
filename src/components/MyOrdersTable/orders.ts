@@ -5,33 +5,47 @@ import { Listing, Order } from 'utils/types';
 const myListing1: Listing = {
   id: 14698,
   token: 'USDT',
-  action: ListingAction.Buy,
+  action: ListingAction.Sell,
   fiatCurrency: 'USD',
   price: 1.01,
-  totalAmount: 100,
-  availableAmount: 80,
+  totalAmount: 150,
+  availableAmount: 120,
   minPerOrder: 10,
   maxPerOrder: 200,
-  userAddress: '0x1234567890',
+  creator: '0x1234567890',
   hasOrders: true,
 };
 
 const myListing2: Listing = {
-  id: 14698,
+  id: 14699,
   token: 'USDT',
-  action: ListingAction.Sell,
+  action: ListingAction.Buy,
   fiatCurrency: 'USD',
   price: 1.01,
-  totalAmount: 100,
-  availableAmount: 80,
+  totalAmount: 280,
+  availableAmount: 140,
   minPerOrder: 10,
   maxPerOrder: 200,
-  userAddress: '0x1234567890',
+  creator: '0x1234567890',
   hasOrders: true,
 };
 
 const theirListing1: Listing = {
-  id: 14698,
+  id: 14700,
+  token: 'USDT',
+  action: ListingAction.Sell,
+  fiatCurrency: 'USD',
+  price: 1.02,
+  totalAmount: 230,
+  availableAmount: 140,
+  minPerOrder: 50,
+  maxPerOrder: 230,
+  creator: '0x54866544843',
+  hasOrders: true,
+};
+
+const theirListing2: Listing = {
+  id: 14701,
   token: 'USDT',
   action: ListingAction.Buy,
   fiatCurrency: 'USD',
@@ -40,21 +54,35 @@ const theirListing1: Listing = {
   availableAmount: 140,
   minPerOrder: 50,
   maxPerOrder: 230,
-  userAddress: '0x54866544843',
+  creator: '0x54866544843',
   hasOrders: true,
 };
 
-const theirListing2: Listing = {
-  id: 14698,
+const myListingWithLowAM1: Listing = {
+  id: 14702,
   token: 'USDT',
   action: ListingAction.Sell,
   fiatCurrency: 'USD',
-  price: 1.02,
-  totalAmount: 230,
-  availableAmount: 140,
-  minPerOrder: 50,
-  maxPerOrder: 230,
-  userAddress: '0x54866544843',
+  price: 1.01,
+  totalAmount: 100,
+  availableAmount: 80,
+  minPerOrder: 10,
+  maxPerOrder: 200,
+  creator: '0x1234567890',
+  hasOrders: true,
+};
+
+const myListingWithLowAM2: Listing = {
+  id: 14703,
+  token: 'USDT',
+  action: ListingAction.Buy,
+  fiatCurrency: 'USD',
+  price: 1.01,
+  totalAmount: 100,
+  availableAmount: 70,
+  minPerOrder: 10,
+  maxPerOrder: 200,
+  creator: '0x1234567890',
   hasOrders: true,
 };
 
@@ -65,6 +93,16 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, myListing1),
     status: OrderStatus.RequestSent,
     listing: myListing1,
+    creator: '0x54866544843',
+    action: OrderAction.Sell,
+  },
+  {
+    id: 42000,
+    fiatAmount: 100,
+    tokenAmount: fiatToToken(100, myListing1),
+    status: OrderStatus.RequestSent,
+    listing: myListingWithLowAM1,
+    creator: '0x54866544843',
     action: OrderAction.Sell,
   },
   {
@@ -73,6 +111,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, myListing1),
     status: OrderStatus.AssetsConfirmed,
     listing: myListing1,
+    creator: '0x54866544843',
     action: OrderAction.Sell,
   },
   {
@@ -81,6 +120,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, myListing1),
     status: OrderStatus.PaymentSent,
     listing: myListing1,
+    creator: '0x54866544843',
     action: OrderAction.Sell,
   },
   {
@@ -89,6 +129,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, myListing1),
     status: OrderStatus.Completed,
     listing: myListing1,
+    creator: '0x54866544843',
     action: OrderAction.Sell,
   },
   {
@@ -97,6 +138,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, myListing1),
     status: OrderStatus.InDispute,
     listing: myListing1,
+    creator: '0x54866544843',
     action: OrderAction.Sell,
   },
   {
@@ -105,6 +147,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, myListing1),
     status: OrderStatus.Cancelled,
     listing: myListing1,
+    creator: '0x54866544843',
     action: OrderAction.Sell,
   },
   {
@@ -113,6 +156,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, theirListing1),
     status: OrderStatus.RequestSent,
     listing: theirListing1,
+    creator: '0x1234567890',
     action: OrderAction.Buy,
   },
   {
@@ -121,6 +165,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, theirListing1),
     status: OrderStatus.AssetsConfirmed,
     listing: theirListing1,
+    creator: '0x1234567890',
     action: OrderAction.Buy,
   },
   {
@@ -129,6 +174,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, theirListing1),
     status: OrderStatus.PaymentSent,
     listing: theirListing1,
+    creator: '0x1234567890',
     action: OrderAction.Buy,
   },
   {
@@ -137,6 +183,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, theirListing1),
     status: OrderStatus.Completed,
     listing: theirListing1,
+    creator: '0x1234567890',
     action: OrderAction.Buy,
   },
   {
@@ -145,6 +192,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, theirListing1),
     status: OrderStatus.InDispute,
     listing: theirListing1,
+    creator: '0x1234567890',
     action: OrderAction.Buy,
   },
   {
@@ -153,6 +201,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, theirListing1),
     status: OrderStatus.Cancelled,
     listing: theirListing1,
+    creator: '0x1234567890',
     action: OrderAction.Buy,
   },
 
@@ -162,6 +211,16 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, myListing2),
     status: OrderStatus.RequestSent,
     listing: myListing2,
+    creator: '0x54866544843',
+    action: OrderAction.Buy,
+  },
+  {
+    id: 42012,
+    fiatAmount: 100,
+    tokenAmount: fiatToToken(100, myListing2),
+    status: OrderStatus.RequestSent,
+    listing: myListingWithLowAM2,
+    creator: '0x54866544843',
     action: OrderAction.Buy,
   },
   {
@@ -170,6 +229,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, myListing2),
     status: OrderStatus.AssetsConfirmed,
     listing: myListing2,
+    creator: '0x54866544843',
     action: OrderAction.Buy,
   },
   {
@@ -178,6 +238,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, myListing2),
     status: OrderStatus.TokensDeposited,
     listing: myListing2,
+    creator: '0x54866544843',
     action: OrderAction.Buy,
   },
   {
@@ -186,6 +247,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, myListing2),
     status: OrderStatus.PaymentSent,
     listing: myListing2,
+    creator: '0x54866544843',
     action: OrderAction.Buy,
   },
   {
@@ -194,6 +256,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, myListing2),
     status: OrderStatus.Completed,
     listing: myListing2,
+    creator: '0x54866544843',
     action: OrderAction.Buy,
   },
   {
@@ -202,6 +265,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, myListing2),
     status: OrderStatus.InDispute,
     listing: myListing2,
+    creator: '0x54866544843',
     action: OrderAction.Buy,
   },
   {
@@ -210,6 +274,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, myListing2),
     status: OrderStatus.Cancelled,
     listing: myListing2,
+    creator: '0x54866544843',
     action: OrderAction.Buy,
   },
   {
@@ -218,6 +283,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, theirListing2),
     status: OrderStatus.RequestSent,
     listing: theirListing2,
+    creator: '0x1234567890',
     action: OrderAction.Sell,
   },
   {
@@ -226,6 +292,7 @@ const orders: Order[] = [
     tokenAmount: 21,
     status: OrderStatus.AssetsConfirmed,
     listing: theirListing2,
+    creator: '0x1234567890',
     action: OrderAction.Sell,
   },
   {
@@ -234,6 +301,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, theirListing2),
     status: OrderStatus.TokensDeposited,
     listing: theirListing2,
+    creator: '0x1234567890',
     action: OrderAction.Sell,
   },
   {
@@ -242,6 +310,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, theirListing2),
     status: OrderStatus.PaymentSent,
     listing: theirListing2,
+    creator: '0x1234567890',
     action: OrderAction.Sell,
   },
   {
@@ -250,6 +319,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, theirListing2),
     status: OrderStatus.Completed,
     listing: theirListing2,
+    creator: '0x1234567890',
     action: OrderAction.Sell,
   },
   {
@@ -258,6 +328,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, theirListing2),
     status: OrderStatus.InDispute,
     listing: theirListing2,
+    creator: '0x1234567890',
     action: OrderAction.Sell,
   },
   {
@@ -266,6 +337,7 @@ const orders: Order[] = [
     tokenAmount: fiatToToken(100, theirListing2),
     status: OrderStatus.Cancelled,
     listing: theirListing2,
+    creator: '0x1234567890',
     action: OrderAction.Sell,
   },
 ];

@@ -38,9 +38,9 @@ function CreateOrderModal({ onSubmit, listing, data, ...modalProps }: CreateOrde
 
   const modalTitle = useMemo(() => {
     switch (listing.action) {
-      case ListingAction.Sell:
-        return 'Create Sell Order';
       case ListingAction.Buy:
+        return 'Create Sell Order';
+      case ListingAction.Sell:
         return 'Create Buy Order';
     }
   }, [listing.action]);
@@ -51,7 +51,7 @@ function CreateOrderModal({ onSubmit, listing, data, ...modalProps }: CreateOrde
   );
 
   const { orderAmountHelperText, orderCostHelperText } = useMemo(() => {
-    const action = decapitalize(opposite(listing.action, [ListingAction.Buy, ListingAction.Sell]));
+    const action = decapitalize(opposite(listing.action, [ListingAction.Sell, ListingAction.Buy]));
 
     return {
       // eslint-disable-next-line max-len

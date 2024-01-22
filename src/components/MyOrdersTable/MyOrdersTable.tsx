@@ -15,7 +15,7 @@ import { useTableSearchParams } from 'utils/hooks';
 import ConfirmationModal from 'components/ConfirmationModal';
 import triggerModal from 'utils/triggerModal';
 import { FaRegHand } from 'react-icons/fa6';
-import { cancelOrder, executeOrder, getAllOrders } from 'web3/requests/orders';
+import { rejectOrder, acceptOrder, getAllOrders } from 'web3/requests/orders';
 
 interface MyOrdersTableProps {
   filter?: OrderAction;
@@ -76,8 +76,8 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
       confirmIcon: tooltip === OrderCancelAction.Dispute ? <FaRegHand /> : undefined,
     }).then(confirmed => {
       if (!confirmed) return;
-      if (isCancellingOrDisputing) cancelOrder(order.id);
-      else executeOrder(order.id);
+      if (isCancellingOrDisputing) rejectOrder(order.id);
+      else acceptOrder(order.id);
     });
   };
 
@@ -100,6 +100,11 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
           ),
         },
         {
+          label: 'Available/Total Amount',
+          render: ({ listing: { availableAmount, totalAmount, token } }) =>
+            `${availableAmount} ${token} / ${totalAmount} ${token}`,
+        },
+        {
           label: 'Order Amount/Price',
           render: ({ tokenAmount, fiatAmount, listing: { token, fiatCurrency } }) =>
             `${tokenAmount} ${token} / ${priceFormat(fiatAmount, fiatCurrency)}`,
@@ -115,9 +120,7 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
         },
         {
           label: 'Listing Creator',
-          render: ({ listing: { userAddress } }) => (
-            <UserAddressCellData userAddress={userAddress} />
-          ),
+          render: ({ listing: { creator } }) => <UserAddressCellData userAddress={creator} />,
         },
         {
           label: '',

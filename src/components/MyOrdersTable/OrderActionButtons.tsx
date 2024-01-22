@@ -16,6 +16,7 @@ interface OrderActionButtonsProps {
 }
 
 interface ButtonsComponentsProps extends Partial<Omit<ButtonWithTooltipProps, 'onClick'>> {
+  actionDisabled?: boolean;
   cancelAction?: OrderCancelAction;
 
   onClick?: (tooltip: string, buttonText: string) => void;
@@ -23,6 +24,7 @@ interface ButtonsComponentsProps extends Partial<Omit<ButtonWithTooltipProps, 'o
 
 function ButtonsComponents({
   children,
+  actionDisabled = false,
   disabled,
   tooltip = '',
   cancelAction = OrderCancelAction.Cancel,
@@ -49,7 +51,7 @@ function ButtonsComponents({
   return (
     <>
       <ButtonWithTooltip
-        disabled={disabled}
+        disabled={actionDisabled || disabled}
         tooltip={tooltip}
         onClick={handleActionClick}
         {...rest}
@@ -72,7 +74,7 @@ function ButtonsComponents({
 function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
   const { address } = useUserWallet();
   const userType =
-    order.listing.userAddress === address ? UserType.ListingCreator : UserType.OrderCreator;
+    order.listing.creator === address ? UserType.ListingCreator : UserType.OrderCreator;
   const color = order.action === OrderAction.Buy ? 'success' : 'error';
   const assetsAmountAndSymbol =
     order.action === OrderAction.Buy
@@ -117,6 +119,7 @@ function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
                       className={styles.orderButton}
                       color={color}
                       onClick={handleOnClick}
+                      actionDisabled={order.tokenAmount > order.listing.availableAmount}
                     >
                       Confirm Funds
                     </ButtonsComponents>
@@ -143,6 +146,7 @@ function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
                       className={styles.orderButton}
                       color={color}
                       onClick={handleOnClick}
+                      actionDisabled={order.tokenAmount > order.listing.availableAmount}
                     >
                       Confirm Tokens
                     </ButtonsComponents>

@@ -46,11 +46,11 @@ function AlertContainer({ children }: AlertContainerProps) {
     setOpen(false);
   };
 
-  useWindowEvent(api.WEB3_REQUEST_SENT, (e: Event | CustomEvent) => {
+  useWindowEvent(api.WEB3_REQUEST_SENT_EVENT, (e: Event | CustomEvent) => {
     triggerAlert((e as CustomEvent<string>).detail, 'info');
   });
 
-  useWindowEvent(api.WEB3_REQUEST_COMPLETED, (e: Event | CustomEvent) => {
+  useWindowEvent(api.WEB3_REQUEST_COMPLETED_EVENT, (e: Event | CustomEvent) => {
     triggerAlert((e as CustomEvent<string>).detail, 'success');
   });
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { opposite, priceFormat } from 'utils/helpers';
+import { priceFormat } from 'utils/helpers';
 import { ListingAction } from 'utils/enums';
 
 import styles from './MyListingsTable.module.scss';
@@ -65,17 +65,11 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
         },
         {
           label: 'Listing Type',
-          render: listing => {
-            // When you create a buy listing, the listing.action for the user is ListingAction.Sell
-            // When you create a sell listing, the listing.action for the user is ListingAction.Buy
-            const creatorAction = opposite(listing.action, [ListingAction.Buy, ListingAction.Sell]);
-
-            return (
-              <span className={`${styles.order} ${styles[creatorAction]}`}>
-                {`${creatorAction} ${listing.token}`}
-              </span>
-            );
-          },
+          render: listing => (
+            <span className={`${styles.order} ${styles[listing.action]}`}>
+              {`${listing.action} ${listing.token}`}
+            </span>
+          ),
         },
         {
           label: 'Price',
@@ -94,7 +88,7 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
         },
         {
           label: 'Creator',
-          render: listing => <UserAddressCellData userAddress={listing.userAddress} />,
+          render: listing => <UserAddressCellData userAddress={listing.creator} />,
         },
         {
           label: '',

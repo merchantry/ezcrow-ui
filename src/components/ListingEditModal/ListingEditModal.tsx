@@ -6,7 +6,7 @@ import Modal from 'components/Modal';
 import { Listing, ListingEditData } from 'utils/types';
 import { ListingAction, ListingModalAction } from 'utils/enums';
 import ButtonWithTooltip from 'components/ButtonWithTooltip';
-import { currencyToSymbol, maybePluralize, opposite, roundTo } from 'utils/helpers';
+import { currencyToSymbol, maybePluralize, roundTo } from 'utils/helpers';
 import BaseSelect from 'components/BaseSelect';
 import { NumberInputProps } from 'components/NumberInput/NumberInput';
 import { ROUND_TO_FIAT } from 'utils/config';
@@ -58,18 +58,16 @@ function ListingEditModal({
   const [maxPerOrderError, setMaxPerOrderError] = useState<string | undefined>(undefined);
 
   const listingTitle = useMemo(() => {
-    const creatorAction = opposite(action, [ListingAction.Buy, ListingAction.Sell]);
-
     switch (modalAction) {
       case ListingModalAction.Edit:
-        return `Edit ${creatorAction} Listing (ID: ${listing?.id})`;
+        return `Edit ${action} Listing (ID: ${listing?.id})`;
       case ListingModalAction.CreateNew:
-        return `Create New ${creatorAction} Listing`;
+        return `Create New ${action} Listing`;
     }
   }, [action, listing, modalAction]);
 
   const buttonTooltip = useMemo(() => {
-    if (action === ListingAction.Sell) {
+    if (action === ListingAction.Buy) {
       return undefined;
     }
 
@@ -108,7 +106,7 @@ function ListingEditModal({
     maxPerOrderHelperText,
   } = useMemo(() => {
     switch (action) {
-      case ListingAction.Buy:
+      case ListingAction.Sell:
         return {
           tokenHelperText: `The token you want to sell`,
           currencyHelperText: `Currency you want to sell it for`,
@@ -119,7 +117,7 @@ function ListingEditModal({
           minPerOrderHelperText: `The minimum amount of ${fiatCurrency} a user can spend per order`,
           maxPerOrderHelperText: `The maximum amount of ${fiatCurrency} a user can spend per order`,
         };
-      case ListingAction.Sell:
+      case ListingAction.Buy:
         return {
           tokenHelperText: `Token you want to buy`,
           currencyHelperText: `Currency you want to buy it with`,
