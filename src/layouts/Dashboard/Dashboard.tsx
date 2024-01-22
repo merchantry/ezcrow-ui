@@ -19,6 +19,7 @@ function Dashboard() {
               <SideBarLink to="/">All Listings</SideBarLink>
               <SideBarLink to="/my-listings">My Listings</SideBarLink>
               <SideBarLink to="/my-orders">My Orders</SideBarLink>
+              <SideBarLink to="/orders-in-dispute">Orders In Dispute</SideBarLink>
             </ul>
           </nav>
         </div>

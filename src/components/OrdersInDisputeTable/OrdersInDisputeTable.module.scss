@@ -1,0 +1,13 @@
+@import 'scss/mixins/variables';
+
+span.order {
+  font-weight: 600;
+
+  &.Buy {
+    color: $success;
+  }
+
+  &.Sell {
+    color: $danger;
+  }
+}
