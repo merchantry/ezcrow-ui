@@ -11,27 +11,21 @@ const simulateDelay = <T>(v: T) =>
   }) as Promise<T>;
 
 const emitRequestSentEvent = (message: string) => {
-  window.dispatchEvent(new CustomEvent(api.WEB3_REQUEST_SENT, { detail: message }));
+  window.dispatchEvent(new CustomEvent(api.WEB3_REQUEST_SENT_EVENT, { detail: message }));
 };
 
 const emitRequestComletedEvent = (message: string) => {
-  window.dispatchEvent(new CustomEvent(api.WEB3_REQUEST_COMPLETED, { detail: message }));
+  window.dispatchEvent(new CustomEvent(api.WEB3_REQUEST_COMPLETED_EVENT, { detail: message }));
 };
 
 const api = {
-  WEB3_REQUEST_SENT: 'web3RequestSent',
-  WEB3_REQUEST_COMPLETED: 'web3RequestCompleted',
+  WEB3_REQUEST_SENT_EVENT: 'web3RequestSent',
+  WEB3_REQUEST_COMPLETED_EVENT: 'web3RequestCompleted',
 
   async get(contractAddress: string, method: string, args: unknown[]) {
-    emitRequestSentEvent(
-      `Sending request to ${contractAddress} with method ${method} and args ${args}`,
-    );
-    const data = await simulateDelay(
+    return simulateDelay(
       `Pretending to get data from ${contractAddress} with method ${method} and args ${args}`,
     );
-
-    emitRequestComletedEvent(data);
-    return data;
   },
 
   async sendTransaction(contractAddress: string, method: string, args: unknown[]) {
