@@ -14,7 +14,7 @@ function OrdersInDispute() {
           buyer.
         </p>
       </header>
-      <FiltersBar />
+      <FiltersBar hideSortBy />
       <Outlet />
     </main>
   );

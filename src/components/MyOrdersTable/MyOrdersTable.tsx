@@ -1,57 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-import { decapitalize, priceFormat, run } from 'utils/helpers';
-import { OrderAction, OrderCancelAction } from 'utils/enums';
+import { decapitalize, opposite, priceFormat, roundTo, run } from 'utils/helpers';
+import { ListingAction, OrderCancelAction, OrderStatus, UserType } from 'utils/enums';
 
 import styles from './MyOrdersTable.module.scss';
-import dummyOrders from './orders';
 import tableStyles from 'scss/modules/Table.module.scss';
 import StripedTable from 'components/StripedTable';
 import { Order } from 'utils/types';
 import UserAddressCellData from 'components/UserAddressCellData';
 import OrderStatusCellData from './OrderStatusCellData';
 import OrderActionButtons from './OrderActionButtons';
-import { useTableSearchParams } from 'utils/hooks';
 import ConfirmationModal from 'components/ConfirmationModal';
 import triggerModal from 'utils/triggerModal';
 import { FaRegHand } from 'react-icons/fa6';
-import { rejectOrder, acceptOrder, getAllOrders } from 'web3/requests/orders';
+import { useUserOrders } from 'utils/dataHooks';
+import { useTokenDecimalsStandard, useWeb3Signer } from 'components/ContextData/hooks';
+import { approveToken, signAndAcceptOrder, signAndRejectOrder } from 'web3/requests/ezcrowRamp';
+import { useTableSearchParams } from 'utils/hooks';
+import { useNetwork } from 'utils/web3Hooks';
+import { getCurrentOrderStatus } from 'utils/orders';
 
 interface MyOrdersTableProps {
-  filter?: OrderAction;
+  filter?: ListingAction;
 }
 
 function MyOrdersTable({ filter }: MyOrdersTableProps) {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [isFetching, setIsFetching] = useState(false);
-  const { currency, token, sortBy, sortOrder, page } = useTableSearchParams();
+  const network = useNetwork();
+  const signer = useWeb3Signer();
+  const { token, currency } = useTableSearchParams();
+  const [orders, isFetching, refresh] = useUserOrders(signer?.address, filter);
 
-  useEffect(() => {
-    setIsFetching(true);
-    getAllOrders(currency, token, sortBy, sortOrder, page).then(() => {
-      setIsFetching(false);
-      setOrders(
-        dummyOrders
-          .filter(
-            order =>
-              order.listing.token === token &&
-              order.listing.fiatCurrency === currency &&
-              (filter ? order.action === filter : true),
-          )
-          .sort((a, b) => {
-            const aValue = a.listing[sortBy];
-            const bValue = b.listing[sortBy];
-
-            if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-            if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-
-            return 0;
-          }),
-      );
-    });
-  }, [currency, filter, page, sortBy, sortOrder, token]);
+  const tokenToBigInt = useTokenDecimalsStandard();
 
   const onActionButtonClick = (order: Order, tooltip: string, buttonText: string) => {
+    if (!signer) return;
     const isCancellingOrDisputing =
       tooltip === OrderCancelAction.Cancel || tooltip === OrderCancelAction.Dispute;
 
@@ -71,13 +53,30 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
       text,
       confirmText: buttonText,
       confirmColor:
-        order.action === OrderAction.Sell || isCancellingOrDisputing ? 'error' : 'success',
+        order.listingAction === ListingAction.Sell || isCancellingOrDisputing ? 'error' : 'success',
       noCancelBtn: true,
       confirmIcon: tooltip === OrderCancelAction.Dispute ? <FaRegHand /> : undefined,
-    }).then(confirmed => {
+    }).then(async confirmed => {
       if (!confirmed) return;
-      if (isCancellingOrDisputing) rejectOrder(order.id);
-      else acceptOrder(order.id);
+      const userType =
+        signer.address === order.listingCreator ? UserType.ListingCreator : UserType.OrderCreator;
+      const orderStatus = getCurrentOrderStatus(order);
+      const listingAction = order.listingAction;
+
+      if (
+        userType === UserType.OrderCreator &&
+        orderStatus === OrderStatus.AssetsConfirmed &&
+        listingAction === ListingAction.Buy
+      ) {
+        await approveToken(token, currency, tokenToBigInt(order.tokenAmount), network, signer);
+      }
+
+      const signatureArgs = [token, currency, order.id, network, signer] as const;
+      const promise = isCancellingOrDisputing
+        ? signAndRejectOrder(...signatureArgs)
+        : signAndAcceptOrder(...signatureArgs);
+
+      promise.then(refresh);
     });
   };
 
@@ -89,30 +88,32 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
       columnData={[
         {
           label: 'Order/Listing ID',
-          render: order => `${order.id} / ${order.listing.id}`,
+          render: order => `${order.id} / ${order.listingId}`,
         },
         {
           label: 'Order Type',
-          render: order => (
-            <span className={`${styles.order} ${styles[order.action]}`}>
-              {`${order.action} ${order.listing.token}`}
-            </span>
-          ),
-        },
-        {
-          label: 'Available/Total Amount',
-          render: ({ listing: { availableAmount, totalAmount, token } }) =>
-            `${availableAmount} ${token} / ${totalAmount} ${token}`,
-        },
-        {
-          label: 'Order Amount/Price',
-          render: ({ tokenAmount, fiatAmount, listing: { token, fiatCurrency } }) =>
-            `${tokenAmount} ${token} / ${priceFormat(fiatAmount, fiatCurrency)}`,
+          render: order => {
+            const orderAction =
+              order.listingCreator === signer?.address
+                ? order.listingAction
+                : opposite(order.listingAction, [ListingAction.Buy, ListingAction.Sell]);
+            return (
+              <span className={`${styles.order} ${styles[orderAction]}`}>
+                {`${orderAction} ${order.token}`}
+              </span>
+            );
+          },
         },
         {
           label: 'Price',
           className: tableStyles.price,
-          render: ({ listing: { price, fiatCurrency } }) => `${price} ${fiatCurrency}`,
+          render: ({ tokenAmount, fiatAmount, currency }) =>
+            `${roundTo(fiatAmount / tokenAmount, 2)} ${currency}`,
+        },
+        {
+          label: 'Order Amount/Price',
+          render: ({ tokenAmount, fiatAmount, token, currency }) =>
+            `${tokenAmount} ${token} / ${priceFormat(fiatAmount, currency)}`,
         },
         {
           label: 'Order status',
@@ -120,7 +121,7 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
         },
         {
           label: 'Listing Creator',
-          render: ({ listing: { creator } }) => <UserAddressCellData userAddress={creator} />,
+          render: ({ listingCreator }) => <UserAddressCellData userAddress={listingCreator} />,
         },
         {
           label: '',

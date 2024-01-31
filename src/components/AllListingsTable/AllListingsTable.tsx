@@ -10,22 +10,31 @@ import BaseButton from 'components/BaseButton';
 import IconButton from 'components/IconButton';
 import StripedTable from 'components/StripedTable';
 import { Listing } from 'utils/types';
-import { useFilteredListings } from 'utils/hooks';
+import { useTableSearchParams } from 'utils/hooks';
 import UserAddressCellData from 'components/UserAddressCellData';
 import CreateOrderModal from 'components/CreateOrderModal';
 import ConfirmationModal from 'components/ConfirmationModal';
 import { FaChevronLeft } from 'react-icons/fa6';
 import { modalLoop } from 'utils/modals';
-import { createOrder } from 'web3/requests/orders';
+import { useListings } from 'utils/dataHooks';
+import { createOrder } from 'web3/requests/ezcrowRamp';
+import { useTokenDecimalsStandard, useWeb3Signer } from 'components/ContextData/hooks';
+import { useNetwork } from 'utils/web3Hooks';
 
 interface AllListingsTableProps {
   filter?: ListingAction;
 }
 
 function AllListingsTable({ filter }: AllListingsTableProps) {
-  const [filteredListings, isFetching] = useFilteredListings(filter);
+  const network = useNetwork();
+  const signer = useWeb3Signer();
+  const [listings, isFetching, refresh] = useListings(filter);
+  const { token, currency } = useTableSearchParams();
+
+  const tokenToBigInt = useTokenDecimalsStandard();
 
   const onListingActionClick = async (listing: Listing) => {
+    if (!signer) return;
     const userAction = opposite(listing.action, [ListingAction.Sell, ListingAction.Buy]);
     return modalLoop(
       CreateOrderModal,
@@ -39,7 +48,7 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
           userAction,
         )} order for ${orderAmount} ${listing.token}  (${priceFormat(
           orderCost,
-          listing.fiatCurrency,
+          listing.currency,
         )})?`,
         confirmText: 'Create Order',
         cancelText: 'Back',
@@ -47,14 +56,22 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
       }),
     ).then(createOrderData => {
       if (!createOrderData) return;
-      createOrder(listing.id, createOrderData.orderAmount);
+
+      createOrder(
+        token,
+        currency,
+        listing.id,
+        tokenToBigInt(createOrderData.orderAmount),
+        network,
+        signer,
+      ).then(refresh);
     });
   };
 
   return (
     <StripedTable
       isFetching={isFetching}
-      data={filteredListings}
+      data={listings}
       getRowKey={(row: Listing) => row.id}
       columnData={[
         {
@@ -64,17 +81,20 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
         {
           label: 'Price',
           className: tableStyles.price,
-          render: listing => `${listing.price} ${listing.fiatCurrency}`,
+          render: listing => `${listing.price} ${currency}`,
         },
         {
           label: 'Available/Total Amount',
-          render: ({ availableAmount, totalAmount, token }) =>
-            `${availableAmount} ${token} / ${totalAmount} ${token}`,
+          render: ({ availableTokenAmount, totalTokenAmount }) =>
+            `${availableTokenAmount} ${token} / ${totalTokenAmount} ${token}`,
         },
         {
           label: 'Limit Per Order',
-          render: ({ minPerOrder, fiatCurrency, maxPerOrder }) =>
-            `${priceFormat(minPerOrder, fiatCurrency)} - ${priceFormat(maxPerOrder, fiatCurrency)}`,
+          render: ({ minPricePerOrder, maxPricePerOrder }) =>
+            `${priceFormat(minPricePerOrder, currency)} - ${priceFormat(
+              maxPricePerOrder,
+              currency,
+            )}`,
         },
         {
           label: 'Creator',
@@ -85,7 +105,7 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
           colStyle: { width: 205 },
           render: listing => {
             const action = opposite(listing.action, [ListingAction.Sell, ListingAction.Buy]);
-            const buttonTitle = `${action} ${listing.token}`;
+            const buttonTitle = `${action} ${token}`;
 
             return (
               <div className={tableStyles.actions}>

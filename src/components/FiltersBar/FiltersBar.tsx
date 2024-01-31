@@ -10,7 +10,7 @@ import IconButton from 'components/IconButton';
 import { SortOrder } from 'utils/enums';
 import { SortByOption } from 'utils/types';
 import Pagination from 'components/Pagination';
-import { useFormattedDropdownData } from 'components/ContextData/ContextData';
+import { useFormattedDropdownData } from 'components/ContextData/hooks';
 
 function FilterOptionsLinks() {
   const firstPathname = useFirstLocationPathname();
@@ -50,9 +50,10 @@ function FilterOptionsLinks() {
 
 interface FiltersBarProps {
   children?: React.ReactNode;
+  hideSortBy?: boolean;
 }
 
-function FiltersBar({ children }: FiltersBarProps) {
+function FiltersBar({ children, hideSortBy = false }: FiltersBarProps) {
   useFilterRedirects();
   const [, setSearchParams] = useSearchParams();
   const { tokenOptionsMap, currencyOptionsMap } = useFormattedDropdownData();
@@ -95,13 +96,15 @@ function FiltersBar({ children }: FiltersBarProps) {
         options={currencyOptionsMap}
         onChange={handleCurrencyChange}
       />
-      <Dropdown<SortByOption>
-        className={styles.sortByDropdown}
-        value={sortBy}
-        label="Sort By"
-        options={SORT_BY_OPTIONS}
-        onChange={handleSortByChange}
-      />
+      {!hideSortBy && (
+        <Dropdown<SortByOption>
+          className={styles.sortByDropdown}
+          value={sortBy}
+          label="Sort By"
+          options={SORT_BY_OPTIONS}
+          onChange={handleSortByChange}
+        />
+      )}
       <IconButton
         onClick={() => handleSortOrderChange(SortOrder.DESC)}
         className={`${styles.sortOrder} ${sortOrder === SortOrder.DESC && styles.active}`}

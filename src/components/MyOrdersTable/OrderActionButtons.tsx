@@ -1,14 +1,15 @@
 import React, { useMemo } from 'react';
 
 import styles from './MyOrdersTable.module.scss';
-import { useUserWallet } from 'utils/hooks';
 import { Order } from 'utils/types';
-import { OrderAction, OrderCancelAction, OrderStatus, UserType } from 'utils/enums';
+import { ListingAction, OrderCancelAction, OrderStatus, UserType } from 'utils/enums';
 import { maybePluralize, priceFormat } from 'utils/helpers';
 import ButtonWithTooltip from 'components/ButtonWithTooltip';
 import { ButtonWithTooltipProps } from 'components/ButtonWithTooltip/ButtonWithTooltip';
 import { FaXmark, FaRegHand } from 'react-icons/fa6';
 import IconButtonWithTooltip from 'components/IconButtonWithTooltip';
+import { getCurrentOrderStatus } from 'utils/orders';
+import { useWeb3Signer } from 'components/ContextData/hooks';
 
 interface OrderActionButtonsProps {
   order: Order;
@@ -72,20 +73,42 @@ function ButtonsComponents({
 }
 
 function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
-  const { address } = useUserWallet();
-  const userType =
-    order.listing.creator === address ? UserType.ListingCreator : UserType.OrderCreator;
-  const color = order.action === OrderAction.Buy ? 'success' : 'error';
-  const assetsAmountAndSymbol =
-    order.action === OrderAction.Buy
-      ? priceFormat(order.fiatAmount, order.listing.fiatCurrency)
-      : `${order.tokenAmount} ${order.listing.token} ${maybePluralize(order.tokenAmount, 'token')}`;
+  const signer = useWeb3Signer();
+  const {
+    userType,
+    userIsBuyer,
+    color,
+    assetsAmountAndSymbol,
+  }: {
+    userType: UserType;
+    userIsBuyer: boolean;
+    color: 'success' | 'error';
+    assetsAmountAndSymbol: string;
+  } = useMemo(() => {
+    const userType =
+      order.creator === signer?.address ? UserType.OrderCreator : UserType.ListingCreator;
+    const userIsBuyer =
+      userType === UserType.ListingCreator
+        ? order.listingAction === ListingAction.Buy
+        : order.listingAction === ListingAction.Sell;
+
+    return {
+      userType,
+      userIsBuyer,
+      color: userIsBuyer ? 'success' : 'error',
+      assetsAmountAndSymbol: userIsBuyer
+        ? priceFormat(order.fiatAmount, order.currency)
+        : `${order.tokenAmount} ${order.token} ${maybePluralize(order.tokenAmount, 'token')}`,
+    };
+  }, [signer, order]);
+
+  const currentStatus = useMemo(() => getCurrentOrderStatus(order), [order]);
 
   const handleOnClick = (tooltip: string, buttonText: string) => {
     onClick(order, tooltip, buttonText);
   };
 
-  switch (order.status) {
+  switch (currentStatus) {
     case OrderStatus.InDispute:
       return (
         <ButtonsComponents disabled className={styles.orderButton} color={color}>
@@ -109,9 +132,9 @@ function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
     default:
       switch (userType) {
         case UserType.ListingCreator:
-          switch (order.action) {
-            case OrderAction.Buy:
-              switch (order.status) {
+          switch (userIsBuyer) {
+            case true:
+              switch (currentStatus) {
                 case OrderStatus.RequestSent:
                   return (
                     <ButtonsComponents
@@ -119,7 +142,6 @@ function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
                       className={styles.orderButton}
                       color={color}
                       onClick={handleOnClick}
-                      actionDisabled={order.tokenAmount > order.listing.availableAmount}
                     >
                       Confirm Funds
                     </ButtonsComponents>
@@ -128,7 +150,7 @@ function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
                   return (
                     <ButtonsComponents
                       tooltip={`Confirm you have sent the ${assetsAmountAndSymbol} payment to the seller`}
-                      disabled={order.status !== OrderStatus.TokensDeposited}
+                      disabled={currentStatus !== OrderStatus.TokensDeposited}
                       className={styles.orderButton}
                       color={color}
                       onClick={handleOnClick}
@@ -137,8 +159,8 @@ function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
                     </ButtonsComponents>
                   );
               }
-            case OrderAction.Sell:
-              switch (order.status) {
+            case false:
+              switch (currentStatus) {
                 case OrderStatus.RequestSent:
                   return (
                     <ButtonsComponents
@@ -146,7 +168,6 @@ function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
                       className={styles.orderButton}
                       color={color}
                       onClick={handleOnClick}
-                      actionDisabled={order.tokenAmount > order.listing.availableAmount}
                     >
                       Confirm Tokens
                     </ButtonsComponents>
@@ -155,7 +176,7 @@ function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
                   return (
                     <ButtonsComponents
                       tooltip={`Release the ${assetsAmountAndSymbol} to the buyer`}
-                      disabled={order.status !== OrderStatus.PaymentSent}
+                      disabled={currentStatus !== OrderStatus.PaymentSent}
                       className={styles.orderButton}
                       color={color}
                       cancelAction={OrderCancelAction.Dispute}
@@ -168,12 +189,12 @@ function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
           }
           break;
         case UserType.OrderCreator:
-          switch (order.action) {
-            case OrderAction.Buy:
+          switch (userIsBuyer) {
+            case true:
               return (
                 <ButtonsComponents
                   tooltip={`Confirm you have sent the ${assetsAmountAndSymbol} payment to the seller`}
-                  disabled={order.status !== OrderStatus.AssetsConfirmed}
+                  disabled={currentStatus !== OrderStatus.AssetsConfirmed}
                   className={styles.orderButton}
                   color={color}
                   onClick={handleOnClick}
@@ -181,14 +202,14 @@ function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
                   Payment Sent
                 </ButtonsComponents>
               );
-            case OrderAction.Sell:
-              switch (order.status) {
+            case false:
+              switch (currentStatus) {
                 case OrderStatus.RequestSent:
                 case OrderStatus.AssetsConfirmed:
                   return (
                     <ButtonsComponents
                       tooltip={`Deposit ${assetsAmountAndSymbol}`}
-                      disabled={order.status !== OrderStatus.AssetsConfirmed}
+                      disabled={currentStatus !== OrderStatus.AssetsConfirmed}
                       className={styles.orderButton}
                       color={color}
                       onClick={handleOnClick}
@@ -200,7 +221,7 @@ function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
                   return (
                     <ButtonsComponents
                       tooltip={`Release the ${assetsAmountAndSymbol} to the buyer`}
-                      disabled={order.status !== OrderStatus.PaymentSent}
+                      disabled={currentStatus !== OrderStatus.PaymentSent}
                       className={styles.orderButton}
                       color={color}
                       cancelAction={OrderCancelAction.Dispute}

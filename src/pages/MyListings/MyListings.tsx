@@ -6,16 +6,31 @@ import BaseButton from 'components/BaseButton';
 import { FaPlus } from 'react-icons/fa';
 import triggerModal from 'utils/triggerModal';
 import ChooseListingTypeModal from 'components/ChooseListingTypeModal';
-import { useFormattedDropdownData } from 'components/ContextData/ContextData';
 import { useTableSearchParams } from 'utils/hooks';
 import { confirmListingData } from 'utils/modals';
-import { createListing } from 'web3/requests/listings';
+import {
+  useCurrencyDecimalsStandard,
+  useFormattedDropdownData,
+  useTokenDecimalsStandard,
+  useWeb3Signer,
+} from 'components/ContextData/hooks';
+import { useNetwork } from 'utils/web3Hooks';
+import { listingActionToNumber } from 'utils/listings';
+import { ListingAction } from 'utils/enums';
+import { approveToken, createListing } from 'web3/requests/ezcrowRamp';
+import { emitRefreshTableDataEvent } from 'utils/dataHooks';
 
 function MyListings() {
+  const network = useNetwork();
+  const signer = useWeb3Signer();
   const { token, currency } = useTableSearchParams();
   const { tokenOptionsMap, currencyOptionsMap } = useFormattedDropdownData();
 
+  const currencyToBigInt = useCurrencyDecimalsStandard();
+  const tokenToBigInt = useTokenDecimalsStandard();
+
   const onCreateNewListingClick = () => {
+    if (!signer) return;
     triggerModal(ChooseListingTypeModal).then(action => {
       if (!action) return;
 
@@ -25,9 +40,35 @@ function MyListings() {
         currencies: currencyOptionsMap,
         tokenParam: token,
         currencyParam: currency,
-      }).then(listingEditData => {
+      }).then(async listingEditData => {
         if (!listingEditData) return;
-        createListing(listingEditData);
+        const {
+          token,
+          currency,
+          action,
+          price,
+          totalTokenAmount: _totalTokenAmount,
+          minPricePerOrder,
+          maxPricePerOrder,
+        } = listingEditData;
+
+        const totalTokenAmount = tokenToBigInt(_totalTokenAmount);
+
+        if (action === ListingAction.Sell) {
+          await approveToken(token, currency, totalTokenAmount, network, signer);
+        }
+
+        createListing(
+          token,
+          currency,
+          listingActionToNumber(action),
+          currencyToBigInt(price),
+          totalTokenAmount,
+          currencyToBigInt(minPricePerOrder),
+          currencyToBigInt(maxPricePerOrder),
+          network,
+          signer,
+        ).then(emitRefreshTableDataEvent);
       });
     });
   };

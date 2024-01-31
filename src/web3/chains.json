@@ -1,0 +1,13 @@
+{
+  "telostest": {
+    "chainId": "0x29",
+    "chainName": "Telos EVM Testnet",
+    "rpcUrls": ["https://testnet.telos.net/evm"],
+    "nativeCurrency": {
+      "name": "Telos",
+      "symbol": "TLOS",
+      "decimals": 18
+    },
+    "blockExplorerUrls": ["https://testnet.teloscan.io/"]
+  }
+}

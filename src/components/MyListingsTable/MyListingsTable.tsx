@@ -8,38 +8,86 @@ import tableStyles from 'scss/modules/Table.module.scss';
 import BaseButton from 'components/BaseButton';
 import StripedTable from 'components/StripedTable';
 import { Listing } from 'utils/types';
-import { useFilteredListings } from 'utils/hooks';
 import UserAddressCellData from 'components/UserAddressCellData';
 import triggerModal from 'utils/triggerModal';
 import ConfirmationModal from 'components/ConfirmationModal';
-import { useFormattedDropdownData } from 'components/ContextData/ContextData';
 import { confirmListingData } from 'utils/modals';
 import { FaTrash } from 'react-icons/fa6';
-import { editListing, removeListing } from 'web3/requests/listings';
+import { useUserListings } from 'utils/dataHooks';
+import {
+  useCurrencyDecimalsStandard,
+  useFormattedDropdownData,
+  useTokenDecimalsStandard,
+  useWeb3Signer,
+} from 'components/ContextData/hooks';
+import { approveToken, deleteListing, updateListing } from 'web3/requests/ezcrowRamp';
+import { useNetwork } from 'utils/web3Hooks';
+import { listingActionToNumber } from 'utils/listings';
 
 interface MyListingsTableProps {
   filter?: ListingAction;
 }
 
 function MyListingsTable({ filter }: MyListingsTableProps) {
-  const [filteredListings, isFetching] = useFilteredListings(filter);
+  const network = useNetwork();
+  const signer = useWeb3Signer();
+  const [filteredListings, isFetching, refresh] = useUserListings(signer?.address, filter);
   const { tokenOptionsMap, currencyOptionsMap } = useFormattedDropdownData();
 
+  const currencyToBigInt = useCurrencyDecimalsStandard();
+  const tokenToBigInt = useTokenDecimalsStandard();
+
   const onEditListingClick = async (listing: Listing) => {
+    if (!signer) return;
     confirmListingData({
       listingToEdit: listing,
       action: listing.action,
       tokens: tokenOptionsMap,
       currencies: currencyOptionsMap,
-    }).then(listingEditData => {
+    }).then(async listingEditData => {
       if (!listingEditData) return;
-      editListing(listing.id, listingEditData);
+      const {
+        token,
+        currency,
+        action,
+        price,
+        totalTokenAmount: _totalTokenAmount,
+        minPricePerOrder,
+        maxPricePerOrder,
+      } = listingEditData;
+
+      const previousTokenAmount = tokenToBigInt(listing.totalTokenAmount);
+      const totalTokenAmount = tokenToBigInt(_totalTokenAmount);
+
+      if (action === ListingAction.Sell && totalTokenAmount > previousTokenAmount) {
+        await approveToken(
+          token,
+          currency,
+          totalTokenAmount - previousTokenAmount,
+          network,
+          signer,
+        );
+      }
+
+      updateListing(
+        listing.token,
+        listing.currency,
+        listing.id,
+        token,
+        currency,
+        listingActionToNumber(action),
+        currencyToBigInt(price),
+        totalTokenAmount,
+        currencyToBigInt(minPricePerOrder),
+        currencyToBigInt(maxPricePerOrder),
+        network,
+        signer,
+      ).then(refresh);
     });
   };
 
   const onRemoveListingClick = (listing: Listing) => {
-    if (listing.hasOrders) return;
-
+    if (!signer) return;
     triggerModal(ConfirmationModal, {
       title: `Remove Listing (ID: ${listing.id})?`,
       text: 'Are you sure you want to remove this listing?',
@@ -49,7 +97,8 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
       cancelColor: 'primary',
     }).then(confirmed => {
       if (!confirmed) return;
-      removeListing(listing.id);
+
+      deleteListing(listing.token, listing.currency, listing.id, network, signer).then(refresh);
     });
   };
 
@@ -74,17 +123,20 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
         {
           label: 'Price',
           className: tableStyles.price,
-          render: listing => `${listing.price} ${listing.fiatCurrency}`,
+          render: listing => `${listing.price} ${listing.currency}`,
         },
         {
           label: 'Available/Total Amount',
-          render: ({ availableAmount, totalAmount, token }) =>
-            `${availableAmount} ${token} / ${totalAmount} ${token}`,
+          render: ({ availableTokenAmount, totalTokenAmount, token }) =>
+            `${availableTokenAmount} ${token} / ${totalTokenAmount} ${token}`,
         },
         {
           label: 'Limit Per Order',
-          render: ({ minPerOrder, fiatCurrency, maxPerOrder }) =>
-            `${priceFormat(minPerOrder, fiatCurrency)} - ${priceFormat(maxPerOrder, fiatCurrency)}`,
+          render: ({ minPricePerOrder, currency, maxPricePerOrder }) =>
+            `${priceFormat(minPricePerOrder, currency)} - ${priceFormat(
+              maxPricePerOrder,
+              currency,
+            )}`,
         },
         {
           label: 'Creator',
@@ -92,21 +144,21 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
         },
         {
           label: '',
-          colStyle: { width: 225 },
+          colStyle: { width: 230 },
           render: listing => (
             <div className={tableStyles.actions}>
               <BaseButton
                 color="info"
-                disabled={listing.hasOrders}
                 className={styles.edit}
+                disabled={listing.isDeleted}
                 onClick={() => onEditListingClick(listing)}
               >
                 Edit
               </BaseButton>
               <BaseButton
                 color="error"
-                disabled={listing.hasOrders}
                 className={styles.remove}
+                disabled={listing.isDeleted}
                 onClick={() => onRemoveListingClick(listing)}
               >
                 Remove

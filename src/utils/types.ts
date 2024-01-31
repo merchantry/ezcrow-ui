@@ -1,5 +1,5 @@
 import { FILTER_OPTIONS, SORT_BY_OPTIONS } from './config';
-import { ListingAction, OrderAction, OrderStatus, UserType } from './enums';
+import { ListingAction, OrderStatus, UserType } from './enums';
 import { ModalProps } from './interfaces';
 
 export type FilterOption = (typeof FILTER_OPTIONS)[number];
@@ -7,27 +7,33 @@ export type FilterOption = (typeof FILTER_OPTIONS)[number];
 export type Listing = {
   id: number;
   token: string;
+  currency: string;
   action: ListingAction;
-  fiatCurrency: string;
   price: number;
-  totalAmount: number;
-  availableAmount: number;
-  minPerOrder: number;
-  maxPerOrder: number;
+  totalTokenAmount: number;
+  availableTokenAmount: number;
+  minPricePerOrder: number;
+  maxPricePerOrder: number;
   creator: string;
-  hasOrders: boolean;
+  isDeleted: boolean;
 };
 
-export type ListingEditData = Omit<Listing, 'id' | 'hasOrders' | 'creator' | 'availableAmount'>;
+export type ListingEditData = Omit<
+  Listing,
+  'id' | 'creator' | 'availableTokenAmount' | 'isDeleted'
+>;
 
 export type Order = {
   id: number;
   fiatAmount: number;
   tokenAmount: number;
-  status: OrderStatus;
-  listing: Listing;
-  action: OrderAction;
+  token: string;
+  currency: string;
+  statusHistory: OrderStatus[];
+  listingId: number;
+  listingAction: ListingAction;
   creator: string;
+  listingCreator: string;
 };
 
 export type ColumnData<T> = {

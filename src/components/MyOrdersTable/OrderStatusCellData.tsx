@@ -3,11 +3,11 @@ import React from 'react';
 import Chip from 'components/Chip';
 import styles from './MyOrdersTable.module.scss';
 import { ListingAction, OrderStatus, UserType } from 'utils/enums';
-import { useUserWallet } from 'utils/hooks';
 import { Order, PerOrderData } from 'utils/types';
-import { getOrderData, getUserType } from 'utils/orders';
+import { getOrderData } from 'utils/orders';
 import { FaInfo } from 'react-icons/fa6';
 import { ColorType } from 'mui/helpers';
+import { useWeb3Signer } from 'components/ContextData/hooks';
 
 interface OrderStatusProps {
   order: Order;
@@ -126,10 +126,10 @@ const CHIP_DATA: PerOrderData<ChipData> = {
 };
 
 function OrderStatusCellData({ order }: OrderStatusProps) {
-  const { address } = useUserWallet();
+  const signer = useWeb3Signer();
   const { color, label, tooltip } = getOrderData(
     order,
-    getUserType(order.listing, address),
+    order.creator === signer?.address ? UserType.OrderCreator : UserType.ListingCreator,
     CHIP_DATA,
   );
 

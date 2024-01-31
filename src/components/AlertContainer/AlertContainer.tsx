@@ -1,7 +1,5 @@
 import { Alert, AlertColor, Snackbar } from '@mui/material';
 import React, { createContext, useContext, useState } from 'react';
-import { useWindowEvent } from 'utils/hooks';
-import api from 'web3/api';
 
 interface AlertContainerProps {
   children: React.ReactNode;
@@ -45,14 +43,6 @@ function AlertContainer({ children }: AlertContainerProps) {
 
     setOpen(false);
   };
-
-  useWindowEvent(api.WEB3_REQUEST_SENT_EVENT, (e: Event | CustomEvent) => {
-    triggerAlert((e as CustomEvent<string>).detail, 'info');
-  });
-
-  useWindowEvent(api.WEB3_REQUEST_COMPLETED_EVENT, (e: Event | CustomEvent) => {
-    triggerAlert((e as CustomEvent<string>).detail, 'success');
-  });
 
   return (
     <AlertContext.Provider value={triggerAlert}>

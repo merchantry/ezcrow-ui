@@ -31,11 +31,11 @@ function ListingDataConfirmationModal({
 
   const previousFiatCurrencySymbol = useMemo(() => {
     if (!listing) return undefined;
-    return currencyToSymbol(listing.fiatCurrency);
+    return currencyToSymbol(listing.currency);
   }, [listing]);
 
   const currentFiatCurrencySymbol = useMemo(
-    () => currencyToSymbol(listingEditData.fiatCurrency),
+    () => currencyToSymbol(listingEditData.currency),
     [listingEditData],
   );
 
@@ -59,15 +59,15 @@ function ListingDataConfirmationModal({
           />
           <DataComparisonRow
             label="Fiat Currency"
-            previous={listing?.fiatCurrency}
-            current={listingEditData.fiatCurrency}
+            previous={listing?.currency}
+            current={listingEditData.currency}
             prevUnit={previousFiatCurrencySymbol}
             currentUnit={currentFiatCurrencySymbol}
           />
           <DataComparisonRow
             label="Total Amount"
-            previous={listing?.totalAmount}
-            current={listingEditData.totalAmount}
+            previous={listing?.totalTokenAmount}
+            current={listingEditData.totalTokenAmount}
             prevUnit={listing?.token}
             currentUnit={listingEditData.token}
           />
@@ -75,24 +75,24 @@ function ListingDataConfirmationModal({
             label="Rate"
             previous={listing?.price}
             current={listingEditData.price}
-            prevUnit={listing?.fiatCurrency}
-            currentUnit={listingEditData.fiatCurrency}
+            prevUnit={listing?.currency}
+            currentUnit={listingEditData.currency}
             formatAsPrice
           />
           <DataComparisonRow
             label="Min Per Order"
-            previous={listing?.minPerOrder}
-            current={listingEditData.minPerOrder}
-            prevUnit={listing?.fiatCurrency}
-            currentUnit={listingEditData.fiatCurrency}
+            previous={listing?.minPricePerOrder}
+            current={listingEditData.minPricePerOrder}
+            prevUnit={listing?.currency}
+            currentUnit={listingEditData.currency}
             formatAsPrice
           />
           <DataComparisonRow
             label="Max Per Order"
-            previous={listing?.maxPerOrder}
-            current={listingEditData.maxPerOrder}
-            prevUnit={listing?.fiatCurrency}
-            currentUnit={listingEditData.fiatCurrency}
+            previous={listing?.maxPricePerOrder}
+            current={listingEditData.maxPricePerOrder}
+            prevUnit={listing?.currency}
+            currentUnit={listingEditData.currency}
             formatAsPrice
           />
         </div>

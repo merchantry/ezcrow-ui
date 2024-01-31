@@ -13,7 +13,7 @@ function MyOrders() {
           interact with the user you&apos;re trading with.
         </p>
       </header>
-      <FiltersBar />
+      <FiltersBar hideSortBy />
       <Outlet />
     </main>
   );

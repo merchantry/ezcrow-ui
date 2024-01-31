@@ -7,7 +7,7 @@ import MyListings from 'pages/MyListings';
 import MyOrders from 'pages/MyOrders';
 import AllListingsTable from 'components/AllListingsTable';
 import MyListingsTable from 'components/MyListingsTable';
-import { ListingAction, OrderAction } from 'utils/enums';
+import { ListingAction } from 'utils/enums';
 import MyOrdersTable from 'components/MyOrdersTable';
 import Page from 'layouts/Page';
 import OrdersInDispute from 'pages/OrdersInDispute';
@@ -51,8 +51,8 @@ function Routes() {
             }
           >
             <Route path="all" element={<MyOrdersTable />} />
-            <Route path="buy" element={<MyOrdersTable filter={OrderAction.Buy} />} />
-            <Route path="sell" element={<MyOrdersTable filter={OrderAction.Sell} />} />
+            <Route path="buy" element={<MyOrdersTable filter={ListingAction.Buy} />} />
+            <Route path="sell" element={<MyOrdersTable filter={ListingAction.Sell} />} />
           </Route>
           <Route
             path="/orders-in-dispute"
@@ -63,8 +63,8 @@ function Routes() {
             }
           >
             <Route path="all" element={<OrdersInDisputeTable />} />
-            <Route path="buy" element={<OrdersInDisputeTable filter={OrderAction.Buy} />} />
-            <Route path="sell" element={<OrdersInDisputeTable filter={OrderAction.Sell} />} />
+            <Route path="buy" element={<OrdersInDisputeTable filter={ListingAction.Buy} />} />
+            <Route path="sell" element={<OrdersInDisputeTable filter={ListingAction.Sell} />} />
           </Route>
         </Route>
       </RoutesList>

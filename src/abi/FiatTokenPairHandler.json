@@ -1,0 +1,199 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "fiatTokenPairDeployer",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "listingsKeyStorageDeployer",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "listingsHandlerDeployer",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "ordersKeyStorageDeployer",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "ordersHandlerDeployer",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "currencySettings",
+        "type": "address"
+      }
+    ],
+    "name": "FiatTokenPairAlreadyExists",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "tokenSymbol",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "currencySymbol",
+        "type": "string"
+      }
+    ],
+    "name": "FiatTokenPairDoesNotExist",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "OwnableUnauthorizedAccount",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "currencySettings",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "initialListingId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "initialOrderId",
+        "type": "uint256"
+      }
+    ],
+    "name": "createFiatTokenPair",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "tokenSymbol",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "currencySymbol",
+        "type": "string"
+      }
+    ],
+    "name": "getFiatTokenPairAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "tokenSymbol",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "currencySymbol",
+        "type": "string"
+      }
+    ],
+    "name": "getListingsHandler",
+    "outputs": [
+      {
+        "internalType": "contract IListingsHandler",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "tokenSymbol",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "currencySymbol",
+        "type": "string"
+      }
+    ],
+    "name": "getOrdersHandler",
+    "outputs": [
+      {
+        "internalType": "contract IOrdersHandler",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

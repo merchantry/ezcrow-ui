@@ -30,6 +30,14 @@ export const roundTo = (value: number, decimals: number) => {
   return Math.round(value * factor) / factor;
 };
 
+export const divideByTenExp = (value: number, decimals: number) => {
+  const factor = 10 ** decimals;
+  return value / factor;
+};
+
+export const convertDecimals = (value: string, decimalsFrom: number, decimalsTo: number) =>
+  roundTo(divideByTenExp(Number(value), decimalsFrom), decimalsTo);
+
 export const fiatToToken = (fiatAmount: number, listing: Listing) =>
   Math.floor(fiatAmount / listing.price);
 
@@ -56,3 +64,5 @@ export const maybePluralize = (value: number, singular: string, plural?: string)
   value === 1 ? singular : plural ?? `${singular}s`;
 
 export const run = <T>(fn: () => T) => fn();
+
+export const shortenAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;

@@ -1,0 +1,11 @@
+{
+  "EzcrowRamp": {
+    "telostest": "0x26E05e95B5933cC116047278F3bfc82a35017a7C"
+  },
+  "FiatTokenPairHandler": {
+    "telostest": "0x4cA928B27ea647199DaC41573A2B755D78A315A1"
+  },
+  "EzcrowRampQuery": {
+    "telostest": "0x8E70595711C38990a3c83440FBEDbcc3Dc1624F9"
+  }
+}

@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { isFilterOption } from './helpers';
-import { CURRENCY_OPTIONS, SORT_BY_OPTIONS, TOKEN_OPTIONS } from './config';
-import { Listing, SortByOption } from './types';
-import { ListingAction, SortOrder } from './enums';
-import { getAllListings } from 'web3/requests/listings';
-import dummyListings from './dummyListings';
+import { SORT_BY_OPTIONS } from './config';
+import { SortByOption } from './types';
+import { SortOrder } from './enums';
 
 export const useWindowEvent = (
   eventName: string,
@@ -50,13 +48,11 @@ export const useFilterRedirects = () => {
 
 export const useTableSearchParams = () => {
   const [searchParams] = useSearchParams();
+  // const { tokenDecimals, currencyDecimals } = useDropdownData();
 
-  const currency = useMemo(
-    () => searchParams.get('currency') ?? CURRENCY_OPTIONS[0],
-    [searchParams],
-  );
+  const currency = useMemo(() => searchParams.get('currency') ?? 'USD', [searchParams]);
 
-  const token = useMemo(() => searchParams.get('token') ?? TOKEN_OPTIONS[0], [searchParams]);
+  const token = useMemo(() => searchParams.get('token') ?? 'TEST', [searchParams]);
 
   const sortBy = useMemo(
     () => (searchParams.get('sortBy') ?? Object.keys(SORT_BY_OPTIONS)[0]) as SortByOption,
@@ -71,50 +67,4 @@ export const useTableSearchParams = () => {
   const page = useMemo(() => Number(searchParams.get('page')) || 1, [searchParams]);
 
   return { currency, token, sortBy, sortOrder, page };
-};
-
-export const useFilteredListings = (filter: ListingAction | undefined) => {
-  const [listings, setListings] = useState<Listing[]>([]);
-  const [isFetching, setIsFetching] = useState(false);
-  const { currency, token, sortBy, sortOrder, page } = useTableSearchParams();
-
-  useEffect(() => {
-    setIsFetching(true);
-    getAllListings(filter ?? 'all', currency, token, sortBy, sortOrder, page).then(() => {
-      setIsFetching(false);
-      setListings(
-        dummyListings
-          .filter(
-            listing =>
-              listing.token === token &&
-              listing.fiatCurrency === currency &&
-              (filter ? listing.action === filter : true),
-          )
-          .sort((a, b) => {
-            const aValue = a[sortBy];
-            const bValue = b[sortBy];
-
-            if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-            if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-
-            return 0;
-          }),
-      );
-    });
-  }, [currency, filter, page, sortBy, sortOrder, token]);
-
-  return [listings, isFetching] as const;
-};
-
-export const useUserWallet = () => {
-  const userWallet = useMemo(
-    () => ({
-      address: '0x1234567890',
-      balance: 1000000,
-      token: 'USDT',
-    }),
-    [],
-  );
-
-  return userWallet;
 };

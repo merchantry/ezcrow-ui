@@ -22,17 +22,17 @@ export interface CreateOrderModalProps extends EditableModalProps<CreateOrderDat
 
 function CreateOrderModal({ onSubmit, listing, data, ...modalProps }: CreateOrderModalProps) {
   const minTokenOrderAmount = useMemo(
-    () => roundTo(listing.minPerOrder / listing.price, ROUND_TO_TOKEN),
-    [listing.minPerOrder, listing.price],
+    () => roundTo(listing.minPricePerOrder / listing.price, ROUND_TO_TOKEN),
+    [listing.minPricePerOrder, listing.price],
   );
 
   const maxTokenOrderAmount = useMemo(
-    () => roundTo(listing.maxPerOrder / listing.price, ROUND_TO_TOKEN),
-    [listing.maxPerOrder, listing.price],
+    () => roundTo(listing.maxPricePerOrder / listing.price, ROUND_TO_TOKEN),
+    [listing.maxPricePerOrder, listing.price],
   );
 
   const [orderAmount, setOrderAmount] = useState<number>(
-    data?.orderAmount ?? Math.min(maxTokenOrderAmount, listing.availableAmount),
+    data?.orderAmount ?? Math.min(maxTokenOrderAmount, listing.availableTokenAmount),
   );
   const [orderAmountError, setOrderAmountError] = useState<string | undefined>(undefined);
 
@@ -45,10 +45,7 @@ function CreateOrderModal({ onSubmit, listing, data, ...modalProps }: CreateOrde
     }
   }, [listing.action]);
 
-  const currencySymbol = useMemo(
-    () => currencyToSymbol(listing.fiatCurrency),
-    [listing.fiatCurrency],
-  );
+  const currencySymbol = useMemo(() => currencyToSymbol(listing.currency), [listing.currency]);
 
   const { orderAmountHelperText, orderCostHelperText } = useMemo(() => {
     const action = decapitalize(opposite(listing.action, [ListingAction.Sell, ListingAction.Buy]));
@@ -59,12 +56,12 @@ function CreateOrderModal({ onSubmit, listing, data, ...modalProps }: CreateOrde
       // eslint-disable-next-line max-len
       orderCostHelperText: `The total cost of your order. Rate ${priceFormat(
         listing.price,
-        listing.fiatCurrency,
+        listing.currency,
       )} * Order Amount`,
     };
   }, [
     listing.action,
-    listing.fiatCurrency,
+    listing.currency,
     listing.price,
     listing.token,
     maxTokenOrderAmount,

@@ -40,22 +40,22 @@ function ListingEditModal({
   ...modalProps
 }: ListingEditModalProps) {
   const [token, setToken] = useState<string>(data?.token ?? listing?.token ?? tokenParam);
-  const [totalAmount, setTotalAmount] = useState<number>(
-    data?.totalAmount ?? listing?.totalAmount ?? 10,
+  const [totalTokenAmount, setTotalTokenAmount] = useState<number>(
+    data?.totalTokenAmount ?? listing?.totalTokenAmount ?? 10,
   );
   const [price, setPrice] = useState<number>(data?.price ?? listing?.price ?? 1);
-  const [minPerOrder, setMinPerOrder] = useState<number>(
-    data?.minPerOrder ?? listing?.minPerOrder ?? 10,
+  const [minPricePerOrder, setMinPricePerOrder] = useState<number>(
+    data?.minPricePerOrder ?? listing?.minPricePerOrder ?? 10,
   );
-  const [maxPerOrder, setMaxPerOrder] = useState<number>(
-    data?.maxPerOrder ?? listing?.maxPerOrder ?? 10,
+  const [maxPricePerOrder, setMaxPricePerOrder] = useState<number>(
+    data?.maxPricePerOrder ?? listing?.maxPricePerOrder ?? 10,
   );
-  const [fiatCurrency, setFiatCurrency] = useState<string>(
-    data?.fiatCurrency ?? listing?.fiatCurrency ?? currencyParam,
+  const [currency, setCurrency] = useState<string>(
+    data?.currency ?? listing?.currency ?? currencyParam,
   );
 
-  const [minPerOrderError, setMinPerOrderError] = useState<string | undefined>(undefined);
-  const [maxPerOrderError, setMaxPerOrderError] = useState<string | undefined>(undefined);
+  const [minPricePerOrderError, setMinPricePerOrderError] = useState<string | undefined>(undefined);
+  const [maxPricePerOrderError, setMaxPricePerOrderError] = useState<string | undefined>(undefined);
 
   const listingTitle = useMemo(() => {
     switch (modalAction) {
@@ -71,29 +71,36 @@ function ListingEditModal({
       return undefined;
     }
 
-    return `You will need to deposit ${totalAmount} ${token} ${maybePluralize(
-      totalAmount,
+    return `You will need to deposit ${totalTokenAmount} ${token} ${maybePluralize(
+      totalTokenAmount,
       'token',
     )}`;
-  }, [action, totalAmount, token]);
+  }, [action, totalTokenAmount, token]);
 
-  const fiatCurrencySymbol = useMemo(() => currencyToSymbol(fiatCurrency), [fiatCurrency]);
+  const currencySymbol = useMemo(() => currencyToSymbol(currency), [currency]);
 
   const maxPotentialOrderAmount = useMemo(() => {
-    if (!price || !totalAmount) return 0;
+    if (!price || !totalTokenAmount) return 0;
 
-    return roundTo(price * totalAmount, ROUND_TO_FIAT);
-  }, [price, totalAmount]);
+    return roundTo(price * totalTokenAmount, ROUND_TO_FIAT);
+  }, [price, totalTokenAmount]);
 
   const isReadyToSubmit = useMemo(
     () =>
-      !!totalAmount &&
+      !!totalTokenAmount &&
       !!price &&
-      !!minPerOrder &&
-      !!maxPerOrder &&
-      !minPerOrderError &&
-      !maxPerOrderError,
-    [totalAmount, price, minPerOrder, maxPerOrder, minPerOrderError, maxPerOrderError],
+      !!minPricePerOrder &&
+      !!maxPricePerOrder &&
+      !minPricePerOrderError &&
+      !maxPricePerOrderError,
+    [
+      totalTokenAmount,
+      price,
+      minPricePerOrder,
+      maxPricePerOrder,
+      minPricePerOrderError,
+      maxPricePerOrderError,
+    ],
   );
 
   const {
@@ -102,8 +109,8 @@ function ListingEditModal({
     priceHelperText,
     amountHelperText,
     maxPotentialOrderAmountHelperText,
-    minPerOrderHelperText,
-    maxPerOrderHelperText,
+    minPricePerOrderHelperText,
+    maxPricePerOrderHelperText,
   } = useMemo(() => {
     switch (action) {
       case ListingAction.Sell:
@@ -113,9 +120,9 @@ function ListingEditModal({
           priceHelperText: `The price you want to sell the token for`,
           amountHelperText: `The amount of ${token} you want to sell`,
           // eslint-disable-next-line max-len
-          maxPotentialOrderAmountHelperText: `The maximum amount of ${fiatCurrency} you can earn on this listing (Rate * Amount)`,
-          minPerOrderHelperText: `The minimum amount of ${fiatCurrency} a user can spend per order`,
-          maxPerOrderHelperText: `The maximum amount of ${fiatCurrency} a user can spend per order`,
+          maxPotentialOrderAmountHelperText: `The maximum amount of ${currency} you can earn on this listing (Rate * Amount)`,
+          minPricePerOrderHelperText: `The minimum amount of ${currency} a user can spend per order`,
+          maxPricePerOrderHelperText: `The maximum amount of ${currency} a user can spend per order`,
         };
       case ListingAction.Buy:
         return {
@@ -124,18 +131,18 @@ function ListingEditModal({
           priceHelperText: `The price you want to buy the token for`,
           amountHelperText: `The amount of ${token} you want to buy`,
           // eslint-disable-next-line max-len
-          maxPotentialOrderAmountHelperText: `The maximum amount of ${fiatCurrency} you can spend on this listing (Rate * Amount)`,
-          minPerOrderHelperText: `The minimum amount of ${fiatCurrency} you want to spend per order`,
-          maxPerOrderHelperText: `The maximum amount of ${fiatCurrency} you want to spend per order`,
+          maxPotentialOrderAmountHelperText: `The maximum amount of ${currency} you can spend on this listing (Rate * Amount)`,
+          minPricePerOrderHelperText: `The minimum amount of ${currency} you want to spend per order`,
+          maxPricePerOrderHelperText: `The maximum amount of ${currency} you want to spend per order`,
         };
     }
-  }, [action, fiatCurrency, token]);
+  }, [action, currency, token]);
 
   const FiatInputWithCurrency = useCallback(
     (props: Omit<ModifiedNumberInputProps, 'endAdornment'>) => (
-      <FiatInput endAdornment={fiatCurrencySymbol} {...props} />
+      <FiatInput endAdornment={currencySymbol} {...props} />
     ),
-    [fiatCurrencySymbol],
+    [currencySymbol],
   );
 
   const TokenInputWithCurrency = useCallback(
@@ -146,36 +153,36 @@ function ListingEditModal({
   );
 
   useEffect(() => {
-    setMinPerOrderError(undefined);
-    setMaxPerOrderError(undefined);
+    setMinPricePerOrderError(undefined);
+    setMaxPricePerOrderError(undefined);
 
-    if (minPerOrder > maxPerOrder) {
-      setMinPerOrderError('Min per order cannot be greater than max per order');
-      setMaxPerOrderError('Max per order cannot be less than min per order');
-    } else if (maxPerOrder > maxPotentialOrderAmount) {
-      setMaxPerOrderError(`Max per order cannot be greater than max potential order amount`);
+    if (minPricePerOrder > maxPricePerOrder) {
+      setMinPricePerOrderError('Min per order cannot be greater than max per order');
+      setMaxPricePerOrderError('Max per order cannot be less than min per order');
+    } else if (maxPricePerOrder > maxPotentialOrderAmount) {
+      setMaxPricePerOrderError(`Max per order cannot be greater than max potential order amount`);
     }
-  }, [minPerOrder, maxPerOrder, maxPotentialOrderAmount]);
+  }, [minPricePerOrder, maxPricePerOrder, maxPotentialOrderAmount]);
 
-  const setMaxPerOrderToMaxPotentialOrderAmount = useCallback(() => {
-    setMaxPerOrder(maxPotentialOrderAmount);
+  const setMaxPricePerOrderToMaxPotentialOrderAmount = useCallback(() => {
+    setMaxPricePerOrder(maxPotentialOrderAmount);
   }, [maxPotentialOrderAmount]);
 
   const setBothLimitsToMaxPotentialOrderAmount = useCallback(() => {
-    setMinPerOrder(maxPotentialOrderAmount);
-    setMaxPerOrder(maxPotentialOrderAmount);
+    setMinPricePerOrder(maxPotentialOrderAmount);
+    setMaxPricePerOrder(maxPotentialOrderAmount);
   }, [maxPotentialOrderAmount]);
 
   const handleOnSubmit = () => {
     if (!isReadyToSubmit) return;
 
     const editedData: ListingEditData = {
-      totalAmount,
+      totalTokenAmount,
       token,
-      fiatCurrency,
+      currency,
       price,
-      minPerOrder,
-      maxPerOrder,
+      minPricePerOrder,
+      maxPricePerOrder,
       action,
     };
 
@@ -204,8 +211,8 @@ function ListingEditModal({
           />
           <BaseSelect
             label="Currency"
-            value={fiatCurrency}
-            onChange={setFiatCurrency}
+            value={currency}
+            onChange={setCurrency}
             options={currencies}
             helperText={currencyHelperText}
           />
@@ -218,8 +225,8 @@ function ListingEditModal({
         />
         <TokenInputWithCurrency
           label="Amount"
-          value={totalAmount}
-          onChange={setTotalAmount}
+          value={totalTokenAmount}
+          onChange={setTotalTokenAmount}
           helperText={amountHelperText}
         />
         <div className={styles.maxAmountContainer}>
@@ -227,12 +234,12 @@ function ListingEditModal({
             label="Max Potential Order Amount"
             value={maxPotentialOrderAmount}
             helperText={maxPotentialOrderAmountHelperText}
-            endAdornment={fiatCurrencySymbol}
+            endAdornment={currencySymbol}
           />
           <div className={styles.buttonsContainer}>
             <IconButtonWithTooltip
               tooltip="Set Max"
-              onClick={setMaxPerOrderToMaxPotentialOrderAmount}
+              onClick={setMaxPricePerOrderToMaxPotentialOrderAmount}
             >
               <FaLessThanEqual />
             </IconButtonWithTooltip>
@@ -247,17 +254,17 @@ function ListingEditModal({
         <div className={styles.flexContainer}>
           <FiatInputWithCurrency
             label="Min Per Order"
-            value={minPerOrder}
-            onChange={setMinPerOrder}
-            helperText={minPerOrderHelperText}
-            error={minPerOrderError}
+            value={minPricePerOrder}
+            onChange={setMinPricePerOrder}
+            helperText={minPricePerOrderHelperText}
+            error={minPricePerOrderError}
           />
           <FiatInputWithCurrency
             label="Max Per Order"
-            value={maxPerOrder}
-            onChange={setMaxPerOrder}
-            helperText={maxPerOrderHelperText}
-            error={maxPerOrderError}
+            value={maxPricePerOrder}
+            onChange={setMaxPricePerOrder}
+            helperText={maxPricePerOrderHelperText}
+            error={maxPricePerOrderError}
           />
         </div>
       </Modal.Body>
