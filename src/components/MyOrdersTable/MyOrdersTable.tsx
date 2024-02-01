@@ -124,6 +124,10 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
           render: ({ listingCreator }) => <UserAddressCellData userAddress={listingCreator} />,
         },
         {
+          label: 'Order Creator',
+          render: ({ creator }) => <UserAddressCellData userAddress={creator} />,
+        },
+        {
           label: '',
           colStyle: { width: 260 },
           render: order => (
