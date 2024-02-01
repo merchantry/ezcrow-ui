@@ -8,14 +8,24 @@ export const getThemeColor = (color: string | undefined, theme: Theme) => {
   return isUIColor ? theme.palette[color as ColorType].main : '';
 };
 
-export const buttonWithColor = (color: string | undefined, theme: Theme) => {
-  const backgroundColor = getThemeColor(color, theme);
+export const buttonWithColor = (_color: string | undefined, theme: Theme) => {
+  const color = getThemeColor(_color, theme);
+  const backgroundColor = getThemeColor('primary', theme);
 
   return {
-    [`&.${buttonClasses.root}:hover`]: {
+    [`&.${buttonClasses.root}`]: {
+      color,
       backgroundColor,
     },
+    [`&.${buttonClasses.root}:hover`]: {
+      color,
+      backgroundColor,
+    },
+    [`&.${buttonClasses.root} svg`]: {
+      fill: color,
+    },
     [`&.${buttonClasses.disabled}`]: {
+      color,
       backgroundColor,
       opacity: 0.5,
     },

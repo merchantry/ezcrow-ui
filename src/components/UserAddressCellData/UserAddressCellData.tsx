@@ -16,7 +16,7 @@ function UserAddressCellData({ userAddress }: UserAddressCellDataProps) {
     <span className={styles.address}>
       {shortenAddress(userAddress)}
       {userAddress === signer?.address && (
-        <Chip label="You" color="info" tooltip="You created this listing" tooltipPlacement="left" />
+        <Chip label="You" tooltip="You created this listing" tooltipPlacement="left" />
       )}
     </span>
   );

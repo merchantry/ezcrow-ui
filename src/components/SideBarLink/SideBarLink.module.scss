@@ -8,7 +8,6 @@ li.linkContainer {
 
     width: 100%;
     padding: 10px 40px;
-    // font-size: 20px;
 
     text-decoration: none;
     transition: background-color $quick-transition;
@@ -28,7 +27,7 @@ li.linkContainer {
 
     &.active,
     &:hover {
-      background-color: rgba(217, 217, 217, 0.22);
+      background-color: $primary-dark;
     }
 
     &.active:before {

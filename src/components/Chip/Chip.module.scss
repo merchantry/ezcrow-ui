@@ -1,5 +1,12 @@
 @import 'scss/mixins/variables';
 
+$chip-colors: (
+  success: $success,
+  error: $danger,
+  info: $info,
+  warning: $warning,
+);
+
 div.chip {
   height: 30px;
   padding: 0 5px;
@@ -8,12 +15,15 @@ div.chip {
     cursor: help;
   }
 
-  & > svg {
-    fill: $primary;
-  }
+  @each $type, $color in $chip-colors {
+    &.#{$type} {
+      & > svg {
+        fill: $color;
+      }
 
-  & > span {
-    color: $primary;
-    font-weight: 600;
+      & > span {
+        color: $color;
+      }
+    }
   }
 }

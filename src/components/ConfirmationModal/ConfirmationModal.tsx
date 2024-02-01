@@ -28,8 +28,8 @@ function ConfirmationModal({
   cancelIcon,
   confirmStartIcon,
   cancelStartIcon,
-  confirmColor = 'success',
-  cancelColor = 'error',
+  confirmColor,
+  cancelColor,
   noCancelBtn = false,
   ...modalProps
 }: ConfirmationModalProps) {

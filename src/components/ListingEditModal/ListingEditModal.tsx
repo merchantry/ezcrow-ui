@@ -273,7 +273,6 @@ function ListingEditModal({
           disabled={!isReadyToSubmit}
           tooltip={buttonTooltip}
           placement="top"
-          color="success"
           onClick={handleOnSubmit}
         >
           Save Changes

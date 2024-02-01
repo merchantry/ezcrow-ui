@@ -3,6 +3,7 @@ import { styled, Button, ButtonProps } from '@mui/material';
 
 import styles from './IconButton.module.scss';
 import { buttonWithColor } from 'mui/helpers';
+import theme from 'mui/theme';
 
 export interface IconButtonProps extends ButtonProps {
   children: React.ReactNode;
@@ -13,6 +14,6 @@ const IconButton = styled(({ children, className, ...rest }: IconButtonProps) =>
   <Button variant="contained" className={`${styles.iconButton} ${className}`} {...rest}>
     {children}
   </Button>
-))(({ color, theme }) => buttonWithColor(color, theme));
+))(({ color }) => buttonWithColor(color, theme));
 
 export default IconButton;

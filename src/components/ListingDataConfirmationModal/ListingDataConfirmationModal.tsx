@@ -98,10 +98,10 @@ function ListingDataConfirmationModal({
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <BaseButton startIcon={<FaChevronLeft />} color="error" onClick={back}>
+        <BaseButton startIcon={<FaChevronLeft />} onClick={back}>
           Back
         </BaseButton>
-        <BaseButton endIcon={<FaCheck />} color="success" onClick={confirm}>
+        <BaseButton endIcon={<FaCheck />} onClick={confirm}>
           Confirm
         </BaseButton>
       </Modal.Footer>

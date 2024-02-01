@@ -33,7 +33,6 @@ function OrdersInDisputeTable({ filter }: OrdersInDisputeTableProps) {
       title: `Cancel (Order ID: ${order.id})?`,
       text: 'Are you sure you want to cancel order in dispute',
       confirmText: 'Cancel Order',
-      confirmColor: 'error',
       noCancelBtn: true,
     }).then(confirmed => {
       if (!confirmed) return;
@@ -48,7 +47,6 @@ function OrdersInDisputeTable({ filter }: OrdersInDisputeTableProps) {
       title: `Complete (Order ID: ${order.id})?`,
       text: 'Are you sure you want to complete order in dispute',
       confirmText: 'Complete Order',
-      confirmColor: 'info',
       noCancelBtn: true,
     }).then(confirmed => {
       if (!confirmed) return;
@@ -93,12 +91,8 @@ function OrdersInDisputeTable({ filter }: OrdersInDisputeTableProps) {
           colStyle: { width: 260 },
           render: order => (
             <div className={tableStyles.actions}>
-              <BaseButton onClick={() => onCancelOrder(order)} color="error">
-                Cancel
-              </BaseButton>
-              <BaseButton onClick={() => onCompleteOrder(order)} color="info">
-                Complete
-              </BaseButton>
+              <BaseButton onClick={() => onCancelOrder(order)}>Cancel</BaseButton>
+              <BaseButton onClick={() => onCompleteOrder(order)}>Complete</BaseButton>
             </div>
           ),
         },

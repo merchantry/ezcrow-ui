@@ -58,12 +58,12 @@
 
     & > tbody {
       & > tr {
-        background: $primary;
+        background: #071825;
 
         transition: filter $quick-transition;
 
         &:nth-child(odd) {
-          background: $primary-dark;
+          background: $background-color;
         }
 
         &:hover {

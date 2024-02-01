@@ -18,8 +18,10 @@ function Chip({ label, color, tooltip, tooltipPlacement, icon, className }: Chip
     () => (
       <MuiChip
         icon={icon}
-        color={color}
-        className={`${styles.chip} ${className} ${tooltip ? styles.withTooltip : ''}`}
+        color="primary"
+        className={`${styles.chip} ${color ? styles[color] : ''} ${className} ${
+          tooltip ? styles.withTooltip : ''
+        }`}
         label={label}
       />
     ),
