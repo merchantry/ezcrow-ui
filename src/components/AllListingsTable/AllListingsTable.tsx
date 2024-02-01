@@ -20,6 +20,7 @@ import { useListings } from 'utils/dataHooks';
 import { createOrder } from 'web3/requests/ezcrowRamp';
 import { useTokenDecimalsStandard, useWeb3Signer } from 'components/ContextData/hooks';
 import { useNetwork } from 'utils/web3Hooks';
+import { ColorType } from 'mui/helpers';
 
 interface AllListingsTableProps {
   filter?: ListingAction;
@@ -35,7 +36,8 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
 
   const onListingActionClick = async (listing: Listing) => {
     if (!signer) return;
-    const userAction = opposite(listing.action, [ListingAction.Sell, ListingAction.Buy]);
+    const orderAction = opposite(listing.action, [ListingAction.Sell, ListingAction.Buy]);
+    const confirmColor: ColorType = orderAction === ListingAction.Sell ? 'error' : 'success';
     return modalLoop(
       CreateOrderModal,
       {
@@ -43,14 +45,15 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
       },
       ConfirmationModal,
       ({ orderAmount, orderCost }) => ({
-        title: `Create ${userAction} Order?`,
+        title: `Create ${orderAction} Order?`,
         text: `Are you sure you want to create a ${decapitalize(
-          userAction,
+          orderAction,
         )} order for ${orderAmount} ${listing.token}  (${priceFormat(
           orderCost,
           listing.currency,
         )})?`,
-        confirmText: 'Create Order',
+        confirmText: `${orderAction} ${listing.token}`,
+        confirmColor,
         cancelText: 'Back',
         cancelStartIcon: <FaChevronLeft />,
       }),

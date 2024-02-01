@@ -47,26 +47,42 @@ function CreateOrderModal({ onSubmit, listing, data, ...modalProps }: CreateOrde
 
   const currencySymbol = useMemo(() => currencyToSymbol(listing.currency), [listing.currency]);
 
-  const { orderAmountHelperText, orderCostHelperText } = useMemo(() => {
-    const action = decapitalize(opposite(listing.action, [ListingAction.Sell, ListingAction.Buy]));
+  const orderAction = useMemo(
+    () => opposite(listing.action, [ListingAction.Sell, ListingAction.Buy]),
+    [listing.action],
+  );
 
-    return {
-      // eslint-disable-next-line max-len
-      orderAmountHelperText: `The amount of tokens you would like to ${action}. Enter an amount between ${minTokenOrderAmount} and ${maxTokenOrderAmount} ${listing.token}`,
-      // eslint-disable-next-line max-len
+  const buttonTitle = useMemo(
+    () => `${orderAction} ${listing.token}`,
+    [listing.token, orderAction],
+  );
+
+  const buttonColor = useMemo(
+    () => (orderAction === ListingAction.Buy ? 'success' : 'error'),
+    [orderAction],
+  );
+
+  const { orderAmountHelperText, orderCostHelperText } = useMemo(
+    () => ({
+      orderAmountHelperText: `The amount of tokens you would like to ${decapitalize(
+        orderAction,
+      )}. Enter an amount between ${minTokenOrderAmount} and ${maxTokenOrderAmount} ${
+        listing.token
+      }`,
       orderCostHelperText: `The total cost of your order. Rate ${priceFormat(
         listing.price,
         listing.currency,
       )} * Order Amount`,
-    };
-  }, [
-    listing.action,
-    listing.currency,
-    listing.price,
-    listing.token,
-    maxTokenOrderAmount,
-    minTokenOrderAmount,
-  ]);
+    }),
+    [
+      orderAction,
+      listing.currency,
+      listing.price,
+      listing.token,
+      maxTokenOrderAmount,
+      minTokenOrderAmount,
+    ],
+  );
 
   const orderCost = useMemo(
     () => roundTo(orderAmount * listing.price, ROUND_TO_FIAT),
@@ -112,8 +128,8 @@ function CreateOrderModal({ onSubmit, listing, data, ...modalProps }: CreateOrde
       </Modal.Body>
 
       <Modal.Footer className={styles.footer}>
-        <BaseButton disabled={!!orderAmountError} color="success" onClick={handleOnSubmit}>
-          Create Order
+        <BaseButton disabled={!!orderAmountError} color={buttonColor} onClick={handleOnSubmit}>
+          {buttonTitle}
         </BaseButton>
       </Modal.Footer>
     </Modal>
