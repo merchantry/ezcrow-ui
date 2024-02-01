@@ -16,7 +16,7 @@ export async function getEthereumProvider() {
   return ethereum as typeof ethereum & EthereumProvider;
 }
 
-async function getChainId(ethereumProvider: EthereumProvider): Promise<string> {
+export async function getChainId(ethereumProvider: EthereumProvider): Promise<string> {
   return ethereumProvider.request({ method: 'eth_chainId' });
 }
 
