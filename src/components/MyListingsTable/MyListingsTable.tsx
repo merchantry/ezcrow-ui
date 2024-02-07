@@ -94,7 +94,6 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
       confirmText: 'Remove',
       confirmIcon: <FaTrash />,
       confirmColor: 'error',
-      cancelColor: 'primary',
     }).then(confirmed => {
       if (!confirmed) return;
 

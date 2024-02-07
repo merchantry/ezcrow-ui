@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from 'mui/theme';
 import ContextData from 'components/ContextData';
 import AlertContainer from 'components/AlertContainer';
+import ApiLoadingScreen from 'components/ApiLoadingScreen';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <ContextData>
         <AlertContainer>
           <Routes />
+          <ApiLoadingScreen />
         </AlertContainer>
       </ContextData>
     </ThemeProvider>
