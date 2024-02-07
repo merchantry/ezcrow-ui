@@ -1,0 +1,13 @@
+@import 'scss/mixins/mixins';
+
+.container {
+  @include elementContainer;
+
+  display: flex;
+  align-items: center;
+
+  height: 40px;
+  padding: 2px 20px;
+
+  z-index: 1001
+}

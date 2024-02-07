@@ -53,10 +53,14 @@
       border: $border;
     }
 
-    & > .web3ButtonContainer {
+    & > .userData {
       position: absolute;
-      top: 50px;
+      top: 25px;
       right: 40px;
+
+      display: flex;
+      align-items: stretch;
+      gap: 20px;
     }
   }
 }

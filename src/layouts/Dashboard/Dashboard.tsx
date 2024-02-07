@@ -4,6 +4,7 @@ import { ReactComponent as EzcrowLogo } from 'assets/ezcrow_logo_h.svg';
 import { Link, Outlet } from 'react-router-dom';
 import SideBarLink from 'components/SideBarLink';
 import Web3Button from 'components/Web3Button';
+import UserTokenBalance from 'components/UserTokenBalance';
 
 function Dashboard() {
   return (
@@ -27,7 +28,8 @@ function Dashboard() {
         <div className={styles.mainContent}>
           <Outlet />
         </div>
-        <div className={styles.web3ButtonContainer}>
+        <div className={styles.userData}>
+          <UserTokenBalance />
           <Web3Button />
         </div>
       </div>

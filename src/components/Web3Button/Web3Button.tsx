@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import BaseButton from 'components/BaseButton';
-
+import styles from './Web3Button.module.scss';
 import { useChain } from 'utils/web3Hooks';
 import {
   connectUserWallet,
@@ -15,6 +14,7 @@ import { useWeb3Data } from 'components/ContextData/hooks';
 import { useAlert } from 'components/AlertContainer/AlertContainer';
 import { shortenAddress } from 'utils/helpers';
 import { useWeb3Event } from 'utils/ethereumProviderHooks';
+import ButtonWithTooltip from 'components/ButtonWithTooltip';
 
 function Web3Button() {
   const chain = useChain();
@@ -23,13 +23,21 @@ function Web3Button() {
 
   const [isFetching, setIsFetching] = useState(false);
   const [isChainSupported, setIsChainSupported] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
 
   const buttonText = useMemo(() => {
     if (!isChainSupported) return 'Unsupported Network';
     if (isFetching) return 'Connecting...';
-    if (signer) return shortenAddress(signer.address);
-    return 'Connect Wallet';
-  }, [isChainSupported, isFetching, signer]);
+    if (!signer) return 'Connect Wallet';
+    if (isHovered) return 'Disconnect Wallet';
+    return shortenAddress(signer.address);
+  }, [isChainSupported, isFetching, isHovered, signer]);
+
+  const buttonColor = useMemo(() => {
+    if (isHovered && signer) return 'error';
+    if (!isChainSupported) return 'error';
+    return undefined;
+  }, [isChainSupported, isHovered, signer]);
 
   const connectWallet = async () => {
     if (isFetching) return;
@@ -66,6 +74,20 @@ function Web3Button() {
     setIsFetching(false);
   };
 
+  const disconnectWallet = () => {
+    setSigner(undefined);
+  };
+
+  const onPointerMove = () => {
+    setIsHovered(true);
+  };
+
+  const onPointerLeave = () => {
+    setIsHovered(false);
+  };
+
+  const onClick = !signer || !isChainSupported ? connectWallet : disconnectWallet;
+
   useEffect(() => {
     updateWallet();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,13 +103,20 @@ function Web3Button() {
     const chainId = await getChainId(ethereum);
 
     setIsChainSupported(chainId === chain.chainId);
-    updateWallet();
   });
 
   return (
-    <BaseButton onClick={connectWallet} disabled={isFetching}>
+    <ButtonWithTooltip
+      className={styles.button}
+      color={buttonColor}
+      onPointerMove={onPointerMove}
+      onPointerLeave={onPointerLeave}
+      onClick={onClick}
+      tooltip={signer?.address}
+      disabled={isFetching}
+    >
       {buttonText}
-    </BaseButton>
+    </ButtonWithTooltip>
   );
 }
 

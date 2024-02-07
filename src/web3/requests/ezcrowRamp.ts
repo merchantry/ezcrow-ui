@@ -108,26 +108,6 @@ export async function createOrder(
   await runTransaction(() => ezcrowRampContract.createOrder(token, currency, listingId, amount));
 }
 
-async function acceptOrderSignature(
-  token: string,
-  currency: string,
-  orderId: BigNumberish,
-  network: string,
-  signer: ethers.JsonRpcSigner,
-) {
-  const ezcrowRampContract = getEzcrowRampContract(network, signer);
-  const nonce = await ezcrowRampContract.nonces(signer.address);
-
-  return signData(signer, ezcrowRampContract, {
-    owner: signer.address,
-    tokenSymbol: token,
-    currencySymbol: currency,
-    orderId,
-    accept: true,
-    nonce,
-  });
-}
-
 export async function signAndAcceptOrder(
   token: string,
   currency: string,
@@ -135,38 +115,29 @@ export async function signAndAcceptOrder(
   network: string,
   signer: ethers.JsonRpcSigner,
 ) {
-  const { v, r, s } = await acceptOrderSignature(token, currency, orderId, network, signer);
-
-  return acceptOrder({
-    owner: signer.address,
-    tokenSymbol: token,
-    currencySymbol: currency,
-    orderId: orderId.toString(),
-    v: v.toString(),
-    r,
-    s,
-    network,
-  });
-}
-
-async function rejectOrderSignature(
-  token: string,
-  currency: string,
-  orderId: BigNumberish,
-  network: string,
-  signer: ethers.JsonRpcSigner,
-) {
   const ezcrowRampContract = getEzcrowRampContract(network, signer);
   const nonce = await ezcrowRampContract.nonces(signer.address);
-
-  return signData(signer, ezcrowRampContract, {
+  const { v, r, s } = await signData(signer, ezcrowRampContract, {
     owner: signer.address,
     tokenSymbol: token,
     currencySymbol: currency,
     orderId,
-    accept: false,
+    accept: true,
     nonce,
   });
+
+  return runTransaction(() =>
+    acceptOrder({
+      owner: signer.address,
+      tokenSymbol: token,
+      currencySymbol: currency,
+      orderId: orderId.toString(),
+      v: v.toString(),
+      r,
+      s,
+      network,
+    }),
+  );
 }
 
 export async function signAndRejectOrder(
@@ -176,18 +147,29 @@ export async function signAndRejectOrder(
   network: string,
   signer: ethers.JsonRpcSigner,
 ) {
-  const { v, r, s } = await rejectOrderSignature(token, currency, orderId, network, signer);
-
-  return rejectOrder({
+  const ezcrowRampContract = getEzcrowRampContract(network, signer);
+  const nonce = await ezcrowRampContract.nonces(signer.address);
+  const { v, r, s } = await signData(signer, ezcrowRampContract, {
     owner: signer.address,
     tokenSymbol: token,
     currencySymbol: currency,
-    orderId: orderId.toString(),
-    v: v.toString(),
-    r,
-    s,
-    network,
+    orderId,
+    accept: false,
+    nonce,
   });
+
+  return runTransaction(() =>
+    rejectOrder({
+      owner: signer.address,
+      tokenSymbol: token,
+      currencySymbol: currency,
+      orderId: orderId.toString(),
+      v: v.toString(),
+      r,
+      s,
+      network,
+    }),
+  );
 }
 
 export async function acceptDispute(
