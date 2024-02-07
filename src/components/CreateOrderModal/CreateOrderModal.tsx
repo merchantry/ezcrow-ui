@@ -4,7 +4,7 @@ import styles from './CreateOrderModal.module.scss';
 import { EditableModalProps } from 'utils/interfaces';
 import Modal from 'components/Modal';
 import { Listing } from 'utils/types';
-import { ListingAction } from 'utils/enums';
+import { ListingAction, Round } from 'utils/enums';
 import { currencyToSymbol, decapitalize, opposite, priceFormat, roundTo } from 'utils/helpers';
 import BaseButton from 'components/BaseButton';
 import { ROUND_TO_FIAT, ROUND_TO_TOKEN } from 'utils/config';
@@ -22,13 +22,21 @@ export interface CreateOrderModalProps extends EditableModalProps<CreateOrderDat
 
 function CreateOrderModal({ onSubmit, listing, data, ...modalProps }: CreateOrderModalProps) {
   const minTokenOrderAmount = useMemo(
-    () => roundTo(listing.minPricePerOrder / listing.price, ROUND_TO_TOKEN),
-    [listing.minPricePerOrder, listing.price],
+    () =>
+      Math.min(
+        listing.availableTokenAmount,
+        roundTo(listing.minPricePerOrder / listing.price, ROUND_TO_TOKEN, Round.Up),
+      ),
+    [listing.availableTokenAmount, listing.minPricePerOrder, listing.price],
   );
 
   const maxTokenOrderAmount = useMemo(
-    () => roundTo(listing.maxPricePerOrder / listing.price, ROUND_TO_TOKEN),
-    [listing.maxPricePerOrder, listing.price],
+    () =>
+      Math.min(
+        listing.availableTokenAmount,
+        roundTo(listing.maxPricePerOrder / listing.price, ROUND_TO_TOKEN, Round.Down),
+      ),
+    [listing.availableTokenAmount, listing.maxPricePerOrder, listing.price],
   );
 
   const [orderAmount, setOrderAmount] = useState<number>(

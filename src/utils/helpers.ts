@@ -1,4 +1,5 @@
 import { FILTER_OPTIONS } from './config';
+import { Round } from './enums';
 import { FilterOption, Listing } from './types';
 
 export const isFilterOption = (value: string) => FILTER_OPTIONS.includes(value as FilterOption);
@@ -18,25 +19,38 @@ export const mergeSearchParams = (
 
 export const decapitalize = (value: string) => value.charAt(0).toLowerCase() + value.slice(1);
 
-export const priceFormat = (amount: number, currency: string) =>
+export const priceFormat = (amount: number, currency?: string, decimals = 2) =>
   new Intl.NumberFormat('de-DE', {
-    style: 'currency',
+    style: currency ? 'currency' : 'decimal',
     currency,
-    maximumFractionDigits: 3,
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
   }).format(amount);
 
-export const roundTo = (value: number, decimals: number) => {
-  const factor = 10 ** decimals;
-  return Math.round(value * factor) / factor;
+const roundFunctions = {
+  [Round.Up]: Math.ceil,
+  [Round.Down]: Math.floor,
+  [Round.Nearest]: Math.round,
 };
 
-export const divideByTenExp = (value: number, decimals: number) => {
+export const roundTo = (value: number, decimals: number, mode = Round.Nearest) => {
   const factor = 10 ** decimals;
-  return value / factor;
+  const roundFn = roundFunctions[mode];
+
+  return roundFn(value * factor) / factor;
+};
+
+export const multiplyByTenPow = (n: number, exp: number) => {
+  const absExp = Math.abs(exp);
+  if (exp < 0) {
+    return n / 10 ** absExp;
+  }
+
+  return n * 10 ** absExp;
 };
 
 export const convertDecimals = (value: string, decimalsFrom: number, decimalsTo: number) =>
-  roundTo(divideByTenExp(Number(value), decimalsFrom), decimalsTo);
+  roundTo(multiplyByTenPow(Number(value), -decimalsFrom), decimalsTo);
 
 export const fiatToToken = (fiatAmount: number, listing: Listing) =>
   Math.floor(fiatAmount / listing.price);

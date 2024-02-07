@@ -3,6 +3,9 @@ import { TokenAndCurrenciesDataContext } from './TokenAndCurrenciesData';
 import { currencyToSymbol } from 'utils/helpers';
 import { Web3DataContext } from './Web3Data';
 import { useTableSearchParams } from 'utils/hooks';
+import { multiplyByTenPow } from 'utils/helpers';
+import { multiplyByTenPow as bigIntMultiplyByTenPow } from 'utils/bigint';
+import { ROUND_TO_FIAT, ROUND_TO_TOKEN } from 'utils/config';
 
 export const useDropdownData = () => {
   const context = useContext(TokenAndCurrenciesDataContext);
@@ -56,12 +59,20 @@ export const useCurrencyDecimalsStandard = () => {
   const { currencyDecimals } = useDropdownData();
   const { currency } = useTableSearchParams();
 
-  return (value: number) => BigInt(value * 10 ** currencyDecimals[currency]);
+  return (value: number) =>
+    bigIntMultiplyByTenPow(
+      BigInt(multiplyByTenPow(value, ROUND_TO_FIAT)),
+      BigInt(currencyDecimals[currency] - ROUND_TO_FIAT),
+    );
 };
 
 export const useTokenDecimalsStandard = () => {
   const { tokenDecimals } = useDropdownData();
   const { token } = useTableSearchParams();
 
-  return (value: number) => BigInt(value * 10 ** tokenDecimals[token]);
+  return (value: number) =>
+    bigIntMultiplyByTenPow(
+      BigInt(multiplyByTenPow(value, ROUND_TO_TOKEN)),
+      BigInt(tokenDecimals[token] - ROUND_TO_TOKEN),
+    );
 };

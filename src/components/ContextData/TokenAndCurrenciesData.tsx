@@ -3,6 +3,7 @@ import { getTokenAndCurrenciesData } from 'requests/meta';
 import { run } from 'utils/helpers';
 import { ContextData } from './types';
 import { useNetwork } from 'utils/web3Hooks';
+import LoadingScreen from 'components/LoadingScreen';
 
 interface TokenAndCurrenciesDataProps {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ function TokenAndCurrenciesData({ children }: TokenAndCurrenciesDataProps) {
 
   const [tokenDecimals, setTokenDecimals] = useState<DecimalsData>({});
   const [currencyDecimals, setCurrencyDecimals] = useState<DecimalsData>({});
+  const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
     run(async () => {
@@ -27,12 +29,13 @@ function TokenAndCurrenciesData({ children }: TokenAndCurrenciesDataProps) {
 
       setTokenDecimals(tokenDecimals);
       setCurrencyDecimals(currencyDecimals);
+      setIsFetching(false);
     });
   }, [network]);
 
   return (
     <TokenAndCurrenciesDataContext.Provider value={{ tokenDecimals, currencyDecimals }}>
-      {children}
+      {isFetching ? <LoadingScreen /> : children}
     </TokenAndCurrenciesDataContext.Provider>
   );
 }

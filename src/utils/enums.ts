@@ -36,3 +36,9 @@ export enum ListingModalAction {
   CreateNew = 'createNew',
   Edit = 'edit',
 }
+
+export enum Round {
+  Up = 'up',
+  Down = 'down',
+  Nearest = 'nearest',
+}

@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { isFilterOption } from './helpers';
-import { SORT_BY_OPTIONS } from './config';
-import { SortByOption } from './types';
+import { LISTINGS_SORT_BY_OPTIONS } from './config';
 import { SortOrder } from './enums';
+import { useDropdownData } from 'components/ContextData/hooks';
 
 export const useWindowEvent = (
   eventName: string,
@@ -48,15 +48,25 @@ export const useFilterRedirects = () => {
 
 export const useTableSearchParams = () => {
   const [searchParams] = useSearchParams();
-  // const { tokenDecimals, currencyDecimals } = useDropdownData();
+  const { tokenDecimals, currencyDecimals } = useDropdownData();
 
-  const currency = useMemo(() => searchParams.get('currency') ?? 'USD', [searchParams]);
+  const defaultToken = useMemo(() => Object.keys(tokenDecimals)[0], [tokenDecimals]);
+  const defaultCurrency = useMemo(() => Object.keys(currencyDecimals)[0], [currencyDecimals]);
+  const defaultSortBy = Object.keys(LISTINGS_SORT_BY_OPTIONS)[0];
 
-  const token = useMemo(() => searchParams.get('token') ?? 'TEST', [searchParams]);
+  const token = useMemo(
+    () => searchParams.get('token') ?? defaultToken,
+    [defaultToken, searchParams],
+  );
+
+  const currency = useMemo(
+    () => searchParams.get('currency') ?? defaultCurrency,
+    [defaultCurrency, searchParams],
+  );
 
   const sortBy = useMemo(
-    () => (searchParams.get('sortBy') ?? Object.keys(SORT_BY_OPTIONS)[0]) as SortByOption,
-    [searchParams],
+    () => searchParams.get('sortBy') ?? defaultSortBy,
+    [defaultSortBy, searchParams],
   );
 
   const sortOrder = useMemo(
