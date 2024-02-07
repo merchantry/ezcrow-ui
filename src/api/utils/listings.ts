@@ -1,7 +1,11 @@
-import { SortByOption } from 'utils/types';
+import { ListingsSortByOption } from 'utils/types';
 import { Listing } from 'web3/types';
 
-const serializeListing = (listing: Listing, token: string, currency: string) => ({
+const serializeListing = (
+  listing: Listing,
+  token: string,
+  currency: string,
+): Listing & { token: string; currency: string } => ({
   id: listing.id,
   token,
   currency,
@@ -30,7 +34,7 @@ export const formatListingsArray = (
     tokenSymbol: string;
     currencySymbol: string;
     listingActionFilter?: string;
-    sortBy: SortByOption;
+    sortBy: ListingsSortByOption;
     sortOrder: string;
     offset: string;
     count: string;

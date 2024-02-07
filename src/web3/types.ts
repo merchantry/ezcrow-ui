@@ -29,7 +29,11 @@ export type Listing = {
   maxPricePerOrder: bigint;
   creator: string;
   isDeleted: boolean;
+  canBeEdited?: boolean;
+  canBeRemoved?: boolean;
 };
+
+export type ListingStatus = { canBeEdited: boolean; canBeRemoved: boolean };
 
 export type FiatTokenPairHandlerMethods = {
   getFiatTokenPairAddress: StaticMethod<[string, string], string>;
@@ -39,6 +43,7 @@ export type EzcrowRampQueryMethods = {
   getOrder: StaticMethod<[string, string, BigNumberish], Order>;
   getOrders: StaticMethod<[string, string, BigNumberish], Order[]>;
   getUserOrders: StaticMethod<[string, string, string, BigNumberish], Order[]>;
+  getListingOrders: StaticMethod<[string, string, BigNumberish, BigNumberish], Order[]>;
   getListings: StaticMethod<[string, string, BigNumberish], Listing[]>;
   getUserListings: StaticMethod<[string, string, string, BigNumberish], Listing[]>;
 };
@@ -77,6 +82,7 @@ export type ERC20Methods = {
   symbol: StaticMethod<[], string>;
   decimals: StaticMethod<[], bigint>;
   approve: TransactionMethod<[string, BigNumberish]>;
+  balanceOf: StaticMethod<[string], bigint>;
 };
 
 export type CurrencySettingsMethods = {

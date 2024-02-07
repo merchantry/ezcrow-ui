@@ -2,14 +2,16 @@ import route from '../utils/route';
 import { formatListingsArray } from 'api/utils/listings';
 import { getEzcrowRampQueryContract } from 'web3/utils/contracts';
 import { getSigner } from 'api/utils/web3/provider';
-import { SortByOption } from 'utils/types';
+import { ListingsSortByOption } from 'utils/types';
+import { getCurrentStatus } from 'api/utils/orders';
+import { OrderStatus } from 'utils/enums';
 
 interface Params {
   tokenSymbol: string;
   currencySymbol: string;
   user: string;
   listingActionFilter: string;
-  sortBy: SortByOption;
+  sortBy: ListingsSortByOption;
   sortOrder: string;
   offset: string;
   count: string;
@@ -41,7 +43,9 @@ export const handler = route.get(
       maxListings,
     );
 
-    return formatListingsArray(listings, {
+    const orders = await ezcrowRampQuery.getUserOrders(tokenSymbol, currencySymbol, user, 2000);
+
+    const formattedListings = formatListingsArray(listings, {
       tokenSymbol,
       currencySymbol,
       listingActionFilter,
@@ -51,5 +55,24 @@ export const handler = route.get(
       count,
       showDeleted: showDeleted === 'true',
     });
+
+    for (const listing of formattedListings) {
+      const listingOrders = orders.filter(order => order.listingId === listing.id);
+
+      const canBeEdited = listingOrders.every(order => {
+        const currentStatus = Number(getCurrentStatus(order)) as OrderStatus;
+        return currentStatus === OrderStatus.Cancelled;
+      });
+
+      const canBeRemoved = listingOrders.every(order => {
+        const currentStatus = Number(getCurrentStatus(order)) as OrderStatus;
+        return currentStatus === OrderStatus.Cancelled || currentStatus === OrderStatus.Completed;
+      });
+
+      listing.canBeEdited = !listing.isDeleted && canBeEdited;
+      listing.canBeRemoved = !listing.isDeleted && canBeRemoved;
+    }
+
+    return formattedListings;
   },
 );

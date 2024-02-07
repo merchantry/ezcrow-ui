@@ -69,6 +69,10 @@
     &.active {
       background: $primary-light;
     }
+
+    &.ascending {
+      transform: rotate(180deg);
+    }
   }
 
   & > .buttonsContainer {

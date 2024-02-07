@@ -19,6 +19,7 @@ import { listingActionToNumber } from 'utils/listings';
 import { ListingAction } from 'utils/enums';
 import { approveToken, createListing } from 'web3/requests/ezcrowRamp';
 import { emitRefreshTableDataEvent } from 'utils/dataHooks';
+import { LISTINGS_SORT_BY_OPTIONS } from 'utils/config';
 
 function MyListings() {
   const network = useNetwork();
@@ -82,7 +83,7 @@ function MyListings() {
           Edit or remove current listings or create new ones.
         </p>
       </header>
-      <FiltersBar>
+      <FiltersBar sortByOptions={LISTINGS_SORT_BY_OPTIONS}>
         <BaseButton
           onClick={onCreateNewListingClick}
           className={styles.createNewListing}

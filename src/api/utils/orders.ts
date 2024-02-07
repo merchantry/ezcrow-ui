@@ -1,3 +1,4 @@
+import { OrdersSortByOption } from 'utils/types';
 import { Order } from 'web3/types';
 
 export const serializeOrder = (order: Order, token: string, currency: string) => ({
@@ -23,6 +24,7 @@ export const formatOrdersArray = (
     currencySymbol,
     orderActionFilter: _orderActionFilter,
     statusFilter: _statusFilter,
+    sortBy,
     sortOrder,
     offset: _offset,
     count: _count,
@@ -32,6 +34,7 @@ export const formatOrdersArray = (
     currencySymbol: string;
     orderActionFilter?: string;
     statusFilter?: string;
+    sortBy: OrdersSortByOption;
     sortOrder: string;
     offset: string;
     count: string;
@@ -65,8 +68,8 @@ export const formatOrdersArray = (
       return getCurrentStatus(order) === statusFilter;
     })
     .sort((a, b) => {
-      const amountA = a.tokenAmount;
-      const amountB = b.tokenAmount;
+      const amountA = a[sortBy];
+      const amountB = b[sortBy];
 
       if (sortOrder === 'asc') {
         return Number(amountA - amountB);

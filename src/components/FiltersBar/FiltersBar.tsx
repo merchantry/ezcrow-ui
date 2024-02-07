@@ -3,12 +3,11 @@ import styles from './FiltersBar.module.scss';
 import Dropdown from 'components/Dropdown';
 import { NavLink, useSearchParams } from 'react-router-dom';
 import { useFilterRedirects, useFirstLocationPathname, useTableSearchParams } from 'utils/hooks';
-import { FILTER_OPTIONS, SORT_BY_OPTIONS } from 'utils/config';
+import { FILTER_OPTIONS } from 'utils/config';
 import { isFilterOption, mergeSearchParams } from 'utils/helpers';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 import IconButton from 'components/IconButton';
 import { SortOrder } from 'utils/enums';
-import { SortByOption } from 'utils/types';
 import Pagination from 'components/Pagination';
 import { useFormattedDropdownData } from 'components/ContextData/hooks';
 
@@ -50,10 +49,10 @@ function FilterOptionsLinks() {
 
 interface FiltersBarProps {
   children?: React.ReactNode;
-  hideSortBy?: boolean;
+  sortByOptions: Record<string, string>;
 }
 
-function FiltersBar({ children, hideSortBy = false }: FiltersBarProps) {
+function FiltersBar({ children, sortByOptions }: FiltersBarProps) {
   useFilterRedirects();
   const [, setSearchParams] = useSearchParams();
   const { tokenOptionsMap, currencyOptionsMap } = useFormattedDropdownData();
@@ -67,7 +66,7 @@ function FiltersBar({ children, hideSortBy = false }: FiltersBarProps) {
     setSearchParams(params => mergeSearchParams(params, { token }));
   };
 
-  const handleSortByChange = (sortBy: SortByOption) => {
+  const handleSortByChange = (sortBy: string) => {
     setSearchParams(params => mergeSearchParams(params, { sortBy }));
   };
 
@@ -96,15 +95,13 @@ function FiltersBar({ children, hideSortBy = false }: FiltersBarProps) {
         options={currencyOptionsMap}
         onChange={handleCurrencyChange}
       />
-      {!hideSortBy && (
-        <Dropdown<SortByOption>
-          className={styles.sortByDropdown}
-          value={sortBy}
-          label="Sort By"
-          options={SORT_BY_OPTIONS}
-          onChange={handleSortByChange}
-        />
-      )}
+      <Dropdown
+        className={styles.sortByDropdown}
+        value={sortBy}
+        label="Sort By"
+        options={sortByOptions}
+        onChange={handleSortByChange}
+      />
       <IconButton
         onClick={() => handleSortOrderChange(SortOrder.DESC)}
         className={`${styles.sortOrder} ${sortOrder === SortOrder.DESC && styles.active}`}
@@ -113,7 +110,9 @@ function FiltersBar({ children, hideSortBy = false }: FiltersBarProps) {
       </IconButton>
       <IconButton
         onClick={() => handleSortOrderChange(SortOrder.ASC)}
-        className={`${styles.sortOrder} ${sortOrder === SortOrder.ASC && styles.active}`}
+        className={`${styles.sortOrder} ${styles.ascending} ${
+          sortOrder === SortOrder.ASC && styles.active
+        }`}
       >
         <FaSortAmountUp />
       </IconButton>

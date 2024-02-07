@@ -150,7 +150,7 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
               <BaseButton
                 color="info"
                 className={styles.edit}
-                disabled={listing.isDeleted}
+                disabled={!listing.canBeEdited}
                 onClick={() => onEditListingClick(listing)}
               >
                 Edit
@@ -158,7 +158,7 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
               <BaseButton
                 color="error"
                 className={styles.remove}
-                disabled={listing.isDeleted}
+                disabled={!listing.canBeRemoved}
                 onClick={() => onRemoveListingClick(listing)}
               >
                 Remove

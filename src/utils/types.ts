@@ -1,27 +1,27 @@
-import { FILTER_OPTIONS, SORT_BY_OPTIONS } from './config';
+import { FILTER_OPTIONS, LISTINGS_SORT_BY_OPTIONS, ORDERS_SORT_BY_OPTIONS } from './config';
 import { ListingAction, OrderStatus, UserType } from './enums';
 import { ModalProps } from './interfaces';
 
 export type FilterOption = (typeof FILTER_OPTIONS)[number];
 
-export type Listing = {
-  id: number;
+export type ListingEditData = {
   token: string;
   currency: string;
   action: ListingAction;
   price: number;
   totalTokenAmount: number;
-  availableTokenAmount: number;
   minPricePerOrder: number;
   maxPricePerOrder: number;
-  creator: string;
-  isDeleted: boolean;
 };
 
-export type ListingEditData = Omit<
-  Listing,
-  'id' | 'creator' | 'availableTokenAmount' | 'isDeleted'
->;
+export type Listing = ListingEditData & {
+  id: number;
+  availableTokenAmount: number;
+  creator: string;
+  isDeleted: boolean;
+  canBeEdited?: boolean;
+  canBeRemoved?: boolean;
+};
 
 export type Order = {
   id: number;
@@ -44,7 +44,9 @@ export type ColumnData<T> = {
   render: (row: T) => React.ReactNode;
 }[];
 
-export type SortByOption = keyof typeof SORT_BY_OPTIONS;
+export type ListingsSortByOption = keyof typeof LISTINGS_SORT_BY_OPTIONS;
+
+export type OrdersSortByOption = keyof typeof ORDERS_SORT_BY_OPTIONS;
 
 export type PerUserOption<T> = Record<UserType, T>;
 export type PerListingActionAndUserOption<T> = Record<ListingAction, PerUserOption<T>>;

@@ -2,13 +2,13 @@ import route from '../utils/route';
 import { formatListingsArray } from 'api/utils/listings';
 import { getEzcrowRampQueryContract } from 'web3/utils/contracts';
 import { getSigner } from 'api/utils/web3/provider';
-import { SortByOption } from 'utils/types';
+import { ListingsSortByOption } from 'utils/types';
 
 interface Params {
   tokenSymbol: string;
   currencySymbol: string;
   listingActionFilter: string;
-  sortBy: SortByOption;
+  sortBy: ListingsSortByOption;
   sortOrder: string;
   offset: string;
   count: string;

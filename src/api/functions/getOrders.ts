@@ -2,12 +2,14 @@ import { getEzcrowRampQueryContract } from 'web3/utils/contracts';
 import route from '../utils/route';
 import { formatOrdersArray } from 'api/utils/orders';
 import { getSigner } from 'api/utils/web3/provider';
+import { OrdersSortByOption } from 'utils/types';
 
 type Params = {
   tokenSymbol: string;
   currencySymbol: string;
   orderActionFilter?: string;
   statusFilter?: string;
+  sortBy: OrdersSortByOption;
   sortOrder: string;
   offset: string;
   count: string;
@@ -21,6 +23,7 @@ export const handler = route.get(
     currencySymbol,
     orderActionFilter,
     statusFilter,
+    sortBy,
     sortOrder,
     offset,
     count,
@@ -36,6 +39,7 @@ export const handler = route.get(
       currencySymbol,
       orderActionFilter,
       statusFilter,
+      sortBy,
       sortOrder,
       offset,
       count,

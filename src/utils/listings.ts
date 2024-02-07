@@ -14,6 +14,8 @@ export type ListingResponse = {
   minPricePerOrder: string;
   creator: string;
   isDeleted: boolean;
+  canBeEdited?: boolean;
+  canBeRemoved?: boolean;
 };
 
 export const serializeListing = (
@@ -46,6 +48,8 @@ export const serializeListing = (
   ),
   creator: listing.creator,
   isDeleted: listing.isDeleted,
+  canBeEdited: listing.canBeEdited,
+  canBeRemoved: listing.canBeRemoved,
 });
 
 export const listingActionToNumber = (action: ListingAction) => {

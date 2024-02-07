@@ -2,6 +2,7 @@ import React from 'react';
 
 import FiltersBar from 'components/FiltersBar';
 import { Outlet } from 'react-router-dom';
+import { ORDERS_SORT_BY_OPTIONS } from 'utils/config';
 
 function OrdersInDispute() {
   return (
@@ -14,7 +15,7 @@ function OrdersInDispute() {
           buyer.
         </p>
       </header>
-      <FiltersBar hideSortBy />
+      <FiltersBar sortByOptions={ORDERS_SORT_BY_OPTIONS} />
       <Outlet />
     </main>
   );
