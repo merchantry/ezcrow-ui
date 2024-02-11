@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BASE_TITLE } from 'utils/config';
+import { BASE_TITLE } from 'config/page';
 
 interface PageProps {
   title: string;

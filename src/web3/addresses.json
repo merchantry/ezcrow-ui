@@ -1,11 +1,17 @@
 {
   "EzcrowRamp": {
-    "telostest": "0x26E05e95B5933cC116047278F3bfc82a35017a7C"
+    "telostest": "0x3eebC7aB358527D63ab920D17ED92d7f41282c73"
   },
   "FiatTokenPairHandler": {
-    "telostest": "0x4cA928B27ea647199DaC41573A2B755D78A315A1"
+    "telostest": "0x29dFA1B2A478483c66233e1C0ab8DaC5C0F91ec2"
   },
   "EzcrowRampQuery": {
-    "telostest": "0x8E70595711C38990a3c83440FBEDbcc3Dc1624F9"
+    "telostest": "0xe8868E834627EBBb921517CE7F6ACa099B7f507d"
+  },
+  "MultiOwnable": {
+    "telostest": "0xBFc6410E50d1cCc61f6f78e3744e5655313f74a3"
+  },
+  "WhitelistedUsersDatabaseHandler": {
+    "telostest": "0xe818ac7c69232874faA6E3B2f7639f095f47858e"
   }
 }

@@ -1,27 +1,26 @@
 import { JsonRpcSigner } from 'ethers';
-import React, { Dispatch, SetStateAction, createContext, useState } from 'react';
+import React, { createContext, useState } from 'react';
+import { StateContextData } from './types';
+import { Web3ContractAccountData } from 'utils/types';
 
 interface Web3DataProps {
   children: React.ReactNode;
 }
 
-type StateContextData<T, ValueKey extends string, SetValueKey extends string> =
-  | ({
-      [key in ValueKey]: T | undefined;
-    } & {
-      [key in SetValueKey]: Dispatch<SetStateAction<T | undefined>>;
-    })
-  | null;
-
-type Web3Data = StateContextData<JsonRpcSigner, 'signer', 'setSigner'>;
+type Web3ProfileData = StateContextData<Web3ContractAccountData, 'accountData', 'setAccountData'>;
+type Web3Signer = StateContextData<JsonRpcSigner, 'signer', 'setSigner'>;
+type Web3Data = Web3ProfileData & Web3Signer;
 
 export const Web3DataContext = createContext<Web3Data>(null);
 
 function Web3Data({ children }: Web3DataProps) {
+  const [accountData, setAccountData] = useState<Web3ContractAccountData>();
   const [signer, setSigner] = useState<JsonRpcSigner>();
 
   return (
-    <Web3DataContext.Provider value={{ signer, setSigner }}>{children}</Web3DataContext.Provider>
+    <Web3DataContext.Provider value={{ signer, setSigner, accountData, setAccountData }}>
+      {children}
+    </Web3DataContext.Provider>
   );
 }
 

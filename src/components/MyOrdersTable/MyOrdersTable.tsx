@@ -19,6 +19,7 @@ import { approveToken, signAndAcceptOrder, signAndRejectOrder } from 'web3/reque
 import { useTableSearchParams } from 'utils/hooks';
 import { useNetwork } from 'utils/web3Hooks';
 import { getCurrentOrderStatus } from 'utils/orders';
+import { useUserProfileModal } from 'utils/modalHooks';
 
 interface MyOrdersTableProps {
   filter?: ListingAction;
@@ -28,6 +29,7 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
   const network = useNetwork();
   const signer = useWeb3Signer();
   const { token, currency } = useTableSearchParams();
+  const { triggerUserProfileFromOrderModal } = useUserProfileModal();
   const [orders, isFetching, refresh] = useUserOrders(signer?.address, filter);
 
   const tokenToBigInt = useTokenDecimalsStandard();
@@ -80,6 +82,10 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
     });
   };
 
+  const onAddressClick = async (address: string, orderId: number) => {
+    triggerUserProfileFromOrderModal(address, orderId);
+  };
+
   return (
     <StripedTable
       isFetching={isFetching}
@@ -121,11 +127,21 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
         },
         {
           label: 'Listing Creator',
-          render: ({ listingCreator }) => <UserAddressCellData userAddress={listingCreator} />,
+          render: ({ id, listingCreator }) => (
+            <UserAddressCellData
+              userAddress={listingCreator}
+              onClick={() => onAddressClick(listingCreator, id)}
+            />
+          ),
         },
         {
           label: 'Order Creator',
-          render: ({ creator }) => <UserAddressCellData userAddress={creator} />,
+          render: ({ id, creator }) => (
+            <UserAddressCellData
+              userAddress={creator}
+              onClick={() => onAddressClick(creator, id)}
+            />
+          ),
         },
         {
           label: '',

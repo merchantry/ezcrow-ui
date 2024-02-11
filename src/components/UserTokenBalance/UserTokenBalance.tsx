@@ -6,7 +6,7 @@ import { priceFormat } from 'utils/helpers';
 import { getERC20Contract, getEzcrowRampContract } from 'web3/utils/contracts';
 import { useTableSearchParams, useWindowEvent } from 'utils/hooks';
 import { useNetwork } from 'utils/web3Hooks';
-import { ROUND_TO_TOKEN } from 'utils/config';
+import { ROUND_TO_TOKEN } from 'config/number';
 import { multiplyByTenPow } from 'utils/bigint';
 import { useWeb3Event } from 'utils/ethereumProviderHooks';
 import { WEB3_REQUEST_COMPLETED_EVENT } from 'web3/api';

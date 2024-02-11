@@ -23,6 +23,7 @@ import {
 import { approveToken, deleteListing, updateListing } from 'web3/requests/ezcrowRamp';
 import { useNetwork } from 'utils/web3Hooks';
 import { listingActionToNumber } from 'utils/listings';
+import { useUserProfileModal } from 'utils/modalHooks';
 
 interface MyListingsTableProps {
   filter?: ListingAction;
@@ -33,6 +34,7 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
   const signer = useWeb3Signer();
   const [filteredListings, isFetching, refresh] = useUserListings(signer?.address, filter);
   const { tokenOptionsMap, currencyOptionsMap } = useFormattedDropdownData();
+  const { triggerUserProfileModal } = useUserProfileModal();
 
   const currencyToBigInt = useCurrencyDecimalsStandard();
   const tokenToBigInt = useTokenDecimalsStandard();
@@ -59,7 +61,9 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
       const previousTokenAmount = tokenToBigInt(listing.totalTokenAmount);
       const totalTokenAmount = tokenToBigInt(_totalTokenAmount);
 
-      if (action === ListingAction.Sell && totalTokenAmount > previousTokenAmount) {
+      if (token !== listing.token || currency !== listing.currency) {
+        await approveToken(token, currency, totalTokenAmount, network, signer);
+      } else if (action === ListingAction.Sell && totalTokenAmount > previousTokenAmount) {
         await approveToken(
           token,
           currency,
@@ -101,6 +105,10 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
     });
   };
 
+  const onAddressClick = async (address: string) => {
+    triggerUserProfileModal(address);
+  };
+
   return (
     <StripedTable
       isFetching={isFetching}
@@ -139,7 +147,12 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
         },
         {
           label: 'Creator',
-          render: listing => <UserAddressCellData userAddress={listing.creator} />,
+          render: listing => (
+            <UserAddressCellData
+              userAddress={listing.creator}
+              onClick={() => onAddressClick(listing.creator)}
+            />
+          ),
         },
         {
           label: '',

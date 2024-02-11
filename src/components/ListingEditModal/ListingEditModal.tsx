@@ -9,7 +9,7 @@ import ButtonWithTooltip from 'components/ButtonWithTooltip';
 import { currencyToSymbol, maybePluralize, roundTo } from 'utils/helpers';
 import BaseSelect from 'components/BaseSelect';
 import { NumberInputProps } from 'components/NumberInput/NumberInput';
-import { ROUND_TO_FIAT } from 'utils/config';
+import { ROUND_TO_FIAT } from 'config/number';
 import { FiatInput, TokenInput } from 'components/NumberInput/ModifiedNumberInputs';
 import ReadOnlyInput from 'components/ReadOnlyInput';
 import IconButtonWithTooltip from 'components/IconButtonWithTooltip';

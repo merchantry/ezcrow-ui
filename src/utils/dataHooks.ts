@@ -2,12 +2,13 @@ import { DependencyList, useEffect, useState } from 'react';
 import { useTableSearchParams, useWindowEvent } from './hooks';
 import { ListingAction, OrderStatus } from './enums';
 import { getListings, getUserListings } from 'requests/listings';
-import { PER_PAGE, ROUND_TO_FIAT, ROUND_TO_TOKEN } from './config';
+import { ROUND_TO_FIAT, ROUND_TO_TOKEN } from '../config/number';
 import { listingActionToNumber, serializeListing } from './listings';
 import { getOrders, getUserOrders } from 'requests/orders';
 import { serializeOrder } from './orders';
 import { useNetwork } from './web3Hooks';
 import { useDropdownData } from 'components/ContextData/hooks';
+import { PER_PAGE } from 'config/tables';
 
 const orderStatusToNumber = (status?: OrderStatus) => {
   if (status === undefined) return undefined;

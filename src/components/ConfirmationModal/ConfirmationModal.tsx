@@ -7,7 +7,8 @@ import { ColorType } from 'mui/helpers';
 import styles from './ConfirmationModal.module.scss';
 
 export interface ConfirmationModalProps extends ModalProps<boolean> {
-  text: string;
+  text?: string;
+  children?: React.ReactNode;
   confirmText?: string;
   cancelText?: string;
   confirmIcon?: React.ReactNode;
@@ -22,6 +23,7 @@ export interface ConfirmationModalProps extends ModalProps<boolean> {
 function ConfirmationModal({
   onSubmit,
   text,
+  children,
   confirmText = 'Confirm',
   cancelText = 'Cancel',
   confirmIcon,
@@ -43,7 +45,7 @@ function ConfirmationModal({
 
   return (
     <Modal {...modalProps}>
-      <Modal.Body>{text}</Modal.Body>
+      <Modal.Body>{children ?? text}</Modal.Body>
       <Modal.Footer className={noCancelBtn ? styles.center : undefined}>
         {!noCancelBtn && (
           <BaseButton

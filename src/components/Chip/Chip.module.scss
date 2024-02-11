@@ -7,22 +7,26 @@ $chip-colors: (
   warning: $warning,
 );
 
-div.chip {
-  height: 30px;
-  padding: 0 5px;
+div.chipContainer {
+  display: inline-block;
 
-  &.withTooltip {
-    cursor: help;
-  }
+  & > div.chip {
+    height: 30px;
+    padding: 0 5px;
 
-  @each $type, $color in $chip-colors {
-    &.#{$type} {
-      & > svg {
-        fill: $color;
-      }
+    &.withTooltip {
+      cursor: help;
+    }
 
-      & > span {
-        color: $color;
+    @each $type, $color in $chip-colors {
+      &.#{$type} {
+        & > svg {
+          fill: $color;
+        }
+
+        & > span {
+          color: $color;
+        }
       }
     }
   }

@@ -2,7 +2,7 @@ import React from 'react';
 
 import FiltersBar from 'components/FiltersBar';
 import { Outlet } from 'react-router-dom';
-import { ORDERS_SORT_BY_OPTIONS } from 'utils/config';
+import { ORDERS_SORT_BY_OPTIONS } from 'config/tables';
 
 function MyOrders() {
   return (

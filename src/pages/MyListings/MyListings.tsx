@@ -19,7 +19,7 @@ import { listingActionToNumber } from 'utils/listings';
 import { ListingAction } from 'utils/enums';
 import { approveToken, createListing } from 'web3/requests/ezcrowRamp';
 import { emitRefreshTableDataEvent } from 'utils/dataHooks';
-import { LISTINGS_SORT_BY_OPTIONS } from 'utils/config';
+import { LISTINGS_SORT_BY_OPTIONS } from 'config/tables';
 
 function MyListings() {
   const network = useNetwork();

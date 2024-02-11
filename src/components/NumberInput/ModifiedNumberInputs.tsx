@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ROUND_TO_FIAT, MIN_FIAT_AMOUNT, ROUND_TO_TOKEN, MIN_TOKEN_AMOUNT } from 'utils/config';
+import { ROUND_TO_FIAT, MIN_FIAT_AMOUNT, ROUND_TO_TOKEN, MIN_TOKEN_AMOUNT } from 'config/number';
 import NumberInput, { NumberInputProps } from './NumberInput';
 
 export type ModifiedNumberInputProps = Omit<NumberInputProps, 'roundTo' | 'min' | 'step'>;

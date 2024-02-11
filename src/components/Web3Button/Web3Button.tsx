@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import styles from './Web3Button.module.scss';
-import { useChain } from 'utils/web3Hooks';
+import { useChain, useNetwork } from 'utils/web3Hooks';
 import {
   connectUserWallet,
   getChainId,
@@ -15,29 +15,29 @@ import { useAlert } from 'components/AlertContainer/AlertContainer';
 import { shortenAddress } from 'utils/helpers';
 import { useWeb3Event } from 'utils/ethereumProviderHooks';
 import ButtonWithTooltip from 'components/ButtonWithTooltip';
+import { getMultiOwnableContract } from 'web3/utils/contracts';
 
 function Web3Button() {
   const chain = useChain();
+  const network = useNetwork();
   const triggerAlert = useAlert();
-  const { signer, setSigner } = useWeb3Data();
+
+  const { signer, setSigner, setAccountData } = useWeb3Data();
 
   const [isFetching, setIsFetching] = useState(false);
   const [isChainSupported, setIsChainSupported] = useState(true);
-  const [isHovered, setIsHovered] = useState(false);
 
   const buttonText = useMemo(() => {
     if (!isChainSupported) return 'Unsupported Network';
     if (isFetching) return 'Connecting...';
     if (!signer) return 'Connect Wallet';
-    if (isHovered) return 'Disconnect Wallet';
     return shortenAddress(signer.address);
-  }, [isChainSupported, isFetching, isHovered, signer]);
+  }, [isChainSupported, isFetching, signer]);
 
   const buttonColor = useMemo(() => {
-    if (isHovered && signer) return 'error';
     if (!isChainSupported) return 'error';
     return undefined;
-  }, [isChainSupported, isHovered, signer]);
+  }, [isChainSupported]);
 
   const connectWallet = async () => {
     if (isFetching) return;
@@ -74,19 +74,14 @@ function Web3Button() {
     setIsFetching(false);
   };
 
-  const disconnectWallet = () => {
-    setSigner(undefined);
-  };
+  useEffect(() => {
+    if (!signer) return;
 
-  const onPointerMove = () => {
-    setIsHovered(true);
-  };
-
-  const onPointerLeave = () => {
-    setIsHovered(false);
-  };
-
-  const onClick = !signer || !isChainSupported ? connectWallet : disconnectWallet;
+    const multiOwnable = getMultiOwnableContract(network, signer);
+    multiOwnable.isOwner(signer.address).then(isOwner => {
+      setAccountData(account => ({ ...account, isOwner }));
+    });
+  }, [network, setAccountData, signer]);
 
   useEffect(() => {
     updateWallet();
@@ -94,8 +89,12 @@ function Web3Button() {
   }, []);
 
   useWeb3Event('accountsChanged', (accounts: string[]) => {
-    if (accounts.length > 0) updateWallet();
-    else setSigner(undefined);
+    if (accounts.length > 0) {
+      updateWallet();
+      return;
+    }
+
+    setSigner(undefined);
   });
 
   useWeb3Event('chainChanged', async () => {
@@ -109,9 +108,7 @@ function Web3Button() {
     <ButtonWithTooltip
       className={styles.button}
       color={buttonColor}
-      onPointerMove={onPointerMove}
-      onPointerLeave={onPointerLeave}
-      onClick={onClick}
+      onClick={connectWallet}
       tooltip={signer?.address}
       disabled={isFetching}
     >

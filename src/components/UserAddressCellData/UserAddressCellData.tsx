@@ -7,14 +7,17 @@ import { useWeb3Signer } from 'components/ContextData/hooks';
 
 export interface UserAddressCellDataProps {
   userAddress: string;
+  onClick?: () => void;
 }
 
-function UserAddressCellData({ userAddress }: UserAddressCellDataProps) {
+function UserAddressCellData({ userAddress, onClick }: UserAddressCellDataProps) {
   const signer = useWeb3Signer();
 
   return (
     <span className={styles.address}>
-      {shortenAddress(userAddress)}
+      <a className={styles.addressLink} onClick={onClick}>
+        {shortenAddress(userAddress)}
+      </a>
       {userAddress === signer?.address && <Chip label="You" tooltipPlacement="left" />}
     </span>
   );

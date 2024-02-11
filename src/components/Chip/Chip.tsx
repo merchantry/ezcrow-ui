@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
 
-import { Chip as MuiChip } from '@mui/material';
+import { Chip as MuiChip, styled, ChipProps as MuiChipProps } from '@mui/material';
 import styles from './Chip.module.scss';
 import Tooltip from 'components/Tooltip';
+import { getThemeColor } from 'mui/helpers';
+import theme from 'mui/theme';
 
 export interface ChipProps {
   label: string;
@@ -13,17 +15,25 @@ export interface ChipProps {
   className?: string;
 }
 
+const StyledChip = styled(({ label, icon, className }: MuiChipProps) => (
+  <MuiChip icon={icon} color="primary" className={className} label={label} />
+))(() => ({
+  backgroundColor: getThemeColor('primary', theme),
+}));
+
 function Chip({ label, color, tooltip, tooltipPlacement, icon, className }: ChipProps) {
   const chip = useMemo(
     () => (
-      <MuiChip
-        icon={icon}
-        color="primary"
-        className={`${styles.chip} ${color ? styles[color] : ''} ${className} ${
-          tooltip ? styles.withTooltip : ''
-        }`}
-        label={label}
-      />
+      <div className={styles.chipContainer}>
+        <StyledChip
+          label={label}
+          color={color}
+          icon={icon}
+          className={`${styles.chip} ${color ? styles[color] : ''} ${className} ${
+            tooltip ? styles.withTooltip : ''
+          }`}
+        />
+      </div>
     ),
     [className, color, icon, label, tooltip],
   );

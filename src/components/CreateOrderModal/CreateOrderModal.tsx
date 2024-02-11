@@ -7,7 +7,7 @@ import { Listing } from 'utils/types';
 import { ListingAction, Round } from 'utils/enums';
 import { currencyToSymbol, decapitalize, opposite, priceFormat, roundTo } from 'utils/helpers';
 import BaseButton from 'components/BaseButton';
-import { ROUND_TO_FIAT, ROUND_TO_TOKEN } from 'utils/config';
+import { ROUND_TO_FIAT, ROUND_TO_TOKEN } from 'config/number';
 import { TokenInput } from 'components/NumberInput/ModifiedNumberInputs';
 import ReadOnlyInput from 'components/ReadOnlyInput';
 

@@ -1,9 +1,10 @@
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { isFilterOption } from './helpers';
-import { LISTINGS_SORT_BY_OPTIONS } from './config';
+import { LISTINGS_SORT_BY_OPTIONS } from '../config/tables';
 import { SortOrder } from './enums';
 import { useDropdownData } from 'components/ContextData/hooks';
+import { FilterOption } from './types';
 
 export const useWindowEvent = (
   eventName: string,
@@ -32,6 +33,19 @@ export const useFirstLocationPathname = () => {
   const location = useLocation();
 
   return useMemo(() => location.pathname.split('/')[1] || undefined, [location]);
+};
+
+export const useFilterOption = () => {
+  const location = useLocation();
+
+  return useMemo(() => {
+    const lastPath = location.pathname.split('/').pop();
+    if (!lastPath || !isFilterOption(lastPath)) {
+      return undefined;
+    }
+
+    return lastPath as FilterOption;
+  }, [location]);
 };
 
 export const useFilterRedirects = () => {

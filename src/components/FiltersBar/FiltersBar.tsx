@@ -3,13 +3,13 @@ import styles from './FiltersBar.module.scss';
 import Dropdown from 'components/Dropdown';
 import { NavLink, useSearchParams } from 'react-router-dom';
 import { useFilterRedirects, useFirstLocationPathname, useTableSearchParams } from 'utils/hooks';
-import { FILTER_OPTIONS } from 'utils/config';
 import { isFilterOption, mergeSearchParams } from 'utils/helpers';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 import IconButton from 'components/IconButton';
 import { SortOrder } from 'utils/enums';
 import Pagination from 'components/Pagination';
 import { useFormattedDropdownData } from 'components/ContextData/hooks';
+import { FILTER_OPTIONS } from 'config/tables';
 
 function FilterOptionsLinks() {
   const firstPathname = useFirstLocationPathname();

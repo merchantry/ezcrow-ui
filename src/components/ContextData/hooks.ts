@@ -5,7 +5,7 @@ import { Web3DataContext } from './Web3Data';
 import { useTableSearchParams } from 'utils/hooks';
 import { multiplyByTenPow } from 'utils/helpers';
 import { multiplyByTenPow as bigIntMultiplyByTenPow } from 'utils/bigint';
-import { ROUND_TO_FIAT, ROUND_TO_TOKEN } from 'utils/config';
+import { ROUND_TO_FIAT, ROUND_TO_TOKEN } from 'config/number';
 
 export const useDropdownData = () => {
   const context = useContext(TokenAndCurrenciesDataContext);

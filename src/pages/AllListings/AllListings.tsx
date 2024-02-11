@@ -3,7 +3,7 @@ import React from 'react';
 import FiltersBar from 'components/FiltersBar';
 import 'scss/styles/pages.scss';
 import { Outlet } from 'react-router-dom';
-import { LISTINGS_SORT_BY_OPTIONS } from 'utils/config';
+import { LISTINGS_SORT_BY_OPTIONS } from 'config/tables';
 
 function AllListings() {
   return (

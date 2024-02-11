@@ -1,13 +1,4 @@
-const toUrlSearchParams = (obj: Record<string, string | undefined>): string => {
-  if (!obj) return '';
-
-  const params = new URLSearchParams();
-  Object.entries(obj).forEach(([key, value]) => {
-    if (value === undefined) return;
-    params.set(key, value);
-  });
-  return '?' + params.toString();
-};
+import { toUrlSearchParams } from 'utils/helpers';
 
 type JSONParseable =
   | string

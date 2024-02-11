@@ -1,0 +1,25 @@
+@import 'scss/mixins/variables';
+
+div.body {
+  width: 600px;
+
+  & > div.flexContainer {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+
+    & > *:first-child {
+      flex: 1;
+    }
+  }
+
+  & > div.privateData {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+div.footer {
+  justify-content: center;
+}

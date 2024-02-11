@@ -2,12 +2,9 @@ import React from 'react';
 
 import { decapitalize, opposite, priceFormat } from 'utils/helpers';
 import { ListingAction } from 'utils/enums';
-import { FaRegMessage } from 'react-icons/fa6';
 
-import styles from './AllListingsTable.module.scss';
 import tableStyles from 'scss/modules/Table.module.scss';
 import BaseButton from 'components/BaseButton';
-import IconButton from 'components/IconButton';
 import StripedTable from 'components/StripedTable';
 import { Listing } from 'utils/types';
 import { useTableSearchParams } from 'utils/hooks';
@@ -21,6 +18,7 @@ import { createOrder } from 'web3/requests/ezcrowRamp';
 import { useTokenDecimalsStandard, useWeb3Signer } from 'components/ContextData/hooks';
 import { useNetwork } from 'utils/web3Hooks';
 import { ColorType } from 'mui/helpers';
+import { useUserProfileModal } from 'utils/modalHooks';
 
 interface AllListingsTableProps {
   filter?: ListingAction;
@@ -31,6 +29,7 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
   const signer = useWeb3Signer();
   const [listings, isFetching, refresh] = useListings(filter);
   const { token, currency } = useTableSearchParams();
+  const { triggerUserProfileModal } = useUserProfileModal();
 
   const tokenToBigInt = useTokenDecimalsStandard();
 
@@ -71,6 +70,10 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
     });
   };
 
+  const onAddressClick = (address: string) => {
+    triggerUserProfileModal(address);
+  };
+
   return (
     <StripedTable
       isFetching={isFetching}
@@ -101,20 +104,22 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
         },
         {
           label: 'Creator',
-          render: listing => <UserAddressCellData userAddress={listing.creator} />,
+          render: listing => (
+            <UserAddressCellData
+              userAddress={listing.creator}
+              onClick={() => onAddressClick(listing.creator)}
+            />
+          ),
         },
         {
           label: '',
-          colStyle: { width: 205 },
+          colStyle: { width: 145 },
           render: listing => {
             const action = opposite(listing.action, [ListingAction.Sell, ListingAction.Buy]);
             const buttonTitle = `${action} ${token}`;
 
             return (
               <div className={tableStyles.actions}>
-                <IconButton className={styles.contactButton} title="Contact user">
-                  <FaRegMessage />
-                </IconButton>
                 <BaseButton
                   onClick={() => onListingActionClick(listing)}
                   color={action === ListingAction.Sell ? 'error' : 'success'}

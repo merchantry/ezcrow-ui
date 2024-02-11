@@ -1,4 +1,4 @@
-import { FILTER_OPTIONS } from './config';
+import { FILTER_OPTIONS } from 'config/tables';
 import { Round } from './enums';
 import { FilterOption, Listing } from './types';
 
@@ -80,3 +80,17 @@ export const maybePluralize = (value: number, singular: string, plural?: string)
 export const run = <T>(fn: () => T) => fn();
 
 export const shortenAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
+
+export const toUrlSearchParams = (obj: Record<string, string | undefined>): string => {
+  const params = Object.entries(obj)
+    .reduce((acc, [key, value]) => {
+      if (value !== undefined) acc.set(key, value);
+
+      return acc;
+    }, new URLSearchParams())
+    .toString();
+
+  if (!params) return '';
+
+  return '?' + params;
+};

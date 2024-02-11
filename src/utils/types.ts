@@ -1,8 +1,22 @@
-import { FILTER_OPTIONS, LISTINGS_SORT_BY_OPTIONS, ORDERS_SORT_BY_OPTIONS } from './config';
+import { FILTER_OPTIONS, LISTINGS_SORT_BY_OPTIONS, ORDERS_SORT_BY_OPTIONS } from 'config/tables';
 import { ListingAction, OrderStatus, UserType } from './enums';
 import { ModalProps } from './interfaces';
 
 export type FilterOption = (typeof FILTER_OPTIONS)[number];
+
+export type UserData = {
+  profileNonce: number;
+  user: string;
+  currency: string;
+  telegramHandle: string;
+  whitelisted: boolean;
+  privateData: {
+    paymentMethod: string;
+    paymentData: string;
+  };
+};
+
+export type UserEditData = Pick<UserData, 'currency' | 'telegramHandle'> & UserData['privateData'];
 
 export type ListingEditData = {
   token: string;
@@ -54,3 +68,7 @@ export type OrderOption<T> = T | PerUserOption<T> | PerListingActionAndUserOptio
 export type PerOrderData<T> = Record<OrderStatus, { [K in keyof T]: OrderOption<T[K]> }>;
 
 export type GetModalSubmitDataType<T> = T extends ModalProps<infer R> ? R : never;
+
+export type Web3ContractAccountData = {
+  isOwner: boolean;
+};

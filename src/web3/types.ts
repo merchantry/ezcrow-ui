@@ -1,4 +1,5 @@
 import { BigNumberish, ContractMethod, ContractTransactionResponse } from 'ethers';
+import { UserData } from 'utils/types';
 
 export type TransactionMethod<T extends unknown[]> = ContractMethod<
   T,
@@ -88,4 +89,16 @@ export type ERC20Methods = {
 export type CurrencySettingsMethods = {
   symbol: StaticMethod<[], string>;
   decimals: StaticMethod<[], bigint>;
+};
+
+export type WhitelistedUsersDatabaseHandlerMethods = {
+  getUserData: StaticMethod<[string, string], UserData>;
+  getUserPreparedData: StaticMethod<[string, string], UserData>;
+  getUserDataWithOrder: StaticMethod<[string, string, string, BigNumberish], UserData>;
+  updateUser: TransactionMethod<[string, string, string, string]>;
+  getAllValidPaymentMethods: StaticMethod<[], string[]>;
+};
+
+export type MultiOwnableMethods = {
+  isOwner: StaticMethod<[string], boolean>;
 };
