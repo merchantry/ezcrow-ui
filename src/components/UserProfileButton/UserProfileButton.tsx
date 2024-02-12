@@ -47,7 +47,9 @@ function UserProfileButton() {
       if (!data) return;
 
       const { currency, telegramHandle, paymentMethod, paymentData } = data;
-      await updateUser(currency, telegramHandle, paymentMethod, paymentData, network, signer);
+      updateUser(currency, telegramHandle, paymentMethod, paymentData, network, signer).then(() => {
+        updateData();
+      });
     });
   };
 
@@ -67,16 +69,16 @@ function UserProfileButton() {
     [network, signer],
   );
 
-  useEffect(() => {
+  const updateData = useCallback(async () => {
     if (!signer) return;
 
-    getUserDataFromContract(currency).then(userData => {
-      setUserData(userData);
-    });
-    getUserPreparedDataFromContract(currency).then(userData => {
-      setUserPreparedData(userData);
-    });
-  }, [currency, getUserDataFromContract, getUserPreparedDataFromContract, network, signer]);
+    setUserData(await getUserDataFromContract(currency));
+    setUserPreparedData(await getUserPreparedDataFromContract(currency));
+  }, [currency, getUserDataFromContract, getUserPreparedDataFromContract, signer]);
+
+  useEffect(() => {
+    updateData();
+  }, [updateData]);
 
   if (!signer) return <></>;
 

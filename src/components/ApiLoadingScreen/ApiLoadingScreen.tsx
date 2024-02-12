@@ -4,6 +4,7 @@ import { useWindowEvent } from 'utils/hooks';
 import {
   WEB3_REQUEST_COMPLETED_EVENT,
   WEB3_REQUEST_FAILED_EVENT,
+  WEB3_REQUEST_MINED_EVENT,
   WEB3_REQUEST_SENT_EVENT,
 } from 'web3/api';
 import LoadingAnimation from 'components/LoadingAnimation';
@@ -24,6 +25,10 @@ function ApiLoadingScreen() {
   useWindowEvent(WEB3_REQUEST_FAILED_EVENT, () => {
     setLoading(false);
     triggerAlert('Transaction failed', 'error');
+  });
+
+  useWindowEvent(WEB3_REQUEST_MINED_EVENT, () => {
+    triggerAlert('Transaction mined', 'info');
   });
 
   if (!loading) return null;

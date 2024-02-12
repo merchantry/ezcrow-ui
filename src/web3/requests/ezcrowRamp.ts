@@ -1,6 +1,6 @@
 import { BigNumberish, ethers } from 'ethers';
 import { acceptOrder, rejectOrder } from 'requests/orders';
-import { runTransaction } from 'web3/api';
+import { runTransaction, sendRequest } from 'web3/api';
 import {
   getERC20Contract,
   getEzcrowRampContract,
@@ -126,7 +126,7 @@ export async function signAndAcceptOrder(
     nonce,
   });
 
-  return runTransaction(() =>
+  return sendRequest(() =>
     acceptOrder({
       owner: signer.address,
       tokenSymbol: token,
@@ -158,7 +158,7 @@ export async function signAndRejectOrder(
     nonce,
   });
 
-  return runTransaction(() =>
+  return sendRequest(() =>
     rejectOrder({
       owner: signer.address,
       tokenSymbol: token,
