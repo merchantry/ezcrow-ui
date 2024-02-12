@@ -6,9 +6,9 @@ import Modal from 'components/Modal';
 import BaseSelect from 'components/BaseSelect';
 import BaseInput from 'components/BaseInput';
 import { UserData, UserEditData } from 'utils/types';
-import { Box, CircularProgress } from '@mui/material';
 import Chip from 'components/Chip';
 import BaseButton from 'components/BaseButton';
+import LoadingAnimation from 'components/LoadingAnimation';
 
 export interface UserProfileEditModalProps extends EditableModalProps<UserEditData> {
   currencies: Record<string, string>;
@@ -107,9 +107,7 @@ function UserProfileEditModal({
           helperText={CURRENCY_HELPER_TEXT}
         />
         {isFetching ? (
-          <Box>
-            <CircularProgress />
-          </Box>
+          <LoadingAnimation />
         ) : (
           <>
             <div className={styles.flexContainer}>
