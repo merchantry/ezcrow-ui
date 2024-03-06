@@ -5,11 +5,13 @@ import { NavLink, useSearchParams } from 'react-router-dom';
 import { useFilterRedirects, useFirstLocationPathname, useTableSearchParams } from 'utils/hooks';
 import { isFilterOption, mergeSearchParams } from 'utils/helpers';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
+import { FaRotateRight } from 'react-icons/fa6';
 import IconButton from 'components/IconButton';
 import { SortOrder } from 'utils/enums';
 import Pagination from 'components/Pagination';
 import { useFormattedDropdownData } from 'components/ContextData/hooks';
 import { FILTER_OPTIONS } from 'config/tables';
+import { emitRefreshTableDataEvent } from 'utils/dataHooks';
 
 function FilterOptionsLinks() {
   const firstPathname = useFirstLocationPathname();
@@ -122,6 +124,9 @@ function FiltersBar({ children, sortByOptions }: FiltersBarProps) {
         pages={5}
         className={styles.pagination}
       />
+      <IconButton onClick={emitRefreshTableDataEvent}>
+        <FaRotateRight />
+      </IconButton>
       <div className={styles.buttonsContainer}>{children}</div>
     </div>
   );
