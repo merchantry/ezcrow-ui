@@ -40,5 +40,5 @@ export enum ListingModalAction {
 export enum Round {
   Up = 'up',
   Down = 'down',
-  Nearest = 'nearest',
+  ToNearest = 'toNearest',
 }

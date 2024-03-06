@@ -30,10 +30,10 @@ export const priceFormat = (amount: number, currency?: string, decimals = 2) =>
 const roundFunctions = {
   [Round.Up]: Math.ceil,
   [Round.Down]: Math.floor,
-  [Round.Nearest]: Math.round,
+  [Round.ToNearest]: Math.round,
 };
 
-export const roundTo = (value: number, decimals: number, mode = Round.Nearest) => {
+export const roundTo = (value: number, decimals: number, mode = Round.ToNearest) => {
   const factor = 10 ** decimals;
   const roundFn = roundFunctions[mode];
 
