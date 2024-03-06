@@ -24,7 +24,7 @@ const api = {
       headers: {
         'Content-Type': 'application/json',
       },
-    });
+    }).then(res => res.json());
   },
 };
 

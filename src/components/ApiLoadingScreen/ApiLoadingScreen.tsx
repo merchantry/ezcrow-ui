@@ -18,17 +18,21 @@ function ApiLoadingScreen() {
     setLoading(true);
   });
 
-  useWindowEvent(WEB3_REQUEST_COMPLETED_EVENT, () => {
-    setLoading(false);
+  useWindowEvent(WEB3_REQUEST_COMPLETED_EVENT, e => {
+    const { detail } = e as CustomEvent<string>;
+    triggerAlert(detail, 'info');
   });
 
-  useWindowEvent(WEB3_REQUEST_FAILED_EVENT, () => {
+  useWindowEvent(WEB3_REQUEST_FAILED_EVENT, e => {
+    const { detail } = e as CustomEvent<string>;
     setLoading(false);
-    triggerAlert('Transaction failed', 'error');
+    triggerAlert(detail, 'error');
   });
 
-  useWindowEvent(WEB3_REQUEST_MINED_EVENT, () => {
-    triggerAlert('Transaction mined', 'info');
+  useWindowEvent(WEB3_REQUEST_MINED_EVENT, e => {
+    const { detail } = e as CustomEvent<string>;
+    setLoading(false);
+    triggerAlert(detail, 'success');
   });
 
   if (!loading) return null;

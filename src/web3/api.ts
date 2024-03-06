@@ -1,9 +1,13 @@
-import { ContractTransactionResponse } from 'ethers';
+import { ContractTransactionResponse, Provider } from 'ethers';
+import { TxRequest } from 'requests/types';
+import { transaction } from './transaction';
 
 export const WEB3_REQUEST_SENT_EVENT = 'WEB3_REQUEST_SENT';
 export const WEB3_REQUEST_COMPLETED_EVENT = 'WEB3_REQUEST_COMPLETED';
 export const WEB3_REQUEST_MINED_EVENT = 'WEB3_REQUEST_MINED';
 export const WEB3_REQUEST_FAILED_EVENT = 'WEB3_REQUEST_FAILED';
+
+const TIMEOUT = 1 * 60 * 1000;
 
 const emitCustomEvent = (eventName: string, message: string) => {
   window.dispatchEvent(new CustomEvent(eventName, { detail: message }));
@@ -20,24 +24,36 @@ const emitRequestMinedEvent = (message: string) =>
 const emitRequestFailedEvent = (message: string) =>
   emitCustomEvent(WEB3_REQUEST_FAILED_EVENT, message);
 
-export const runTransaction = async (callback: () => Promise<ContractTransactionResponse>) => {
+const emitTransactionLifecycleEvents = <T>(
+  callback: () => Promise<T>,
+  wait: (v: T) => Promise<void>,
+) => {
   emitRequestSentEvent('Sending transaction...');
-  try {
-    const tx = await callback();
-    emitRequestComletedEvent('Transaction sent');
-    await tx.wait();
-    emitRequestMinedEvent('Transaction mined');
-  } catch (error) {
-    emitRequestFailedEvent('Transaction failed');
-  }
+  return transaction(callback, async v => {
+    await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject();
+      }, TIMEOUT);
+
+      wait(v)
+        .then(() => {
+          clearTimeout(timeout);
+          resolve(undefined);
+        })
+        .catch(reject);
+    });
+  })
+    .onCompleted(() => emitRequestComletedEvent('Transaction sent! Waiting for confirmation...'))
+    .onMined(() => emitRequestMinedEvent('Transaction confirmed'))
+    .onFailed(() => emitRequestFailedEvent('Transaction failed'));
 };
 
-export const sendRequest = async <T>(callback: () => Promise<T>) => {
-  emitRequestSentEvent('Sending transaction...');
-  try {
-    await callback();
-    emitRequestComletedEvent('Transaction sent');
-  } catch (error) {
-    emitRequestFailedEvent('Transaction failed');
-  }
-};
+export const runTransaction = (callback: () => Promise<ContractTransactionResponse>) =>
+  emitTransactionLifecycleEvents(callback, async tx => {
+    await tx.wait();
+  });
+
+export const sendTransactionRequest = (callback: () => Promise<TxRequest>, provider: Provider) =>
+  emitTransactionLifecycleEvents(callback, async ({ txHash }) => {
+    await provider.waitForTransaction(txHash);
+  });

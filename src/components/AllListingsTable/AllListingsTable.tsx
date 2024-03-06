@@ -27,7 +27,7 @@ interface AllListingsTableProps {
 function AllListingsTable({ filter }: AllListingsTableProps) {
   const network = useNetwork();
   const signer = useWeb3Signer();
-  const [listings, isFetching, refresh] = useListings(filter);
+  const [listings, isFetching] = useListings(filter);
   const { token, currency } = useTableSearchParams();
   const { triggerUserProfileModal } = useUserProfileModal();
 
@@ -66,7 +66,7 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
         tokenToBigInt(createOrderData.orderAmount),
         network,
         signer,
-      ).then(refresh);
+      );
     });
   };
 

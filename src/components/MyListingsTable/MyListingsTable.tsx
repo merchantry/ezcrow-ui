@@ -32,7 +32,7 @@ interface MyListingsTableProps {
 function MyListingsTable({ filter }: MyListingsTableProps) {
   const network = useNetwork();
   const signer = useWeb3Signer();
-  const [filteredListings, isFetching, refresh] = useUserListings(signer?.address, filter);
+  const [filteredListings, isFetching] = useUserListings(signer?.address, filter);
   const { tokenOptionsMap, currencyOptionsMap } = useFormattedDropdownData();
   const { triggerUserProfileModal } = useUserProfileModal();
 
@@ -86,7 +86,7 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
         currencyToBigInt(maxPricePerOrder),
         network,
         signer,
-      ).then(refresh);
+      );
     });
   };
 
@@ -101,7 +101,7 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
     }).then(confirmed => {
       if (!confirmed) return;
 
-      deleteListing(listing.token, listing.currency, listing.id, network, signer).then(refresh);
+      deleteListing(listing.token, listing.currency, listing.id, network, signer);
     });
   };
 

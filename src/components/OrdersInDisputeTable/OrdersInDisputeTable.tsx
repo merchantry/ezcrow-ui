@@ -27,34 +27,34 @@ function OrdersInDisputeTable({ filter }: OrdersInDisputeTableProps) {
   const signer = useWeb3Signer();
   const { token, currency } = useTableSearchParams();
   const { triggerUserProfileModal } = useUserProfileModal();
-  const [orders, isFetching, refresh] = useOrders(filter, OrderStatus.InDispute);
+  const [orders, isFetching] = useOrders(filter, OrderStatus.InDispute);
 
-  const onCancelOrder = (order: Order) => {
+  const onCancelOrder = async (order: Order) => {
     if (!signer) return;
-    triggerModal(ConfirmationModal, {
+
+    const confirmed = await triggerModal(ConfirmationModal, {
       title: `Cancel (Order ID: ${order.id})?`,
       text: 'Are you sure you want to cancel order in dispute',
       confirmText: 'Cancel Order',
       noCancelBtn: true,
-    }).then(confirmed => {
-      if (!confirmed) return;
-
-      acceptDispute(token, currency, order.id, network, signer).then(refresh);
     });
+    if (!confirmed) return;
+
+    acceptDispute(token, currency, order.id, network, signer);
   };
 
-  const onCompleteOrder = (order: Order) => {
+  const onCompleteOrder = async (order: Order) => {
     if (!signer) return;
-    triggerModal(ConfirmationModal, {
+
+    const confirmed = await triggerModal(ConfirmationModal, {
       title: `Complete (Order ID: ${order.id})?`,
       text: 'Are you sure you want to complete order in dispute',
       confirmText: 'Complete Order',
       noCancelBtn: true,
-    }).then(confirmed => {
-      if (!confirmed) return;
-
-      rejectDispute(token, currency, order.id, network, signer).then(refresh);
     });
+    if (!confirmed) return;
+
+    rejectDispute(token, currency, order.id, network, signer);
   };
 
   const onAddressClick = async (address: string) => {

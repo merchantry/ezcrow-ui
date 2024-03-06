@@ -8,6 +8,10 @@ export const handler = route.post(
     const signer = getSigner(network);
     const ezcrowRamp = getEzcrowRampContract(network, signer);
 
-    await ezcrowRamp.rejectOrder(owner, tokenSymbol, currencySymbol, orderId, v, r, s);
+    const tx = await ezcrowRamp.rejectOrder(owner, tokenSymbol, currencySymbol, orderId, v, r, s);
+
+    return {
+      txHash: tx.hash,
+    };
   },
 );

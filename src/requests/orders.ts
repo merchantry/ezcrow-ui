@@ -1,5 +1,6 @@
 import { OrderActionParams } from 'api/types';
 import api from './api';
+import { TxRequest } from './types';
 
 type GetOrdersParams = {
   tokenSymbol: string;
@@ -54,10 +55,10 @@ export async function getUserOrders({
   });
 }
 
-export async function acceptOrder(params: OrderActionParams) {
+export async function acceptOrder(params: OrderActionParams): Promise<TxRequest> {
   return api.post('acceptOrder', params);
 }
 
-export async function rejectOrder(params: OrderActionParams) {
+export async function rejectOrder(params: OrderActionParams): Promise<TxRequest> {
   return api.post('rejectOrder', params);
 }

@@ -30,11 +30,11 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
   const signer = useWeb3Signer();
   const { token, currency } = useTableSearchParams();
   const { triggerUserProfileFromOrderModal } = useUserProfileModal();
-  const [orders, isFetching, refresh] = useUserOrders(signer?.address, filter);
+  const [orders, isFetching] = useUserOrders(signer?.address, filter);
 
   const tokenToBigInt = useTokenDecimalsStandard();
 
-  const onActionButtonClick = (order: Order, tooltip: string, buttonText: string) => {
+  const onActionButtonClick = async (order: Order, tooltip: string, buttonText: string) => {
     if (!signer) return;
     const isCancellingOrDisputing =
       tooltip === OrderCancelAction.Cancel || tooltip === OrderCancelAction.Dispute;
@@ -50,7 +50,7 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
       }
     });
 
-    triggerModal(ConfirmationModal, {
+    const confirmed = await triggerModal(ConfirmationModal, {
       title: `${buttonText} (Order ID: ${order.id})?`,
       text,
       confirmText: buttonText,
@@ -58,28 +58,25 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
         order.listingAction === ListingAction.Sell || isCancellingOrDisputing ? 'error' : 'success',
       noCancelBtn: true,
       confirmIcon: tooltip === OrderCancelAction.Dispute ? <FaRegHand /> : undefined,
-    }).then(async confirmed => {
-      if (!confirmed) return;
-      const userType =
-        signer.address === order.listingCreator ? UserType.ListingCreator : UserType.OrderCreator;
-      const orderStatus = getCurrentOrderStatus(order);
-      const listingAction = order.listingAction;
-
-      if (
-        userType === UserType.OrderCreator &&
-        orderStatus === OrderStatus.AssetsConfirmed &&
-        listingAction === ListingAction.Buy
-      ) {
-        await approveToken(token, currency, tokenToBigInt(order.tokenAmount), network, signer);
-      }
-
-      const signatureArgs = [token, currency, order.id, network, signer] as const;
-      const promise = isCancellingOrDisputing
-        ? signAndRejectOrder(...signatureArgs)
-        : signAndAcceptOrder(...signatureArgs);
-
-      promise.then(refresh);
     });
+
+    if (!confirmed) return;
+    const userType =
+      signer.address === order.listingCreator ? UserType.ListingCreator : UserType.OrderCreator;
+    const orderStatus = getCurrentOrderStatus(order);
+    const listingAction = order.listingAction;
+
+    if (
+      userType === UserType.OrderCreator &&
+      orderStatus === OrderStatus.AssetsConfirmed &&
+      listingAction === ListingAction.Buy
+    ) {
+      await approveToken(token, currency, tokenToBigInt(order.tokenAmount), network, signer);
+    }
+
+    const orderFunction = isCancellingOrDisputing ? signAndRejectOrder : signAndAcceptOrder;
+
+    orderFunction(token, currency, order.id, network, signer);
   };
 
   const onAddressClick = async (address: string, orderId: number) => {

@@ -1,6 +1,6 @@
 import { BigNumberish, ethers } from 'ethers';
 import { acceptOrder, rejectOrder } from 'requests/orders';
-import { runTransaction, sendRequest } from 'web3/api';
+import { runTransaction, sendTransactionRequest } from 'web3/api';
 import {
   getERC20Contract,
   getEzcrowRampContract,
@@ -117,6 +117,7 @@ export async function signAndAcceptOrder(
 ) {
   const ezcrowRampContract = getEzcrowRampContract(network, signer);
   const nonce = await ezcrowRampContract.nonces(signer.address);
+
   const { v, r, s } = await signData(signer, ezcrowRampContract, {
     owner: signer.address,
     tokenSymbol: token,
@@ -126,17 +127,19 @@ export async function signAndAcceptOrder(
     nonce,
   });
 
-  return sendRequest(() =>
-    acceptOrder({
-      owner: signer.address,
-      tokenSymbol: token,
-      currencySymbol: currency,
-      orderId: orderId.toString(),
-      v: v.toString(),
-      r,
-      s,
-      network,
-    }),
+  return sendTransactionRequest(
+    () =>
+      acceptOrder({
+        owner: signer.address,
+        tokenSymbol: token,
+        currencySymbol: currency,
+        orderId: orderId.toString(),
+        v: v.toString(),
+        r,
+        s,
+        network,
+      }),
+    signer.provider,
   );
 }
 
@@ -158,17 +161,19 @@ export async function signAndRejectOrder(
     nonce,
   });
 
-  return sendRequest(() =>
-    rejectOrder({
-      owner: signer.address,
-      tokenSymbol: token,
-      currencySymbol: currency,
-      orderId: orderId.toString(),
-      v: v.toString(),
-      r,
-      s,
-      network,
-    }),
+  return sendTransactionRequest(
+    () =>
+      rejectOrder({
+        owner: signer.address,
+        tokenSymbol: token,
+        currencySymbol: currency,
+        orderId: orderId.toString(),
+        v: v.toString(),
+        r,
+        s,
+        network,
+      }),
+    signer.provider,
   );
 }
 

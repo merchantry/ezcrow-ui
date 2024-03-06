@@ -1,4 +1,4 @@
-import { DependencyList, useEffect, useState } from 'react';
+import { DependencyList, useCallback, useEffect, useState } from 'react';
 import { useTableSearchParams, useWindowEvent } from './hooks';
 import { ListingAction, OrderStatus } from './enums';
 import { getListings, getUserListings } from 'requests/listings';
@@ -9,6 +9,7 @@ import { serializeOrder } from './orders';
 import { useNetwork } from './web3Hooks';
 import { useDropdownData } from 'components/ContextData/hooks';
 import { PER_PAGE } from 'config/tables';
+import { WEB3_REQUEST_COMPLETED_EVENT, WEB3_REQUEST_MINED_EVENT } from 'web3/api';
 
 const orderStatusToNumber = (status?: OrderStatus) => {
   if (status === undefined) return undefined;
@@ -47,24 +48,18 @@ const useItemsWithFetchFunction = <T, R>(
 ) => {
   const [items, setItems] = useState<R[]>([]);
   const [isFetching, setIsFetching] = useState<boolean>(false);
-  const [refreshValue, setRefreshValue] = useState(false);
 
   const { token, currency, sortBy, sortOrder, page } = useTableSearchParams();
   const { tokenDecimals, currencyDecimals } = useDropdownData();
   const network = useNetwork();
 
-  const refresh = () => {
-    setRefreshValue(refreshValue => !refreshValue);
-  };
+  const updateData = useCallback(
+    async (forceUpdate: boolean) => {
+      if (!token || !currency || !(token in tokenDecimals) || !(currency in currencyDecimals)) {
+        return;
+      }
 
-  useEffect(() => {
-    if (!token || !currency || !(token in tokenDecimals) || !(currency in currencyDecimals)) {
-      setIsFetching(true);
-      return;
-    }
-
-    const fn = async () => {
-      setIsFetching(true);
+      setIsFetching(forceUpdate);
 
       const tokenDecimalsFrom = tokenDecimals[token];
       const currencyDecimalsFrom = currencyDecimals[currency];
@@ -79,36 +74,51 @@ const useItemsWithFetchFunction = <T, R>(
         network,
       });
 
-      setItems(
-        data.map(i =>
-          serializeItem(i, tokenDecimalsFrom, ROUND_TO_TOKEN, currencyDecimalsFrom, ROUND_TO_FIAT),
-        ),
+      const newItems = data.map(i =>
+        serializeItem(i, tokenDecimalsFrom, ROUND_TO_TOKEN, currencyDecimalsFrom, ROUND_TO_FIAT),
       );
 
+      setItems(items => {
+        if (!forceUpdate && JSON.stringify(newItems) === JSON.stringify(items)) {
+          return items;
+        }
+
+        return newItems;
+      });
       setIsFetching(false);
-    };
-
-    fn();
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    currencyDecimals,
-    tokenDecimals,
-    sortOrder,
-    currency,
-    refreshValue,
-    network,
-    sortBy,
-    token,
-    page,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    ...deps,
-  ]);
+    [
+      currencyDecimals,
+      tokenDecimals,
+      sortOrder,
+      currency,
+      network,
+      sortBy,
+      token,
+      page,
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      ...deps,
+    ],
+  );
 
-  useWindowEvent(REFRESH_TABLE_DATA_EVENT, () => {
-    refresh();
+  useWindowEvent(WEB3_REQUEST_COMPLETED_EVENT, () => {
+    updateData(false);
   });
 
-  return [items, isFetching, refresh] as [R[], boolean, () => void];
+  useWindowEvent(WEB3_REQUEST_MINED_EVENT, () => {
+    updateData(false);
+  });
+
+  useWindowEvent(REFRESH_TABLE_DATA_EVENT, () => {
+    updateData(true);
+  });
+
+  useEffect(() => {
+    updateData(true);
+  }, [updateData]);
+
+  return [items, isFetching] as [R[], boolean];
 };
 
 export const useListings = (filter?: ListingAction) =>
