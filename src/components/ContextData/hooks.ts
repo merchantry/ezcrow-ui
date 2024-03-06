@@ -61,8 +61,8 @@ export const useCurrencyDecimalsStandard = () => {
 
   return (value: number) =>
     bigIntMultiplyByTenPow(
-      BigInt(multiplyByTenPow(value, ROUND_TO_FIAT)),
-      BigInt(currencyDecimals[currency] - ROUND_TO_FIAT),
+      BigInt(Math.round(multiplyByTenPow(value, ROUND_TO_FIAT))),
+      BigInt(Math.round(currencyDecimals[currency] - ROUND_TO_FIAT)),
     );
 };
 
@@ -72,7 +72,7 @@ export const useTokenDecimalsStandard = () => {
 
   return (value: number) =>
     bigIntMultiplyByTenPow(
-      BigInt(multiplyByTenPow(value, ROUND_TO_TOKEN)),
-      BigInt(tokenDecimals[token] - ROUND_TO_TOKEN),
+      BigInt(Math.round(multiplyByTenPow(value, ROUND_TO_TOKEN))),
+      BigInt(Math.round(tokenDecimals[token] - ROUND_TO_TOKEN)),
     );
 };
