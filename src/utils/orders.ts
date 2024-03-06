@@ -38,6 +38,22 @@ export const getOrderOption = <T>(
 export const getCurrentOrderStatus = (order: Order) =>
   order.statusHistory[order.statusHistory.length - 1];
 
+export const getUserType = (user: string, order: Order) => {
+  switch (user) {
+    case order.creator:
+      return UserType.OrderCreator;
+    case order.listingCreator:
+      return UserType.ListingCreator;
+    default:
+      throw new Error('User is not related to the order');
+  }
+};
+
+export const isUserBuying = (userType: UserType, order: Order) =>
+  userType === UserType.ListingCreator
+    ? order.listingAction === ListingAction.Buy
+    : order.listingAction === ListingAction.Sell;
+
 export const getOrderData = <T>(order: Order, user: UserType, perOrderData: PerOrderData<T>) => {
   const result: Partial<T> = {};
   const status = getCurrentOrderStatus(order);

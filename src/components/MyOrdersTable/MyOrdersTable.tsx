@@ -18,7 +18,7 @@ import { useTokenDecimalsStandard, useWeb3Signer } from 'components/ContextData/
 import { approveToken, signAndAcceptOrder, signAndRejectOrder } from 'web3/requests/ezcrowRamp';
 import { useTableSearchParams } from 'utils/hooks';
 import { useNetwork } from 'utils/web3Hooks';
-import { getCurrentOrderStatus } from 'utils/orders';
+import { getCurrentOrderStatus, getUserType, isUserBuying } from 'utils/orders';
 import { useUserProfileModal } from 'utils/modalHooks';
 
 interface MyOrdersTableProps {
@@ -55,14 +55,15 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
       text,
       confirmText: buttonText,
       confirmColor:
-        order.listingAction === ListingAction.Sell || isCancellingOrDisputing ? 'error' : 'success',
+        !isUserBuying(getUserType(signer?.address ?? '', order), order) || isCancellingOrDisputing
+          ? 'error'
+          : 'success',
       noCancelBtn: true,
       confirmIcon: tooltip === OrderCancelAction.Dispute ? <FaRegHand /> : undefined,
     });
 
     if (!confirmed) return;
-    const userType =
-      signer.address === order.listingCreator ? UserType.ListingCreator : UserType.OrderCreator;
+    const userType = getUserType(signer.address, order);
     const orderStatus = getCurrentOrderStatus(order);
     const listingAction = order.listingAction;
 

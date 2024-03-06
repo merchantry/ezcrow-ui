@@ -2,13 +2,13 @@ import React, { useMemo } from 'react';
 
 import styles from './MyOrdersTable.module.scss';
 import { Order } from 'utils/types';
-import { ListingAction, OrderCancelAction, OrderStatus, UserType } from 'utils/enums';
+import { OrderCancelAction, OrderStatus, UserType } from 'utils/enums';
 import { maybePluralize, priceFormat } from 'utils/helpers';
 import ButtonWithTooltip from 'components/ButtonWithTooltip';
 import { ButtonWithTooltipProps } from 'components/ButtonWithTooltip/ButtonWithTooltip';
 import { FaXmark, FaRegHand } from 'react-icons/fa6';
 import IconButtonWithTooltip from 'components/IconButtonWithTooltip';
-import { getCurrentOrderStatus } from 'utils/orders';
+import { getCurrentOrderStatus, getUserType, isUserBuying } from 'utils/orders';
 import { useWeb3Signer } from 'components/ContextData/hooks';
 
 interface OrderActionButtonsProps {
@@ -85,12 +85,8 @@ function OrderActionButtons({ order, onClick }: OrderActionButtonsProps) {
     color: 'success' | 'error';
     assetsAmountAndSymbol: string;
   } = useMemo(() => {
-    const userType =
-      order.creator === signer?.address ? UserType.OrderCreator : UserType.ListingCreator;
-    const userIsBuyer =
-      userType === UserType.ListingCreator
-        ? order.listingAction === ListingAction.Buy
-        : order.listingAction === ListingAction.Sell;
+    const userType = getUserType(signer?.address ?? '', order);
+    const userIsBuyer = isUserBuying(userType, order);
 
     return {
       userType,
