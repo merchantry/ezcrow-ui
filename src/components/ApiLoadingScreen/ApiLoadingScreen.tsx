@@ -8,7 +8,7 @@ import {
   WEB3_REQUEST_SENT_EVENT,
 } from 'web3/api';
 import LoadingAnimation from 'components/LoadingAnimation';
-import { useAlert } from 'components/AlertContainer/AlertContainer';
+import { useAlert } from 'components/AlertContainer/hooks';
 
 function ApiLoadingScreen() {
   const triggerAlert = useAlert();

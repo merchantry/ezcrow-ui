@@ -1,23 +1,10 @@
 import { Alert, AlertColor, Snackbar } from '@mui/material';
-import React, { createContext, useContext, useState } from 'react';
+import React, { useState } from 'react';
+import AlertContext from './AlertContext';
 
 interface AlertContainerProps {
   children: React.ReactNode;
 }
-
-type TriggerAlert = (message: string, severity?: AlertColor, autoHideDuration?: number) => void;
-
-const AlertContext = createContext<TriggerAlert | null>(null);
-
-export const useAlert = () => {
-  const context = useContext(AlertContext);
-
-  if (!context) {
-    throw new Error('useAlert must be used within a AlertContextProvider');
-  }
-
-  return context;
-};
 
 function AlertContainer({ children }: AlertContainerProps) {
   const [open, setOpen] = useState(false);

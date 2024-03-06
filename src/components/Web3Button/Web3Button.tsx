@@ -11,7 +11,7 @@ import {
   updateChain,
 } from 'utils/ethereumProvider';
 import { useWeb3Data } from 'components/ContextData/hooks';
-import { useAlert } from 'components/AlertContainer/AlertContainer';
+import { useAlert } from 'components/AlertContainer/hooks';
 import { shortenAddress } from 'utils/helpers';
 import { useWeb3Event } from 'utils/ethereumProviderHooks';
 import ButtonWithTooltip from 'components/ButtonWithTooltip';
