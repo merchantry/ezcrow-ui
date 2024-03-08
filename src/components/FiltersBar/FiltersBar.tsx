@@ -97,6 +97,7 @@ function FiltersBar({ children, sortByOptions }: FiltersBarProps) {
       <IconButton
         onClick={() => setSortOrder(SortOrder.DESC)}
         className={`${styles.sortOrder} ${sortOrder === SortOrder.DESC && styles.active}`}
+        title="Sort descending"
       >
         <FaSortAmountDown />
       </IconButton>
@@ -105,11 +106,12 @@ function FiltersBar({ children, sortByOptions }: FiltersBarProps) {
         className={`${styles.sortOrder} ${styles.ascending} ${
           sortOrder === SortOrder.ASC && styles.active
         }`}
+        title="Sort ascending"
       >
         <FaSortAmountUp />
       </IconButton>
       <Pagination value={page} onChange={setPage} pages={5} className={styles.pagination} />
-      <IconButton onClick={emitRefreshTableDataEvent}>
+      <IconButton onClick={emitRefreshTableDataEvent} title="Refresh table">
         <FaRotateRight />
       </IconButton>
       <div className={styles.buttonsContainer}>{children}</div>

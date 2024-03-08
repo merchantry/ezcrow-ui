@@ -24,11 +24,11 @@ function Pagination({ value, onChange, pages, className }: PaginationProps) {
 
   return (
     <div className={`${styles.pagination} ${className}`}>
-      <IconButton disabled={value === 1} onClick={handlePreviousClick}>
+      <IconButton disabled={value === 1} onClick={handlePreviousClick} title="Previous page">
         <FaCaretLeft />
       </IconButton>
       <div className={styles.pageNumber}>{value}</div>
-      <IconButton disabled={value === pages} onClick={handleNextClick}>
+      <IconButton disabled={value === pages} onClick={handleNextClick} title="Next page">
         <FaCaretRight />
       </IconButton>
     </div>

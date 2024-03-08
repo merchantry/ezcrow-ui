@@ -11,6 +11,7 @@ interface DropwdownProps<T extends string> {
   label: string;
   className?: string;
   style?: CSSProperties;
+  title?: string;
 }
 
 const OPTION_HEIGHT = 35;
@@ -22,6 +23,7 @@ function Dropwdown<T extends string>({
   label,
   className,
   style,
+  title,
 }: DropwdownProps<T>) {
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -53,6 +55,7 @@ function Dropwdown<T extends string>({
       className={`${styles.dropdownContainer} ${isOpen && styles.open} ${className}`}
       style={style}
       onClick={toggleOpen}
+      title={title}
     >
       <div className={styles.label}>
         <span>{label}</span>
