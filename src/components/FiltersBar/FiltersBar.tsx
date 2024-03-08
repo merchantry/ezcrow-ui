@@ -3,7 +3,7 @@ import styles from './FiltersBar.module.scss';
 import Dropdown from 'components/Dropdown';
 import { NavLink, useSearchParams } from 'react-router-dom';
 import { useFilterRedirects, useFirstLocationPathname, useTableSearchParams } from 'utils/hooks';
-import { isFilterOption, mergeSearchParams } from 'utils/helpers';
+import { isFilterOption } from 'utils/helpers';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 import { FaRotateRight } from 'react-icons/fa6';
 import IconButton from 'components/IconButton';
@@ -56,29 +56,19 @@ interface FiltersBarProps {
 
 function FiltersBar({ children, sortByOptions }: FiltersBarProps) {
   useFilterRedirects();
-  const [, setSearchParams] = useSearchParams();
   const { tokenOptionsMap, currencyOptionsMap } = useFormattedDropdownData();
-  const { currency, token, sortBy, sortOrder, page } = useTableSearchParams();
-
-  const handleCurrencyChange = (currency: string) => {
-    setSearchParams(params => mergeSearchParams(params, { currency }));
-  };
-
-  const handleTokenChange = (token: string) => {
-    setSearchParams(params => mergeSearchParams(params, { token }));
-  };
-
-  const handleSortByChange = (sortBy: string) => {
-    setSearchParams(params => mergeSearchParams(params, { sortBy }));
-  };
-
-  const handleSortOrderChange = (sortOrder: SortOrder) => {
-    setSearchParams(params => mergeSearchParams(params, { sortOrder }));
-  };
-
-  const handlePageChange = (page: number) => {
-    setSearchParams(params => mergeSearchParams(params, { page: page.toString() }));
-  };
+  const {
+    currency,
+    token,
+    sortBy,
+    sortOrder,
+    page,
+    setCurrency,
+    setToken,
+    setSortBy,
+    setSortOrder,
+    setPage,
+  } = useTableSearchParams();
 
   return (
     <div className={styles.filterControls}>
@@ -88,42 +78,37 @@ function FiltersBar({ children, sortByOptions }: FiltersBarProps) {
         value={token}
         label="Token"
         options={tokenOptionsMap}
-        onChange={handleTokenChange}
+        onChange={setToken}
       />
       <Dropdown
         className={styles.currencyDropdown}
         value={currency}
         label="Currency"
         options={currencyOptionsMap}
-        onChange={handleCurrencyChange}
+        onChange={setCurrency}
       />
       <Dropdown
         className={styles.sortByDropdown}
         value={sortBy}
         label="Sort By"
         options={sortByOptions}
-        onChange={handleSortByChange}
+        onChange={setSortBy}
       />
       <IconButton
-        onClick={() => handleSortOrderChange(SortOrder.DESC)}
+        onClick={() => setSortOrder(SortOrder.DESC)}
         className={`${styles.sortOrder} ${sortOrder === SortOrder.DESC && styles.active}`}
       >
         <FaSortAmountDown />
       </IconButton>
       <IconButton
-        onClick={() => handleSortOrderChange(SortOrder.ASC)}
+        onClick={() => setSortOrder(SortOrder.ASC)}
         className={`${styles.sortOrder} ${styles.ascending} ${
           sortOrder === SortOrder.ASC && styles.active
         }`}
       >
         <FaSortAmountUp />
       </IconButton>
-      <Pagination
-        value={page}
-        onChange={handlePageChange}
-        pages={5}
-        className={styles.pagination}
-      />
+      <Pagination value={page} onChange={setPage} pages={5} className={styles.pagination} />
       <IconButton onClick={emitRefreshTableDataEvent}>
         <FaRotateRight />
       </IconButton>

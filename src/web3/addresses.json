@@ -1,38 +1,38 @@
 {
   "FiatTokenPairDeployer": {
-    "telostest": "0xBc5f65B4337381Ccdc73c5aE7e0792D1f5C73aD7"
+    "telostest": "0x75b5e3D37845962dbc4Ab9bf9454AF801bEBEBa2"
   },
   "ListingsKeyStorageDeployer": {
-    "telostest": "0xDa513852c5D6064e7f21b634D5bFE562d5B5DB5D"
+    "telostest": "0xE91fc0678A358715F762F499664DdA6D6b86DCC7"
   },
   "ListingsHandlerDeployer": {
-    "telostest": "0x0F411F01Aa13087C15E18068DD77361E8C179962"
+    "telostest": "0x1390653b8C66824323b8EbA1fdA98bC9125C468B"
   },
   "OrdersHandlerDeployer": {
-    "telostest": "0x71481f40EB83334565Ec8Aeb595ca8304F904d6F"
+    "telostest": "0x6949a860685037A6595c76D3Cc7DF5f029bE91ed"
   },
   "EzcrowRamp": {
-    "telostest": "0x5b7fec9E4741ad6504797c9e2a07bDE9e283c82D"
+    "telostest": "0x72d04fdB36cddE5735800c2a2cAE399C175Bb27E"
   },
   "FiatTokenPairHandler": {
-    "telostest": "0x2f9d71Fce2b8003E3F6Eeed539187cb6824F6675"
+    "telostest": "0xb6DA71421fb1C299c3342a8350f00827eB0a21d1"
   },
   "OrdersKeyStorageDeployer": {
-    "telostest": "0xE1Be2E482e9cEB9E906121F2b228B29Ca5E89C7D"
+    "telostest": "0x3A06a22E134B47D09846e12bC7FD14aA18C3b2C3"
   },
   "EzcrowRampQuery": {
-    "telostest": "0x15204266cA408569903Ef992CA9e1fE21D860ff3"
+    "telostest": "0xFDaef35197d0a5f1F350a87a90bc888305f9f6D6"
   },
   "TestToken": {
     "telostest": "0x9B28089f8b07951A1232e89D9d659b2a4F88Fb1F"
   },
   "MultiOwnable": {
-    "telostest": "0x7e0ac371010c72010065611e735f6315286F46ed"
+    "telostest": "0x6b8771E39e4b4f080d2C41AEF206cf0Cb5B3Fa74"
   },
   "WhitelistedUsersDatabaseHandler": {
-    "telostest": "0xFeB3B9bCf6D658B0c1b52377DBFC46af16671a66"
+    "telostest": "0xea060F519Ad734ECd1f1d07B010972e57C29B6b3"
   },
   "WhitelistedUsersDatabase": {
-    "telostest": "0x494fF277fb7ceB66b1685F3B43E2C4Ec9598ce6C"
+    "telostest": "0x5B01d43F15aC23597F01c50638797236Cbe0C522"
   }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { priceFormat } from 'utils/helpers';
+import { mergeSearchParams, priceFormat } from 'utils/helpers';
 import { ListingAction } from 'utils/enums';
 
 import styles from './MyListingsTable.module.scss';
@@ -24,6 +24,7 @@ import { approveToken, deleteListing, updateListing } from 'web3/requests/ezcrow
 import { useNetwork } from 'utils/web3Hooks';
 import { listingActionToNumber } from 'utils/listings';
 import { useUserProfileModal } from 'utils/modalHooks';
+import { useSearchParams } from 'react-router-dom';
 
 interface MyListingsTableProps {
   filter?: ListingAction;
@@ -32,6 +33,7 @@ interface MyListingsTableProps {
 function MyListingsTable({ filter }: MyListingsTableProps) {
   const network = useNetwork();
   const signer = useWeb3Signer();
+  const [, setSearchParams] = useSearchParams();
   const [filteredListings, isFetching] = useUserListings(signer?.address, filter);
   const { tokenOptionsMap, currencyOptionsMap } = useFormattedDropdownData();
   const { triggerUserProfileModal } = useUserProfileModal();
@@ -61,19 +63,20 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
       const previousTokenAmount = tokenToBigInt(listing.totalTokenAmount);
       const totalTokenAmount = tokenToBigInt(_totalTokenAmount);
 
-      if (token !== listing.token || currency !== listing.currency) {
-        await approveToken(token, currency, totalTokenAmount, network, signer);
-      } else if (action === ListingAction.Sell && totalTokenAmount > previousTokenAmount) {
-        await approveToken(
-          token,
-          currency,
-          totalTokenAmount - previousTokenAmount,
-          network,
-          signer,
-        );
+      if (action === ListingAction.Sell) {
+        if (token !== listing.token || currency !== listing.currency)
+          await approveToken(token, currency, totalTokenAmount, network, signer);
+        else if (totalTokenAmount > previousTokenAmount)
+          await approveToken(
+            token,
+            currency,
+            totalTokenAmount - previousTokenAmount,
+            network,
+            signer,
+          );
       }
 
-      updateListing(
+      await updateListing(
         listing.token,
         listing.currency,
         listing.id,
@@ -87,6 +90,8 @@ function MyListingsTable({ filter }: MyListingsTableProps) {
         network,
         signer,
       );
+
+      setSearchParams(params => mergeSearchParams(params, { currency, token }));
     });
   };
 

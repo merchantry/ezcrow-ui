@@ -93,9 +93,8 @@ export type CurrencySettingsMethods = {
 
 export type WhitelistedUsersDatabaseHandlerMethods = {
   getUserData: StaticMethod<[string, string], UserData>;
-  getUserPreparedData: StaticMethod<[string, string], UserData>;
-  getUserDataWithOrder: StaticMethod<[string, string, string, BigNumberish], UserData>;
-  updateUser: TransactionMethod<[string, string, string, string]>;
+  updateUser: TransactionMethod<[string, string, string[]]>;
+  isWhitelisted: StaticMethod<[string, string], boolean>;
   getAllValidPaymentMethods: StaticMethod<[], string[]>;
 };
 

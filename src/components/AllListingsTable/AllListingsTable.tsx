@@ -87,16 +87,16 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
         {
           label: 'Price',
           className: tableStyles.price,
-          render: listing => `${listing.price} ${currency}`,
+          render: listing => `${listing.price} ${listing.currency}`,
         },
         {
           label: 'Available/Total Amount',
-          render: ({ availableTokenAmount, totalTokenAmount }) =>
+          render: ({ availableTokenAmount, totalTokenAmount, token }) =>
             `${availableTokenAmount} ${token} / ${totalTokenAmount} ${token}`,
         },
         {
           label: 'Limit Per Order',
-          render: ({ minPricePerOrder, maxPricePerOrder }) =>
+          render: ({ minPricePerOrder, maxPricePerOrder, currency }) =>
             `${priceFormat(minPricePerOrder, currency)} - ${priceFormat(
               maxPricePerOrder,
               currency,
@@ -116,7 +116,7 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
           colStyle: { width: 145 },
           render: listing => {
             const action = opposite(listing.action, [ListingAction.Sell, ListingAction.Buy]);
-            const buttonTitle = `${action} ${token}`;
+            const buttonTitle = `${action} ${listing.token}`;
 
             return (
               <div className={tableStyles.actions}>

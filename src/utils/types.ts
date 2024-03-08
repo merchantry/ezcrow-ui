@@ -5,18 +5,13 @@ import { ModalProps } from './interfaces';
 export type FilterOption = (typeof FILTER_OPTIONS)[number];
 
 export type UserData = {
-  profileNonce: number;
   user: string;
   currency: string;
   telegramHandle: string;
-  whitelisted: boolean;
-  privateData: {
-    paymentMethod: string;
-    paymentData: string;
-  };
+  paymentMethods: string[];
 };
 
-export type UserEditData = Pick<UserData, 'currency' | 'telegramHandle'> & UserData['privateData'];
+export type UserEditData = Pick<UserData, 'currency' | 'telegramHandle' | 'paymentMethods'>;
 
 export type ListingEditData = {
   token: string;

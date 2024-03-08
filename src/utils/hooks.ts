@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { isFilterOption } from './helpers';
+import { isFilterOption, mergeSearchParams } from './helpers';
 import { LISTINGS_SORT_BY_OPTIONS } from '../config/tables';
 import { SortOrder } from './enums';
 import { useDropdownData } from 'components/ContextData/hooks';
@@ -61,7 +61,7 @@ export const useFilterRedirects = () => {
 };
 
 export const useTableSearchParams = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { tokenDecimals, currencyDecimals } = useDropdownData();
 
   const defaultToken = useMemo(() => Object.keys(tokenDecimals)[0], [tokenDecimals]);
@@ -90,5 +90,36 @@ export const useTableSearchParams = () => {
 
   const page = useMemo(() => Number(searchParams.get('page')) || 1, [searchParams]);
 
-  return { currency, token, sortBy, sortOrder, page };
+  const setCurrency = (currency: string) => {
+    setSearchParams(params => mergeSearchParams(params, { currency }));
+  };
+
+  const setToken = (token: string) => {
+    setSearchParams(params => mergeSearchParams(params, { token }));
+  };
+
+  const setSortBy = (sortBy: string) => {
+    setSearchParams(params => mergeSearchParams(params, { sortBy }));
+  };
+
+  const setSortOrder = (sortOrder: SortOrder) => {
+    setSearchParams(params => mergeSearchParams(params, { sortOrder }));
+  };
+
+  const setPage = (page: number) => {
+    setSearchParams(params => mergeSearchParams(params, { page: page.toString() }));
+  };
+
+  return {
+    currency,
+    token,
+    sortBy,
+    sortOrder,
+    page,
+    setCurrency,
+    setToken,
+    setSortBy,
+    setSortOrder,
+    setPage,
+  };
 };

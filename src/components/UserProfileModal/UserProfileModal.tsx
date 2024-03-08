@@ -9,6 +9,7 @@ import { UserData } from 'utils/types';
 export interface UserProfileModalProps extends ModalProps<boolean> {
   address: string;
   userData: UserData;
+  whitelisted: boolean;
 }
 
 function ProfileRow({ label, children }: { label: string; children: React.ReactNode }) {
@@ -43,7 +44,12 @@ function WhitelistedBadge({ whitelisted }: { whitelisted: boolean }) {
   );
 }
 
-function UserProfileModal({ address, userData, ...modalProps }: UserProfileModalProps) {
+function UserProfileModal({
+  address,
+  userData,
+  whitelisted,
+  ...modalProps
+}: UserProfileModalProps) {
   return (
     <ConfirmationModal title="User Profile" confirmText="OK" noCancelBtn {...modalProps}>
       <div>
@@ -51,13 +57,8 @@ function UserProfileModal({ address, userData, ...modalProps }: UserProfileModal
         <ProfileRow label="Currency">{userData.currency}</ProfileRow>
         <div>
           <ProfileRow label="Telegram Handle">{userData.telegramHandle}</ProfileRow>
-          {userData.privateData.paymentMethod && (
-            <ProfileRow label="Payment Method">{userData.privateData.paymentMethod}</ProfileRow>
-          )}
-          {userData.privateData.paymentData && (
-            <ProfileRow label="Payment Data">{userData.privateData.paymentData}</ProfileRow>
-          )}
-          <WhitelistedBadge whitelisted={userData.whitelisted} />
+          <ProfileRow label="Payment Methods">{userData.paymentMethods.join(', ')}</ProfileRow>
+          <WhitelistedBadge whitelisted={whitelisted} />
         </div>
       </div>
     </ConfirmationModal>

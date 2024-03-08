@@ -1,0 +1,11 @@
+@import 'scss/mixins/variables';
+
+.container {
+  width: 100%;
+
+  & > p,
+  & > label,
+  & > div > div {
+    color: $font-color !important;
+  }
+}

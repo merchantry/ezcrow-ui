@@ -145,11 +145,6 @@
       {
         "components": [
           {
-            "internalType": "uint256",
-            "name": "profileNonce",
-            "type": "uint256"
-          },
-          {
             "internalType": "address",
             "name": "user",
             "type": "address"
@@ -165,172 +160,9 @@
             "type": "string"
           },
           {
-            "internalType": "bool",
-            "name": "whitelisted",
-            "type": "bool"
-          },
-          {
-            "components": [
-              {
-                "internalType": "string",
-                "name": "paymentMethod",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "paymentData",
-                "type": "string"
-              }
-            ],
-            "internalType": "struct UserPrivateData",
-            "name": "privateData",
-            "type": "tuple"
-          }
-        ],
-        "internalType": "struct UserData",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "token",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "currency",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "orderId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getUserDataWithOrder",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "profileNonce",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "user",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "currency",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "telegramHandle",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "whitelisted",
-            "type": "bool"
-          },
-          {
-            "components": [
-              {
-                "internalType": "string",
-                "name": "paymentMethod",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "paymentData",
-                "type": "string"
-              }
-            ],
-            "internalType": "struct UserPrivateData",
-            "name": "privateData",
-            "type": "tuple"
-          }
-        ],
-        "internalType": "struct UserData",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "currency",
-        "type": "string"
-      }
-    ],
-    "name": "getUserPreparedData",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "profileNonce",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "user",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "currency",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "telegramHandle",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "whitelisted",
-            "type": "bool"
-          },
-          {
-            "components": [
-              {
-                "internalType": "string",
-                "name": "paymentMethod",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "paymentData",
-                "type": "string"
-              }
-            ],
-            "internalType": "struct UserPrivateData",
-            "name": "privateData",
-            "type": "tuple"
+            "internalType": "string[]",
+            "name": "paymentMethods",
+            "type": "string[]"
           }
         ],
         "internalType": "struct UserData",
@@ -436,14 +268,9 @@
         "type": "string"
       },
       {
-        "internalType": "string",
-        "name": "paymentMethod",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "paymentData",
-        "type": "string"
+        "internalType": "string[]",
+        "name": "paymentMethods",
+        "type": "string[]"
       }
     ],
     "name": "updateUser",

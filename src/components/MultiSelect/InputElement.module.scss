@@ -1,0 +1,7 @@
+@import 'scss/mixins/variables';
+
+div.input {
+  & > fieldset {
+    border-color: $border-color !important;
+  }
+}

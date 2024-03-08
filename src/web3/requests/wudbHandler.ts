@@ -11,45 +11,30 @@ export async function getUserData(
 ) {
   const wudbHandler = getWudbHandlerContract(network, signer);
   const userData = await wudbHandler.getUserData(address, currency);
+
   return serializeUserData(userData);
 }
 
-export async function getUserPreparedData(
-  currency: string,
-  network: string,
-  signer: ethers.JsonRpcSigner,
-) {
-  const wudbHandler = getWudbHandlerContract(network, signer);
-  const userData = await wudbHandler.getUserPreparedData(signer.address, currency);
-  return serializeUserData(userData);
-}
-
-export async function getUserDataWithOrder(
+export async function isWhitelisted(
   address: string,
   currency: string,
-  token: string,
-  orderId: number,
   network: string,
   signer: ethers.JsonRpcSigner,
 ) {
   const wudbHandler = getWudbHandlerContract(network, signer);
-  const userData = await wudbHandler.getUserDataWithOrder(address, currency, token, orderId);
-  return serializeUserData(userData);
+  return wudbHandler.isWhitelisted(address, currency);
 }
 
 export async function updateUser(
   currency: string,
   telegramHandle: string,
-  paymentMethod: string,
-  paymentData: string,
+  paymentMethods: string[],
   network: string,
   signer: ethers.JsonRpcSigner,
 ) {
   const wudbHandler = getWudbHandlerContract(network, signer);
 
-  await runTransaction(() =>
-    wudbHandler.updateUser(currency, telegramHandle, paymentMethod, paymentData),
-  );
+  await runTransaction(() => wudbHandler.updateUser(currency, telegramHandle, paymentMethods));
 }
 
 export async function getAllValidPaymentMethods(network: string, signer: ethers.JsonRpcSigner) {

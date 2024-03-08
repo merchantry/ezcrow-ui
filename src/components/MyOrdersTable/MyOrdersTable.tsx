@@ -29,7 +29,7 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
   const network = useNetwork();
   const signer = useWeb3Signer();
   const { token, currency } = useTableSearchParams();
-  const { triggerUserProfileFromOrderModal } = useUserProfileModal();
+  const { triggerUserProfileModal } = useUserProfileModal();
   const [orders, isFetching] = useUserOrders(signer?.address, filter);
 
   const tokenToBigInt = useTokenDecimalsStandard();
@@ -80,8 +80,8 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
     orderFunction(token, currency, order.id, network, signer);
   };
 
-  const onAddressClick = async (address: string, orderId: number) => {
-    triggerUserProfileFromOrderModal(address, orderId);
+  const onAddressClick = async (address: string) => {
+    triggerUserProfileModal(address);
   };
 
   return (
@@ -125,20 +125,17 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
         },
         {
           label: 'Listing Creator',
-          render: ({ id, listingCreator }) => (
+          render: ({ listingCreator }) => (
             <UserAddressCellData
               userAddress={listingCreator}
-              onClick={() => onAddressClick(listingCreator, id)}
+              onClick={() => onAddressClick(listingCreator)}
             />
           ),
         },
         {
           label: 'Order Creator',
-          render: ({ id, creator }) => (
-            <UserAddressCellData
-              userAddress={creator}
-              onClick={() => onAddressClick(creator, id)}
-            />
+          render: ({ creator }) => (
+            <UserAddressCellData userAddress={creator} onClick={() => onAddressClick(creator)} />
           ),
         },
         {

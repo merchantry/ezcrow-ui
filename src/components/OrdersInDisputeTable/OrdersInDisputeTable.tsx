@@ -15,7 +15,6 @@ import { useOrders } from 'utils/dataHooks';
 import { acceptDispute, rejectDispute } from 'web3/requests/ezcrowRamp';
 import { useNetwork } from 'utils/web3Hooks';
 import { useWeb3Signer } from 'components/ContextData/hooks';
-import { useTableSearchParams } from 'utils/hooks';
 import { useUserProfileModal } from 'utils/modalHooks';
 
 interface OrdersInDisputeTableProps {
@@ -25,7 +24,6 @@ interface OrdersInDisputeTableProps {
 function OrdersInDisputeTable({ filter }: OrdersInDisputeTableProps) {
   const network = useNetwork();
   const signer = useWeb3Signer();
-  const { token, currency } = useTableSearchParams();
   const { triggerUserProfileModal } = useUserProfileModal();
   const [orders, isFetching] = useOrders(filter, OrderStatus.InDispute);
 
@@ -40,7 +38,7 @@ function OrdersInDisputeTable({ filter }: OrdersInDisputeTableProps) {
     });
     if (!confirmed) return;
 
-    acceptDispute(token, currency, order.id, network, signer);
+    acceptDispute(order.token, order.currency, order.id, network, signer);
   };
 
   const onCompleteOrder = async (order: Order) => {
@@ -54,7 +52,7 @@ function OrdersInDisputeTable({ filter }: OrdersInDisputeTableProps) {
     });
     if (!confirmed) return;
 
-    rejectDispute(token, currency, order.id, network, signer);
+    rejectDispute(order.token, order.currency, order.id, network, signer);
   };
 
   const onAddressClick = async (address: string) => {
