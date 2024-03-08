@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import ReactDOM from 'react-dom/client';
 import { ModalProps } from './interfaces';
 import { GetModalSubmitDataType } from './types';
@@ -25,8 +25,14 @@ function triggerModal<R extends ModalProps<T>, T = GetModalSubmitDataType<R>>(
       },
     } as R;
 
+    const onMaskClick = (e: MouseEvent<HTMLDivElement>) => {
+      if (e.target !== e.currentTarget) return;
+
+      props.onClose();
+    };
+
     root.render(
-      <div className="modal-mask">
+      <div className="modal-mask" onClick={onMaskClick}>
         <Modal {...props} />
       </div>,
     );
