@@ -87,7 +87,7 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
         {
           label: 'Price',
           className: tableStyles.price,
-          render: listing => `${listing.price} ${listing.currency}`,
+          render: listing => `${priceFormat(listing.price)} ${listing.currency}`,
         },
         {
           label: 'Available/Total Amount',

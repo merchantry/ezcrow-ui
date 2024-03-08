@@ -20,12 +20,12 @@ export const mergeSearchParams = (
 export const decapitalize = (value: string) => value.charAt(0).toLowerCase() + value.slice(1);
 
 export const priceFormat = (amount: number, currency?: string, decimals = 2) =>
-  new Intl.NumberFormat('de-DE', {
+  amount.toLocaleString(undefined, {
     style: currency ? 'currency' : 'decimal',
     currency,
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
-  }).format(amount);
+  });
 
 const roundFunctions = {
   [Round.Up]: Math.ceil,

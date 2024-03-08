@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { decapitalize, opposite, priceFormat, roundTo, run } from 'utils/helpers';
+import { decapitalize, opposite, priceFormat, run } from 'utils/helpers';
 import { ListingAction, OrderCancelAction, OrderStatus, UserType } from 'utils/enums';
 
 import styles from './MyOrdersTable.module.scss';
@@ -112,7 +112,7 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
           label: 'Price',
           className: tableStyles.price,
           render: ({ tokenAmount, fiatAmount, currency }) =>
-            `${roundTo(fiatAmount / tokenAmount, 2)} ${currency}`,
+            `${priceFormat(fiatAmount / tokenAmount)} ${currency}`,
         },
         {
           label: 'Order Amount/Price',
