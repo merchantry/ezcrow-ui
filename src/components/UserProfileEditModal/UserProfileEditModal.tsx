@@ -42,7 +42,7 @@ function UserProfileEditModal({
     setIsFetching(true);
     getUserData(currency).then(userData => {
       setTelegramHandle(userData.telegramHandle);
-      setPaymentMethods(userData.paymentMethods || []);
+      setPaymentMethods(userData.paymentMethods);
       setIsWhitelisted(userData.isWhitelisted);
       setIsFetching(false);
     });
