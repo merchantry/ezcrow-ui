@@ -1,6 +1,7 @@
 import { ContractTransactionResponse, Provider } from 'ethers';
 import { TxRequest } from 'requests/types';
 import { transaction } from './transaction';
+import { emitCustomEvent } from 'services/events';
 
 export const WEB3_REQUEST_SENT_EVENT = 'WEB3_REQUEST_SENT';
 export const WEB3_REQUEST_COMPLETED_EVENT = 'WEB3_REQUEST_COMPLETED';
@@ -8,10 +9,6 @@ export const WEB3_REQUEST_MINED_EVENT = 'WEB3_REQUEST_MINED';
 export const WEB3_REQUEST_FAILED_EVENT = 'WEB3_REQUEST_FAILED';
 
 const TIMEOUT = 1 * 60 * 1000;
-
-const emitCustomEvent = (eventName: string, message: string) => {
-  window.dispatchEvent(new CustomEvent(eventName, { detail: message }));
-};
 
 const emitRequestSentEvent = (message: string) => emitCustomEvent(WEB3_REQUEST_SENT_EVENT, message);
 

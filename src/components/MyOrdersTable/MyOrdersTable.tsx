@@ -14,10 +14,9 @@ import ConfirmationModal from 'components/ConfirmationModal';
 import triggerModal from 'utils/triggerModal';
 import { FaRegHand } from 'react-icons/fa6';
 import { useUserOrders } from 'utils/dataHooks';
-import { useTokenDecimalsStandard, useWeb3Signer } from 'components/ContextData/hooks';
+import { useNetwork, useTokenDecimalsStandard, useWeb3Signer } from 'components/ContextData/hooks';
 import { approveToken, signAndAcceptOrder, signAndRejectOrder } from 'web3/requests/ezcrowRamp';
 import { useTableSearchParams } from 'utils/hooks';
-import { useNetwork } from 'utils/web3Hooks';
 import { getCurrentOrderStatus, getUserType, isUserBuying } from 'utils/orders';
 import { useUserProfileModal } from 'utils/modalHooks';
 

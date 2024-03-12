@@ -1,6 +1,6 @@
 import UserProfileModal from 'components/UserProfileModal';
 import triggerModal from './triggerModal';
-import { useNetwork } from './web3Hooks';
+import { useNetwork } from 'components/ContextData/hooks';
 import { useTableSearchParams } from './hooks';
 import { useWeb3Signer } from 'components/ContextData/hooks';
 import { getUserData, isWhitelisted } from 'web3/requests/wudbHandler';

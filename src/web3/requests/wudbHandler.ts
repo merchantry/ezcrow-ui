@@ -10,8 +10,8 @@ export async function getUserData(
   signer: ethers.JsonRpcSigner,
 ) {
   const wudbHandler = getWudbHandlerContract(network, signer);
-  const userData = await wudbHandler.getUserData(address, currency);
 
+  const userData = await wudbHandler.getUserData(address, currency);
   return serializeUserData(userData);
 }
 

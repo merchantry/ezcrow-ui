@@ -1,5 +1,10 @@
 import { BigNumberish, ContractMethod, ContractTransactionResponse } from 'ethers';
 import { UserData } from 'utils/types';
+import chains from 'web3/chains.json';
+
+export type ChainName = keyof typeof chains;
+
+export type Chain = (typeof chains)[ChainName];
 
 export type TransactionMethod<T extends unknown[]> = ContractMethod<
   T,

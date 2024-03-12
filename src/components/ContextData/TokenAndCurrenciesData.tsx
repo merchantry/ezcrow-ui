@@ -2,8 +2,8 @@ import React, { createContext, useEffect, useState } from 'react';
 import { getTokenAndCurrenciesData } from 'requests/meta';
 import { run } from 'utils/helpers';
 import { ContextData } from './types';
-import { useNetwork } from 'utils/web3Hooks';
 import LoadingScreen from 'components/LoadingScreen';
+import { useNetwork } from './hooks';
 
 interface TokenAndCurrenciesDataProps {
   children: React.ReactNode;

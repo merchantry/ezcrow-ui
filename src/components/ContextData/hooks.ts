@@ -46,13 +46,34 @@ export const useWeb3Data = () => {
     throw new Error('useWeb3Data must be used within a Web3DataProvider');
   }
 
-  return context;
+  const { signer: _signer, isNetworkSupported, ...rest } = context;
+  const signer = isNetworkSupported ? _signer : undefined;
+
+  return { signer, isNetworkSupported, ...rest };
 };
 
 export const useWeb3Signer = () => {
   const { signer } = useWeb3Data();
 
   return signer;
+};
+
+export const useNetworkState = () => {
+  const { network, setNetwork } = useWeb3Data();
+
+  return { network, setNetwork };
+};
+
+export const useNetwork = () => {
+  const { network } = useWeb3Data();
+
+  return network;
+};
+
+export const useIsNetworkSupported = () => {
+  const { isNetworkSupported, setIsNetworkSupported } = useWeb3Data();
+
+  return { isNetworkSupported, setIsNetworkSupported };
 };
 
 export const useCurrencyDecimalsStandard = () => {

@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useFormattedDropdownData, useWeb3Signer } from 'components/ContextData/hooks';
+import { useFormattedDropdownData, useNetwork, useWeb3Signer } from 'components/ContextData/hooks';
 import BaseButton from 'components/BaseButton';
 import triggerModal from 'utils/triggerModal';
 import UserProfileEditModal from 'components/UserProfileEditModal';
-import { useNetwork } from 'utils/web3Hooks';
 import { useTableSearchParams } from 'utils/hooks';
 import { UserData } from 'utils/types';
 import {

@@ -13,8 +13,7 @@ import BaseButton from 'components/BaseButton';
 import { ListingAction, OrderStatus } from 'utils/enums';
 import { useOrders } from 'utils/dataHooks';
 import { acceptDispute, rejectDispute } from 'web3/requests/ezcrowRamp';
-import { useNetwork } from 'utils/web3Hooks';
-import { useWeb3Signer } from 'components/ContextData/hooks';
+import { useNetwork, useWeb3Signer } from 'components/ContextData/hooks';
 import { useUserProfileModal } from 'utils/modalHooks';
 
 interface OrdersInDisputeTableProps {

@@ -14,7 +14,7 @@ import {
   useTokenDecimalsStandard,
   useWeb3Signer,
 } from 'components/ContextData/hooks';
-import { useNetwork } from 'utils/web3Hooks';
+import { useNetwork } from 'components/ContextData/hooks';
 import { listingActionToNumber } from 'utils/listings';
 import { ListingAction } from 'utils/enums';
 import { approveToken, createListing } from 'web3/requests/ezcrowRamp';

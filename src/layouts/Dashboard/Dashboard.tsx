@@ -8,6 +8,7 @@ import UserTokenBalance from 'components/UserTokenBalance';
 import UserProfileButton from 'components/UserProfileButton';
 import { useWeb3Data } from 'components/ContextData/hooks';
 import ROUTES from 'config/routes';
+import Web3NetworkButton from 'components/Web3NetworkButton';
 
 function Dashboard() {
   const { signer, accountData } = useWeb3Data();
@@ -43,6 +44,7 @@ function Dashboard() {
         <div className={styles.userData}>
           <UserTokenBalance />
           <UserProfileButton />
+          <Web3NetworkButton />
           <Web3Button />
         </div>
       </div>

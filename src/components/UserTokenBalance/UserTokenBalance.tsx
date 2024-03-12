@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import styles from './UserTokenBalance.module.scss';
-import { useDropdownData, useWeb3Signer } from 'components/ContextData/hooks';
+import { useDropdownData, useWeb3Signer, useNetwork } from 'components/ContextData/hooks';
 import { priceFormat } from 'utils/helpers';
 import { getERC20Contract, getEzcrowRampContract } from 'web3/utils/contracts';
 import { useTableSearchParams, useWindowEvent } from 'utils/hooks';
-import { useNetwork } from 'utils/web3Hooks';
 import { ROUND_TO_TOKEN } from 'config/number';
 import { multiplyByTenPow } from 'utils/bigint';
-import { useWeb3Event } from 'utils/ethereumProviderHooks';
+import { useOnAccountsChanged } from 'utils/ethereumProviderHooks';
 import { WEB3_REQUEST_COMPLETED_EVENT } from 'web3/api';
 
 function UserTokenBalance() {
@@ -48,7 +47,7 @@ function UserTokenBalance() {
     updateBalance();
   });
 
-  useWeb3Event('accountsChanged', () => {
+  useOnAccountsChanged(() => {
     setIsFetching(true);
     updateBalance();
     setIsFetching(false);

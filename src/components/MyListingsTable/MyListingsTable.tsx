@@ -17,11 +17,11 @@ import { useUserListings } from 'utils/dataHooks';
 import {
   useCurrencyDecimalsStandard,
   useFormattedDropdownData,
+  useNetwork,
   useTokenDecimalsStandard,
   useWeb3Signer,
 } from 'components/ContextData/hooks';
 import { approveToken, deleteListing, updateListing } from 'web3/requests/ezcrowRamp';
-import { useNetwork } from 'utils/web3Hooks';
 import { listingActionToNumber } from 'utils/listings';
 import { useUserProfileModal } from 'utils/modalHooks';
 import { useSearchParams } from 'react-router-dom';

@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import detectEthereumProvider from '@metamask/detect-provider';
 import { ethers } from 'ethers';
-import chains from 'web3/chains.json';
+import { Chain } from 'web3/types';
 
 type EthereumProvider = {
-  request: (args: { method: string; params?: any[] }) => Promise<any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  request: <R, T = any[]>(args: { method: string; params?: T }) => Promise<R>;
 };
-
-type Chain = (typeof chains)[keyof typeof chains];
 
 export async function getEthereumProvider() {
   const ethereum = await detectEthereumProvider();
@@ -16,8 +14,8 @@ export async function getEthereumProvider() {
   return ethereum as typeof ethereum & EthereumProvider;
 }
 
-export async function getChainId(ethereumProvider: EthereumProvider): Promise<string> {
-  return ethereumProvider.request({ method: 'eth_chainId' });
+export async function getChainId(ethereumProvider: EthereumProvider) {
+  return ethereumProvider.request<string>({ method: 'eth_chainId' });
 }
 
 async function connectAccounts(ethereumProvider: EthereumProvider) {
@@ -52,7 +50,7 @@ export async function connectUserWallet(ethereumProvider: EthereumProvider, chai
 }
 
 export async function isWalletConnected(ethereumProvider: EthereumProvider) {
-  const accounts = await ethereumProvider.request({ method: 'eth_accounts' });
+  const accounts = await ethereumProvider.request<string[]>({ method: 'eth_accounts' });
 
   return accounts.length > 0;
 }

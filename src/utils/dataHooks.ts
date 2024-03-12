@@ -6,7 +6,7 @@ import { ROUND_TO_FIAT, ROUND_TO_TOKEN } from '../config/number';
 import { listingActionToNumber, serializeListing } from './listings';
 import { getOrders, getUserOrders } from 'requests/orders';
 import { serializeOrder } from './orders';
-import { useNetwork } from './web3Hooks';
+import { useNetwork } from 'components/ContextData/hooks';
 import { useDropdownData } from 'components/ContextData/hooks';
 import { PER_PAGE } from 'config/tables';
 import { WEB3_REQUEST_COMPLETED_EVENT, WEB3_REQUEST_MINED_EVENT } from 'web3/api';
@@ -93,7 +93,11 @@ const useItemsWithFetchFunction = <T, R>(
       tokenDecimals,
       sortOrder,
       currency,
-      network,
+      // We want to avoid updating the data when the netowrk changes
+      // since the network is usually updated before the token and currency
+      // data, so this can fetch data for the newly selected network,
+      // but with the old token and currency
+      // network,
       sortBy,
       token,
       page,

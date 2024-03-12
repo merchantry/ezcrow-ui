@@ -15,8 +15,7 @@ import { FaChevronLeft } from 'react-icons/fa6';
 import { modalLoop } from 'utils/modals';
 import { useListings } from 'utils/dataHooks';
 import { createOrder } from 'web3/requests/ezcrowRamp';
-import { useTokenDecimalsStandard, useWeb3Signer } from 'components/ContextData/hooks';
-import { useNetwork } from 'utils/web3Hooks';
+import { useNetwork, useTokenDecimalsStandard, useWeb3Signer } from 'components/ContextData/hooks';
 import { ColorType } from 'mui/helpers';
 import { useUserProfileModal } from 'utils/modalHooks';
 
