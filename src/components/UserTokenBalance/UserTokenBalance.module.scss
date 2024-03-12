@@ -1,7 +1,8 @@
-@import 'scss/mixins/mixins';
+@import 'scss/mixins/variables';
 
 .container {
-  @include elementContainer;
+  border: $border;
+  border-radius: $border-radius-small;
 
   display: flex;
   align-items: center;
@@ -9,5 +10,5 @@
   height: 40px;
   padding: 2px 20px;
 
-  z-index: 1001
+  z-index: 1001;
 }
