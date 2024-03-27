@@ -7,6 +7,7 @@ import CurrencySettingsAbi from 'abi/CurrencySettings.json';
 import FiatTokenPairHandlerAbi from 'abi/FiatTokenPairHandler.json';
 import MultiOwnableAbi from 'abi/MultiOwnable.json';
 import WhitelistedUsersDatabaseHandlerAbi from 'abi/WhitelistedUsersDatabaseHandler.json';
+import OrdersHandlerAbi from 'abi/OrdersHandler.json';
 import {
   CurrencySettingsMethods,
   ERC20Methods,
@@ -48,3 +49,6 @@ export const getERC20Contract = (address: string, signer: ethers.Signer) =>
 
 export const getCurrencySettingsContract = (address: string, signer: ethers.Signer) =>
   getContract<CurrencySettingsMethods>(address, CurrencySettingsAbi, signer);
+
+export const getOrdersHandlerContract = (address: string, signer: ethers.Signer) =>
+  getContract(address, OrdersHandlerAbi, signer);

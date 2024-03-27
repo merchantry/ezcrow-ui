@@ -1,4 +1,4 @@
-import { useNetwork, useWeb3Data } from 'components/ContextData/hooks';
+import { useNetwork, useWeb3Data, useWeb3Signer } from 'components/ContextData/hooks';
 import chains from './chains.json';
 import {
   connectUserWallet,
@@ -7,10 +7,14 @@ import {
   isWalletConnected,
   updateChain,
 } from 'utils/ethereumProvider';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAlert } from 'components/AlertContainer/hooks';
 import { useOnAccountsChanged } from 'utils/ethereumProviderHooks';
 import { Chain } from './types';
+import { Contract } from 'ethers';
+import { getFiatTokenPairHandlerContract, getOrdersHandlerContract } from './contracts';
+import { run } from 'utils/helpers';
+import { useTableSearchParams } from 'utils/hooks';
 
 export const useChain = () => {
   const network = useNetwork();
@@ -74,4 +78,48 @@ export const useWallet = () => {
   });
 
   return { connectWallet, updateWallet, isFetching };
+};
+
+export const useOnContractEvent = (
+  contract: Contract | undefined,
+  eventName: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handler: (...args: any[]) => void,
+) => {
+  useEffect(() => {
+    if (!contract) return;
+    contract.on(eventName, handler);
+    return () => {
+      contract.off(eventName, handler);
+    };
+  }, [contract, eventName, handler]);
+};
+
+export const useOnOrderHandlerEvent = (eventName: string, handler: (id: bigint) => void) => {
+  const network = useNetwork();
+  const signer = useWeb3Signer();
+  const { token, currency } = useTableSearchParams();
+
+  const [ordersHandler, setOrdersHandler] = useState<Contract | undefined>();
+
+  useEffect(() => {
+    if (!signer) return;
+
+    run(async () => {
+      const ftph = getFiatTokenPairHandlerContract(network, signer);
+      const ordersHandlerAddress = await ftph.getOrdersHandler(token, currency);
+
+      setOrdersHandler(getOrdersHandlerContract(ordersHandlerAddress, signer));
+    });
+  }, [currency, network, signer, token]);
+
+  useOnContractEvent(ordersHandler, eventName, handler);
+};
+
+export const useOnOrderAccepted = (handler: (id: bigint) => void) => {
+  useOnOrderHandlerEvent('OrderAccepted', handler);
+};
+
+export const useOnOrderRejected = (handler: (id: bigint) => void) => {
+  useOnOrderHandlerEvent('OrderRejected', handler);
 };

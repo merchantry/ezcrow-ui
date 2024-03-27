@@ -4,6 +4,7 @@ import { UserData } from 'utils/types';
 
 export interface FiatTokenPairHandlerMethods {
   getFiatTokenPairAddress: StaticMethod<[string, string], string>;
+  getOrdersHandler: StaticMethod<[string, string], string>;
 }
 
 export interface EzcrowRampQueryMethods {

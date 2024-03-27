@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { isFilterOption, mergeSearchParams } from './helpers';
 import { LISTINGS_SORT_BY_OPTIONS } from '../config/tables';
@@ -122,4 +122,25 @@ export const useTableSearchParams = () => {
     setSortOrder,
     setPage,
   };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const useDebouncedCallback = <T extends (...args: any[]) => void>(
+  callback: T,
+  delay: number,
+) => {
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
+  return useCallback(
+    (...args: Parameters<T>) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        callback(...args);
+      }, delay);
+    },
+    [callback, delay],
+  );
 };

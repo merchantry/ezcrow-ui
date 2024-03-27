@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { decapitalize, opposite, priceFormat, run } from 'utils/helpers';
 import { ListingAction, OrderCancelAction, OrderStatus, UserType } from 'utils/enums';
@@ -13,12 +13,13 @@ import OrderActionButtons from './OrderActionButtons';
 import ConfirmationModal from 'components/ConfirmationModal';
 import triggerModal from 'utils/triggerModal';
 import { FaRegHand } from 'react-icons/fa6';
-import { useUserOrders } from 'utils/dataHooks';
+import { emitSoftRefreshTableDataEvent, useUserOrders } from 'utils/dataHooks';
 import { useNetwork, useTokenDecimalsStandard, useWeb3Signer } from 'components/ContextData/hooks';
 import { approveToken, signAndAcceptOrder, signAndRejectOrder } from 'web3/requests/ezcrowRamp';
-import { useTableSearchParams } from 'utils/hooks';
+import { useDebouncedCallback, useTableSearchParams } from 'utils/hooks';
 import { getCurrentOrderStatus, getUserType, isUserBuying } from 'utils/orders';
 import { useUserProfileModal } from 'utils/modalHooks';
+import { useOnOrderAccepted, useOnOrderRejected } from 'web3/hooks';
 
 interface MyOrdersTableProps {
   filter?: ListingAction;
@@ -33,51 +34,71 @@ function MyOrdersTable({ filter }: MyOrdersTableProps) {
 
   const tokenToBigInt = useTokenDecimalsStandard();
 
-  const onActionButtonClick = async (order: Order, tooltip: string, buttonText: string) => {
-    if (!signer) return;
-    const isCancellingOrDisputing =
-      tooltip === OrderCancelAction.Cancel || tooltip === OrderCancelAction.Dispute;
+  const orderIds = useMemo(() => new Set(orders.map(order => order.id)), [orders]);
 
-    const text = run(() => {
-      switch (tooltip) {
-        case OrderCancelAction.Cancel:
-          return `Are you sure you want to cancel the trade?`;
-        case OrderCancelAction.Dispute:
-          return `Are you sure you want to raise a dispute?`;
-        default:
-          return `Are you sure you want to ${decapitalize(tooltip)}?`;
+  const refreshPage = useDebouncedCallback(() => {
+    emitSoftRefreshTableDataEvent();
+  }, 500);
+
+  const orderEventHandler = useCallback(
+    (orderId: bigint) => {
+      if (!orderIds.has(Number(orderId))) return;
+      refreshPage();
+    },
+    [orderIds, refreshPage],
+  );
+
+  useOnOrderAccepted(orderEventHandler);
+  useOnOrderRejected(orderEventHandler);
+
+  const onActionButtonClick = useCallback(
+    async (order: Order, tooltip: string, buttonText: string) => {
+      if (!signer) return;
+      const isCancellingOrDisputing =
+        tooltip === OrderCancelAction.Cancel || tooltip === OrderCancelAction.Dispute;
+
+      const text = run(() => {
+        switch (tooltip) {
+          case OrderCancelAction.Cancel:
+            return `Are you sure you want to cancel the trade?`;
+          case OrderCancelAction.Dispute:
+            return `Are you sure you want to raise a dispute?`;
+          default:
+            return `Are you sure you want to ${decapitalize(tooltip)}?`;
+        }
+      });
+
+      const confirmed = await triggerModal(ConfirmationModal, {
+        title: `${buttonText} (Order ID: ${order.id})?`,
+        text,
+        confirmText: buttonText,
+        confirmColor:
+          !isUserBuying(getUserType(signer?.address ?? '', order), order) || isCancellingOrDisputing
+            ? 'error'
+            : 'success',
+        noCancelBtn: true,
+        confirmIcon: tooltip === OrderCancelAction.Dispute ? <FaRegHand /> : undefined,
+      });
+
+      if (!confirmed) return;
+      const userType = getUserType(signer.address, order);
+      const orderStatus = getCurrentOrderStatus(order);
+      const listingAction = order.listingAction;
+
+      if (
+        userType === UserType.OrderCreator &&
+        orderStatus === OrderStatus.AssetsConfirmed &&
+        listingAction === ListingAction.Buy
+      ) {
+        await approveToken(token, currency, tokenToBigInt(order.tokenAmount), network, signer);
       }
-    });
 
-    const confirmed = await triggerModal(ConfirmationModal, {
-      title: `${buttonText} (Order ID: ${order.id})?`,
-      text,
-      confirmText: buttonText,
-      confirmColor:
-        !isUserBuying(getUserType(signer?.address ?? '', order), order) || isCancellingOrDisputing
-          ? 'error'
-          : 'success',
-      noCancelBtn: true,
-      confirmIcon: tooltip === OrderCancelAction.Dispute ? <FaRegHand /> : undefined,
-    });
+      const orderFunction = isCancellingOrDisputing ? signAndRejectOrder : signAndAcceptOrder;
 
-    if (!confirmed) return;
-    const userType = getUserType(signer.address, order);
-    const orderStatus = getCurrentOrderStatus(order);
-    const listingAction = order.listingAction;
-
-    if (
-      userType === UserType.OrderCreator &&
-      orderStatus === OrderStatus.AssetsConfirmed &&
-      listingAction === ListingAction.Buy
-    ) {
-      await approveToken(token, currency, tokenToBigInt(order.tokenAmount), network, signer);
-    }
-
-    const orderFunction = isCancellingOrDisputing ? signAndRejectOrder : signAndAcceptOrder;
-
-    orderFunction(token, currency, order.id, network, signer);
-  };
+      orderFunction(token, currency, order.id, network, signer);
+    },
+    [network, signer, token, currency, tokenToBigInt],
+  );
 
   const onAddressClick = async (address: string) => {
     triggerUserProfileModal(address);

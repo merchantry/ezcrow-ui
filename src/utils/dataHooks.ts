@@ -10,6 +10,7 @@ import { useNetwork } from 'components/ContextData/hooks';
 import { useDropdownData } from 'components/ContextData/hooks';
 import { PER_PAGE } from 'config/tables';
 import { WEB3_REQUEST_COMPLETED_EVENT, WEB3_REQUEST_MINED_EVENT } from 'web3/api';
+import { emitCustomEvent } from 'services/events';
 
 const orderStatusToNumber = (status?: OrderStatus) => {
   if (status === undefined) return undefined;
@@ -20,9 +21,14 @@ const orderStatusToNumber = (status?: OrderStatus) => {
 const MAX_ITEMS = 200;
 
 const REFRESH_TABLE_DATA_EVENT = 'REFRESH_TABLE_DATA_EVENT';
+const SOFT_REFRESH_TABLE_DATA_EVENT = 'SOFT_REFRESH_TABLE_DATA_EVENT';
 
 export const emitRefreshTableDataEvent = () => {
-  window.dispatchEvent(new CustomEvent(REFRESH_TABLE_DATA_EVENT));
+  emitCustomEvent(REFRESH_TABLE_DATA_EVENT);
+};
+
+export const emitSoftRefreshTableDataEvent = () => {
+  emitCustomEvent(SOFT_REFRESH_TABLE_DATA_EVENT);
 };
 
 type GeneralFetchItemsParams = {
@@ -111,6 +117,10 @@ const useItemsWithFetchFunction = <T, R>(
   });
 
   useWindowEvent(WEB3_REQUEST_MINED_EVENT, () => {
+    updateData(false);
+  });
+
+  useWindowEvent(SOFT_REFRESH_TABLE_DATA_EVENT, () => {
     updateData(false);
   });
 
