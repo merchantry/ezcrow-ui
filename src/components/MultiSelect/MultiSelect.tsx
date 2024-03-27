@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import InputElement from './InputElement';
-import { FormControl, FormHelperText, InputLabel } from '@mui/material';
+import { Checkbox, FormControl, FormHelperText, InputLabel, ListItemText } from '@mui/material';
 import styles from './MultiSelect.module.scss';
 
 interface MultipleSelectProps<T extends string> {
@@ -11,7 +11,7 @@ interface MultipleSelectProps<T extends string> {
   className?: string;
   value: T[];
   onChange: (value: T[]) => void;
-  options: string[];
+  options: T[];
 }
 
 export default function MultipleSelect<T extends string>({
@@ -22,20 +22,30 @@ export default function MultipleSelect<T extends string>({
   onChange,
   options,
 }: MultipleSelectProps<T>) {
-  const handleChange = (event: SelectChangeEvent<T[]>) => {
-    const {
-      target: { value },
-    } = event;
-    onChange(typeof value === 'string' ? (value.split(',') as T[]) : value);
-  };
+  const handleChange = useCallback(
+    (event: SelectChangeEvent<T[]>) => {
+      const {
+        target: { value },
+      } = event;
+      onChange(typeof value === 'string' ? (value.split(',') as T[]) : value);
+    },
+    [onChange],
+  );
 
   return (
     <FormControl className={`${styles.container} ${className}`}>
       <InputLabel>{label}</InputLabel>
-      <Select multiple value={value} onChange={handleChange} input={<InputElement label={label} />}>
+      <Select
+        multiple
+        value={value}
+        onChange={handleChange}
+        renderValue={selected => selected.join(', ')}
+        input={<InputElement label={label} />}
+      >
         {options.map(option => (
           <MenuItem key={option} value={option}>
-            {option}
+            <Checkbox checked={value.includes(option)} />
+            <ListItemText primary={option} />
           </MenuItem>
         ))}
       </Select>
