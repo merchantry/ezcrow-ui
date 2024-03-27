@@ -2,6 +2,10 @@
 
 div.body {
   width: 500px;
+
+  & > p.note {
+    font-size: 0.9rem;
+  }
 }
 
 div.footer {

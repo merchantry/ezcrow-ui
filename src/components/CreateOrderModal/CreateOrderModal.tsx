@@ -133,6 +133,10 @@ function CreateOrderModal({ onSubmit, listing, data, ...modalProps }: CreateOrde
           helperText={orderCostHelperText}
           endAdornment={currencySymbol}
         />
+        <p className={styles.note}>
+          <strong>NOTE:</strong> You can only have 1 active order per listing. If you have an active
+          order on this listing, either cancel or complete it to create a new one.
+        </p>
       </Modal.Body>
 
       <Modal.Footer className={styles.footer}>
