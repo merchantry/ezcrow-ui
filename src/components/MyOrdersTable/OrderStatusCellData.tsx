@@ -93,7 +93,7 @@ const CHIP_DATA: PerOrderData<ChipData> = {
     tooltip: {
       [ListingAction.Sell]: {
         [UserType.ListingCreator]:
-          'The buyer sent the payment. Confirm you received it and complete the trade.',
+          'The buyer sent the payment. Release the tokens only once you have confirmed the payment.',
         [UserType.OrderCreator]:
           'You sent the payment. When the seller confirms the payment, the order will be completed.',
       },
@@ -101,7 +101,7 @@ const CHIP_DATA: PerOrderData<ChipData> = {
         [UserType.ListingCreator]:
           'You sent the payment. When the seller confirms the payment, the order will be completed.',
         [UserType.OrderCreator]:
-          'The seller sent the payment. Confirm you received it and complete the trade.',
+          'The buyer sent the payment. Release the tokens only once you have confirmed the payment.',
       },
     },
   },
