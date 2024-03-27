@@ -74,7 +74,8 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
         network,
         signer,
       ).onMined(() => {
-        const link = `/my-orders?token=${token}&currency=${currency}`;
+        const link = `/my-orders/all?token=${token}&currency=${currency}`;
+
         triggerAlert(ORDER_CREATED_ALERT_TEXT, 'success', {
           // We only use the link for semantic purposes, we don't actually want to navigate to it
           // through the <a> tag, so we use the onClick handler to navigate as to not reload the page
