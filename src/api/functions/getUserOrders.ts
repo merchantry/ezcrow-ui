@@ -2,7 +2,7 @@ import route from '../utils/route';
 import { formatOrdersArray } from 'api/utils/orders';
 import { getSigner } from 'api/utils/web3/provider';
 import { OrdersSortByOption } from 'utils/types';
-import { getEzcrowRampQueryContract } from 'web3/utils/contracts';
+import { getEzcrowRampQueryContract } from 'web3/contracts';
 
 type Params = {
   tokenSymbol: string;

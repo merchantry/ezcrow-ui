@@ -1,4 +1,4 @@
-import { OrderActionParams } from 'api/types';
+import { OrderActionParams, OrderCreateParams } from 'api/types';
 import api from './api';
 import { TxRequest } from './types';
 
@@ -61,4 +61,8 @@ export async function acceptOrder(params: OrderActionParams): Promise<TxRequest>
 
 export async function rejectOrder(params: OrderActionParams): Promise<TxRequest> {
   return api.post('rejectOrder', params);
+}
+
+export async function createOrder(params: OrderCreateParams): Promise<TxRequest> {
+  return api.post('createOrder', params);
 }

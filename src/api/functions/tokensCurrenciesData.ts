@@ -2,7 +2,7 @@ import {
   getCurrencySettingsContract,
   getERC20Contract,
   getEzcrowRampContract,
-} from 'web3/utils/contracts';
+} from 'web3/contracts';
 import route from '../utils/route';
 import { getSigner } from 'api/utils/web3/provider';
 

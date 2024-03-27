@@ -1,4 +1,4 @@
-import { getEzcrowRampQueryContract } from 'web3/utils/contracts';
+import { getEzcrowRampQueryContract } from 'web3/contracts';
 import route from '../utils/route';
 import { formatOrdersArray } from 'api/utils/orders';
 import { getSigner } from 'api/utils/web3/provider';

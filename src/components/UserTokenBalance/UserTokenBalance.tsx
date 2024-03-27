@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './UserTokenBalance.module.scss';
 import { useDropdownData, useWeb3Signer, useNetwork } from 'components/ContextData/hooks';
 import { priceFormat } from 'utils/helpers';
-import { getERC20Contract, getEzcrowRampContract } from 'web3/utils/contracts';
+import { getERC20Contract, getEzcrowRampContract } from 'web3/contracts';
 import { useTableSearchParams, useWindowEvent } from 'utils/hooks';
 import { ROUND_TO_TOKEN } from 'config/number';
 import { multiplyByTenPow } from 'utils/bigint';

@@ -29,10 +29,9 @@ export async function getDomain(contract: ethers.Contract) {
 export const signData = (
   signer: ethers.JsonRpcSigner,
   contract: ethers.Contract,
+  types: Record<string, ethers.TypedDataField[]>,
   message: object,
 ) =>
   getDomain(contract)
-    .then(domain =>
-      signer.signTypedData(domain, { OrderActionPermit: types.OrderActionPermit }, message),
-    )
+    .then(domain => signer.signTypedData(domain, types, message))
     .then(ethers.Signature.from);

@@ -1,6 +1,6 @@
 import route from '../utils/route';
 import { OrderActionParams } from 'api/types';
-import { getEzcrowRampContract } from 'web3/utils/contracts';
+import { getEzcrowRampContract } from 'web3/contracts';
 import { getSigner } from 'api/utils/web3/provider';
 
 export const handler = route.post(

@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { serializeUserData } from 'utils/userData';
 import { runTransaction } from 'web3/api';
-import { getWudbHandlerContract } from 'web3/utils/contracts';
+import { getWudbHandlerContract } from 'web3/contracts';
 
 export async function getUserData(
   address: string,

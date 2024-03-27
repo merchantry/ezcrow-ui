@@ -14,21 +14,29 @@ import ConfirmationModal from 'components/ConfirmationModal';
 import { FaChevronLeft } from 'react-icons/fa6';
 import { modalLoop } from 'utils/modals';
 import { useListings } from 'utils/dataHooks';
-import { createOrder } from 'web3/requests/ezcrowRamp';
+import { signAndCreateOrder } from 'web3/requests/ezcrowRamp';
 import { useNetwork, useTokenDecimalsStandard, useWeb3Signer } from 'components/ContextData/hooks';
 import { ColorType } from 'mui/helpers';
 import { useUserProfileModal } from 'utils/modalHooks';
+import { useAlert } from 'components/AlertContainer/hooks';
+import { useNavigate } from 'react-router-dom';
 
 interface AllListingsTableProps {
   filter?: ListingAction;
 }
 
+const ORDER_CREATED_ALERT_TEXT =
+  'Order created! Go to the "My Orders" page to view your order.' +
+  " You can find the user's contact info by clicking on their address.";
+
 function AllListingsTable({ filter }: AllListingsTableProps) {
+  const navigate = useNavigate();
   const network = useNetwork();
   const signer = useWeb3Signer();
   const [listings, isFetching] = useListings(filter);
   const { token, currency } = useTableSearchParams();
   const { triggerUserProfileModal } = useUserProfileModal();
+  const triggerAlert = useAlert();
 
   const tokenToBigInt = useTokenDecimalsStandard();
 
@@ -55,17 +63,27 @@ function AllListingsTable({ filter }: AllListingsTableProps) {
         cancelText: 'Back',
         cancelStartIcon: <FaChevronLeft />,
       }),
-    ).then(createOrderData => {
+    ).then(async createOrderData => {
       if (!createOrderData) return;
 
-      createOrder(
+      signAndCreateOrder(
         token,
         currency,
         listing.id,
         tokenToBigInt(createOrderData.orderAmount),
         network,
         signer,
-      );
+      ).onMined(() => {
+        const link = `/my-orders?token=${token}&currency=${currency}`;
+        triggerAlert(ORDER_CREATED_ALERT_TEXT, 'success', {
+          // We only use the link for semantic purposes, we don't actually want to navigate to it
+          // through the <a> tag, so we use the onClick handler to navigate as to not reload the page
+          buttonLink: link,
+          onClick: () => navigate(link),
+          buttonText: 'GO',
+          autoHideDuration: 20_000,
+        });
+      });
     });
   };
 

@@ -5,7 +5,7 @@ import { useNetwork } from 'components/ContextData/hooks';
 import { useWeb3Data } from 'components/ContextData/hooks';
 import { shortenAddress } from 'utils/helpers';
 import ButtonWithTooltip from 'components/ButtonWithTooltip';
-import { getMultiOwnableContract } from 'web3/utils/contracts';
+import { getMultiOwnableContract } from 'web3/contracts';
 import { useWallet } from 'web3/hooks';
 
 function Web3Button() {

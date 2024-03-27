@@ -1,0 +1,15 @@
+.textContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  max-width: 400px;
+
+  & > a > button,
+  & > a > button:hover,
+  & > button,
+  & > button:hover {
+    background: #eaf2f3 !important;
+  }
+}

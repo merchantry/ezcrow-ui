@@ -1,6 +1,6 @@
 import route from '../utils/route';
 import { formatListingsArray } from 'api/utils/listings';
-import { getEzcrowRampQueryContract } from 'web3/utils/contracts';
+import { getEzcrowRampQueryContract } from 'web3/contracts';
 import { getSigner } from 'api/utils/web3/provider';
 import { ListingsSortByOption } from 'utils/types';
 import { getCurrentStatus } from 'api/utils/orders';
